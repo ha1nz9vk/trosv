@@ -1,4 +1,5 @@
 import api from "./axiosClient";
+import { envelope, envelopeArray } from "./envelope";
 import type {
   AiAreaSuggestion,
   AiChatResult,
@@ -10,10 +11,10 @@ import type {
 
 // API_CONTRACT §4 - "AI". Backend proxies to the AI service; may take ~30s.
 export const aiRoommates = (): Promise<AiRoommate[]> =>
-  api.post("/ai/roommates").then((r) => r.data.data);
+  api.post("/ai/roommates").then((r) => envelopeArray<AiRoommate>(r).data);
 
 export const aiPriceAdvice = (listingId: number): Promise<AiPriceAdvice> =>
-  api.post("/ai/price-advice", { listing_id: listingId }).then((r) => r.data.data);
+  api.post("/ai/price-advice", { listing_id: listingId }).then((r) => envelope<AiPriceAdvice>(r).data);
 
 export interface AreaSuggestionsPayload {
   [k: string]: unknown;
@@ -22,7 +23,7 @@ export interface AreaSuggestionsPayload {
 export const aiAreaSuggestions = (
   payload: AreaSuggestionsPayload
 ): Promise<AiAreaSuggestion[]> =>
-  api.post("/ai/area-suggestions", payload).then((r) => r.data.data);
+  api.post("/ai/area-suggestions", payload).then((r) => envelopeArray<AiAreaSuggestion>(r).data);
 
 export const aiChat = (
   message: string,
@@ -35,9 +36,9 @@ export const aiChat = (
       history: history.slice(-10),
       listing_id: listingId || undefined,
     })
-    .then((r) => r.data.data);
+    .then((r) => envelope<AiChatResult>(r).data);
 
 export const aiDescription = (
   payload: Record<string, unknown>
 ): Promise<AiDescriptionResult> =>
-  api.post("/ai/description", payload).then((r) => r.data.data);
+  api.post("/ai/description", payload).then((r) => envelope<AiDescriptionResult>(r).data);

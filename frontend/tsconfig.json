@@ -1,32 +1,35 @@
 {
   "compilerOptions": {
-    // Strict mode toan bo - muc tieu chinh cua chuyen doi TS.
+    /* Non-negotiable strictness (build must pass with zero errors). */
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitOverride": true,
-    // Codebase JS dang la 4 spaces, semicolons - giu nguyen convention.
+    "verbatimModuleSyntax": true,
+
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
-    // Vite xu ly import cua .ts/.tsx nhu ban than (khong rename) -
-    // khong duoc bat "extension allowJs" vi se doi hanh vi vite.
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
-    // React 18 JSX runtime.
     "jsxImportSource": "react",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
     "noEmit": true,
-    // Vite thuc hien transpile; tsc chi typecheck (npm run typecheck).
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "e2e"],
   "references": [{ "path": "./tsconfig.node.json" }]

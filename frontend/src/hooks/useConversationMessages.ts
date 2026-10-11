@@ -68,15 +68,23 @@ export function useConversationMessages(
   async function react(m: Message, emoji: string, myId: number): Promise<boolean> {
     const prevMap = m.reactions || {};
     const mine = String(myId);
-    const optimistic = { ...prevMap };
-    if (prevMap[mine] === emoji) delete optimistic[mine];
-    else optimistic[mine] = emoji;
+    const optimistic: Record<string, string> = {};
+    for (const [uid, em] of Object.entries(prevMap)) {
+      if (uid !== mine) optimistic[uid] = em;
+    }
+    if (prevMap[mine] !== emoji) {
+      optimistic[mine] = emoji;
+    }
 
     setMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, reactions: optimistic } : x)));
 
     try {
       const serverMap = await reactToMessage(m.id, emoji);
-      setMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, reactions: serverMap } : x)));
+      if (serverMap == null) {
+        setMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, reactions: null } : x)));
+      } else {
+        setMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, reactions: serverMap } : x)));
+      }
       return true;
     } catch (err) {
       setMessages((prev) => prev.map((x) => (x.id === m.id ? { ...x, reactions: prevMap } : x)));

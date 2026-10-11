@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 950" width="1200" height="950" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A small house and an apple tree under a terracotta sun">
+  <defs>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="8"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.45 0"/>
+    </filter>
+
+    <!-- sprout: base at 0,0 -->
+    <g id="sprout" fill="#7A9160" stroke="#17171C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0,0 V-30 M0,-14 q-22,-4 -22,-26 q20,2 22,26 M0,-18 q22,-4 22,-26 q-20,2 -22,26"/>
+    </g>
+
+    <!-- fern leaflet -->
+    <path id="lf" d="M0,0 Q16,-9 34,0 Q16,9 0,0 Z" fill="#7A9160" stroke="#17171C" stroke-width="3" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+
+    <g id="cloud" fill="#F3EBD6" stroke="#17171C" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M0,40 q-34,0 -34,-26 q0,-26 34,-24 q8,-32 46,-28 q34,4 36,34 q30,2 28,28 q-2,16 -28,16 Z"/>
+    </g>
+  </defs>
+
+  <rect width="1200" height="950" fill="#DFD0AE"/>
+
+  <g filter="url(#rough)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- sun -->
+    <circle cx="880" cy="200" r="68" fill="#DC7856"/>
+
+    <!-- clouds + birds -->
+    <use href="#cloud" transform="translate(190,190)"/>
+    <use href="#cloud" transform="translate(1010,370) scale(0.6)"/>
+    <path d="M640,150 q10,-12 20,0 q10,-12 20,0" fill="none" stroke="#17171C" stroke-width="4"/>
+    <path d="M700,190 q8,-9 16,0 q8,-9 16,0" fill="none" stroke="#17171C" stroke-width="3.5"/>
+
+    <!-- soft far hills -->
+    <path d="M-20,748 C120,670 290,676 440,736 L440,772 L-20,772 Z" fill="#7A9160" opacity="0.35"/>
+    <path d="M700,752 C840,664 1040,672 1220,730 V772 H700 Z" fill="#7A9160" opacity="0.35"/>
+
+    <!-- ground -->
+    <rect x="-20" y="762" width="1240" height="200" fill="#D4C196"/>
+
+    <!-- house + tree scene -->
+    <g transform="translate(276,245) scale(0.8)">
+      <!-- tree trunk + branches -->
+      <path d="M586,648 C582,580 592,520 580,440 L628,440 C618,520 628,580 632,648 Z" fill="#D4A27F" stroke="#17171C" stroke-width="5"/>
+      <path d="M606,512 C632,492 662,484 680,452" fill="none" stroke="#17171C" stroke-width="5"/>
+      <path d="M602,530 C578,512 552,504 532,478" fill="none" stroke="#17171C" stroke-width="5"/>
+
+      <!-- canopy -->
+      <circle cx="570" cy="408" r="72" fill="#7A9160"/>
+      <circle cx="665" cy="353" r="70" fill="#7A9160"/>
+      <circle cx="675" cy="463" r="58" fill="#7A9160"/>
+      <circle cx="560" cy="400" r="72" fill="none" stroke="#17171C" stroke-width="5"/>
+      <circle cx="655" cy="345" r="70" fill="none" stroke="#17171C" stroke-width="5"/>
+      <circle cx="665" cy="455" r="58" fill="none" stroke="#17171C" stroke-width="5"/>
+      <circle cx="538" cy="388" r="10" fill="#DC7856" stroke="#17171C" stroke-width="3.5"/>
+      <circle cx="692" cy="330" r="10" fill="#DC7856" stroke="#17171C" stroke-width="3.5"/>
+      <circle cx="652" cy="470" r="10" fill="#DC7856" stroke="#17171C" stroke-width="3.5"/>
+      <circle cx="604" cy="334" r="10" fill="#DC7856" stroke="#17171C" stroke-width="3.5"/>
+
+      <!-- chimney + smoke -->
+      <rect x="266" y="348" width="36" height="86" fill="#FAF8F5" stroke="#17171C" stroke-width="5"/>
+      <path d="M284,336 c-16,-20 14,-30 0,-52 c-12,-18 12,-30 4,-50" fill="none" stroke="#17171C" stroke-width="4.5"/>
+
+      <!-- house body -->
+      <polygon points="110,470 332,466 336,640 106,642" fill="#FAF8F5" stroke="#17171C" stroke-width="5"/>
+
+      <!-- roof -->
+      <polygon points="92,486 222,356 356,480" fill="#DC7856"/>
+      <path d="M80,486 L222,350 L364,480" fill="none" stroke="#17171C" stroke-width="5.5"/>
+
+      <!-- windows -->
+      <rect x="132" y="512" width="46" height="54" fill="#8B8BE0" stroke="#17171C" stroke-width="4.5"/>
+      <path d="M155,512 V566 M132,539 H178" fill="none" stroke="#17171C" stroke-width="3.5"/>
+      <rect x="264" y="512" width="46" height="54" fill="#8B8BE0" stroke="#17171C" stroke-width="4.5"/>
+      <path d="M287,512 V566 M264,539 H310" fill="none" stroke="#17171C" stroke-width="3.5"/>
+
+      <!-- door -->
+      <path d="M194,642 V570 a26,26 0 0 1 52,0 V642 Z" fill="#7A9160" stroke="#17171C" stroke-width="4.5"/>
+      <circle cx="232" cy="610" r="4.5" fill="#17171C"/>
+    </g>
+
+    <!-- ground line -->
+    <path d="M-20,764 C200,754 420,770 620,762 S1000,756 1220,764" fill="none" stroke="#17171C" stroke-width="5"/>
+
+    <!-- sprouts -->
+    <use href="#sprout" transform="translate(150,764)"/>
+    <use href="#sprout" transform="translate(205,764) scale(0.8)"/>
+    <use href="#sprout" transform="translate(985,762)"/>
+    <use href="#sprout" transform="translate(1040,762) scale(0.8)"/>
+
+    <!-- little fern -->
+    <g transform="translate(1110,764) rotate(4)">
+      <path d="M0,0 L0,-96" fill="none" stroke="#17171C" stroke-width="4"/>
+      <use href="#lf" transform="translate(0,-14) rotate(-40) scale(1)"/>
+      <use href="#lf" transform="translate(0,-14) scale(-1,1) rotate(-40) scale(1)"/>
+      <use href="#lf" transform="translate(0,-30) rotate(-40) scale(0.88)"/>
+      <use href="#lf" transform="translate(0,-30) scale(-1,1) rotate(-40) scale(0.88)"/>
+      <use href="#lf" transform="translate(0,-46) rotate(-42) scale(0.74)"/>
+      <use href="#lf" transform="translate(0,-46) scale(-1,1) rotate(-42) scale(0.74)"/>
+      <use href="#lf" transform="translate(0,-62) rotate(-44) scale(0.6)"/>
+      <use href="#lf" transform="translate(0,-62) scale(-1,1) rotate(-44) scale(0.6)"/>
+      <use href="#lf" transform="translate(0,-78) rotate(-48) scale(0.46)"/>
+      <use href="#lf" transform="translate(0,-78) scale(-1,1) rotate(-48) scale(0.46)"/>
+      <use href="#lf" transform="translate(0,-94) rotate(-90) scale(0.4)"/>
+    </g>
+  </g>
+
+  <!-- paper grain -->
+  <rect width="1200" height="950" filter="url(#grain)" opacity="0.3"/>
+</svg>

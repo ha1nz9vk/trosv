@@ -71,19 +71,20 @@ export function useListingForm(id: number | undefined, toast: ToastLike) {
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
-    getCities().then(setCities).catch(() => {});
+    getCities().then(setCities).catch(() => {
+    });
     getWards().then(setWards).catch(() => {});
     getAmenities().then(setAmenities).catch(() => {});
   }, []);
 
   useEffect(() => {
     if (!isEdit) return;
-    getListing(id as number)
+    getListing(id)
       .then((l) => {
         setForm({
           title: l.title || "",
           type: l.type || "room",
-          price: l.price ?? "",
+          price: l.price,
           area_m2: l.area_m2 ?? "",
           address: l.address || "",
           latitude: l.latitude ?? "",
@@ -96,7 +97,9 @@ export function useListingForm(id: number | undefined, toast: ToastLike) {
         });
         setImages(l.images || []);
       })
-      .catch((err) => setNotice(errMessage(err, "Không tải được tin đăng.")));
+      .catch((err: unknown) => {
+        setNotice(errMessage(err, "Không tải được tin đăng."));
+      });
   }, [id, isEdit]);
 
   const set =
@@ -137,9 +140,10 @@ export function useListingForm(id: number | undefined, toast: ToastLike) {
   // Recentre the coordinate picker on the selected ward's centroid.
   const wardCenter = useMemo<[number, number] | undefined>(() => {
     const w = wards.find((x) => String(x.id) === String(form.ward_id));
-    return w?.latitude != null
-      ? [Number(w.latitude), Number(w.longitude)]
-      : undefined;
+    const lat = w?.latitude;
+    const lng = w?.longitude;
+    if (lat == null || lng == null) return undefined;
+    return [lat, lng];
   }, [wards, form.ward_id]);
 
   function toggleAmenity(amenityId: number): void {
@@ -195,21 +199,21 @@ export function useListingForm(id: number | undefined, toast: ToastLike) {
 
     try {
       if (isEdit) {
-        const updated = await updateListing(id as number, payload);
+        const updated = await updateListing(id, payload);
         // Upload newly picked images, if any.
         if (newFiles.length > 0) {
-          await uploadImages(id as number, newFiles);
+          await uploadImages(id, newFiles);
         }
-        navigate(route(ROUTES.ROOM_DETAIL, { id: updated.id }));
+        void navigate(route(ROUTES.ROOM_DETAIL, { id: updated.id }));
       } else {
         const created = await createListing(payload);
         // Jump to edit page to upload images for the new listing.
         if (newFiles.length > 0) {
           await uploadImages(created.id, newFiles);
         }
-        navigate(ROUTES.LANDLORD);
+        void navigate(ROUTES.LANDLORD);
       }
-    } catch (err) {
+    } catch (err: unknown) {
       setErrors(errFieldErrors(err));
       setNotice(errMessage(err));
     } finally {

@@ -52,10 +52,9 @@ function reverbConfig(): Record<string, unknown> {
         })
           .then(async (res) => {
             if (!res.ok) throw new Error(`auth ${res.status}`);
-            callback(null, await res.json());
+            callback(null, (await res.json()) as { auth: string });
           })
-          .catch((reason: unknown) =>
-            callback(reason instanceof Error ? reason : new Error(String(reason)), null)
+          .catch((reason: unknown) => { callback(reason instanceof Error ? reason : new Error(String(reason)), null); }
           );
       },
     }),
@@ -75,17 +74,14 @@ export function getEcho(): Echo<"reverb"> | null {
 /** Private conversation channel - minimal typed surface for hooks. */
 export interface EchoReactive {
   // Generic payload: hook goi listen<MessageSentEvent>('.message.sent', ...).
-  listen<T = unknown>(eventName: string, callback: (payload: T) => void): unknown;
-  listenForWhisper<T = unknown>(
-    eventName: string,
-    callback: (payload: T) => void
-  ): unknown;
+  listen(eventName: string, callback: (payload: unknown) => void): unknown;
+  listenForWhisper(eventName: string, callback: (payload: unknown) => void): unknown;
 }
 
 export function conversationChannel(conversationId: number): EchoReactive | null {
   const e = getEcho();
   if (!e) return null;
-  return e.private(`conversation.${conversationId}`) as unknown as EchoReactive;
+  return e.private(`conversation.${conversationId}`);
 }
 
 /** Drop the socket + subscriptions (logout / auth change). */

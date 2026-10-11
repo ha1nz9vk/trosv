@@ -59,19 +59,21 @@ export interface ListingImage {
 export interface Ward {
   id: number;
   name: string;
+  /* API returns city as a nested object (city_id is not serialized). */
   city_id?: number;
+  city?: { id: number; name: string };
   latitude?: number | null;
   longitude?: number | null;
-  city?: { id: number; name: string };
 }
 
 export interface School {
   id: number;
   name: string;
+  /* API returns city as a nested object (city_id is not serialized). */
   city_id?: number;
+  city?: { id: number; name: string };
   latitude?: number | null;
   longitude?: number | null;
-  city?: { id: number; name: string };
   /** Phường chứa trường (null với trường chưa gán) - API_CONTRACT §4. */
   ward?: { id: number; name: string } | null;
 }
@@ -278,17 +280,24 @@ export interface AiRoommate {
 
 export interface AiPriceAdvice {
   verdict?: "high" | "low" | "fair";
+  listing_price?: number;
   fair_min?: number;
   fair_max?: number;
-  stats?: { count?: number; median?: number };
+  stats?: { count?: number; min?: number; median?: number; max?: number };
   tips?: string[];
   message?: string;
 }
 
 export interface AiAreaSuggestion {
-  city_id?: number;
-  city_name?: string;
+  ward_id?: number;
+  name?: string;
   reason?: string;
+  stats?: {
+    listings_count?: number;
+    avg_price?: number;
+    avg_rating?: number;
+    distance_to_school_km?: number;
+  } | null;
   [k: string]: unknown;
 }
 

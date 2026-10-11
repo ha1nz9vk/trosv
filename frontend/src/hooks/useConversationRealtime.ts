@@ -40,8 +40,8 @@ export function useConversationRealtime(
     if (!echo) return undefined;
 
     const privateChan = echo.private(`conversation.${id}`) as unknown as EchoReactive;
-    privateChan.listen<MessageSentEvent>(".message.sent", (e) => {
-      const msg = e.message;
+    privateChan.listen(".message.sent", (e: unknown) => {
+      const msg = (e as MessageSentEvent).message;
       setOtherTyping(false); // tin đến = người kia ngừng soạn
       setMessages((prev) => {
         if (prev.some((m) => m.id === msg.id)) return prev;
@@ -63,44 +63,48 @@ export function useConversationRealtime(
     });
 
     // Typing qua client-event (whisper) - không qua backend. Debounce 2.5s.
-    privateChan.listenForWhisper<TypingWhisper>("typing", (e) => {
-      if (e.user_id === user?.id) return;
+    privateChan.listenForWhisper("typing", (e: unknown) => {
+      const w = e as TypingWhisper;
+      if (w.user_id === user?.id) return;
       setOtherTyping(true);
       if (typingTimer.current) clearTimeout(typingTimer.current);
-      typingTimer.current = setTimeout(() => setOtherTyping(false), 2500);
+      typingTimer.current = setTimeout(() => { setOtherTyping(false); }, 2500);
     });
 
     // Reaction: merge lại map reactions mới (đặt/đổi/bỏ của bất kỳ ai).
-    privateChan.listen<MessageReactedEvent>(".message.reacted", (e) => {
+    privateChan.listen(".message.reacted", (e: unknown) => {
+      const ev = e as MessageReactedEvent;
       setMessages((prev) =>
-        prev.map((m) => (m.id === e.message_id ? { ...m, reactions: e.reactions } : m))
+        prev.map((m) => (m.id === ev.message_id ? { ...m, reactions: ev.reactions } : m))
       );
     });
 
     // Dấu đã xem: người kia markRead -> tất cả tin mine có seen_at.
-    privateChan.listen<MessageSeenEvent>(".message.seen", (e) => {
-      if (e.reader_id === user?.id) return;
+    privateChan.listen(".message.seen", (e: unknown) => {
+      const ev = e as MessageSeenEvent;
+      if (ev.reader_id === user?.id) return;
       setMessages((prev) =>
-        prev.map((m) => (m.is_mine && !m.seen_at ? { ...m, seen_at: e.seen_at } : m))
+        prev.map((m) => (m.is_mine && !m.seen_at ? { ...m, seen_at: ev.seen_at } : m))
       );
     });
 
     // Facebook-style deletion: "removed" = unsend cho cả hai phía
     // (thành tombstone); "removed: false" + deleted_for chứa mình =
     // ẩn tin (chỉ ảnh hưởng phía mình).
-    privateChan.listen<MessageDeletedEvent>(".message.deleted", (e) => {
+    privateChan.listen(".message.deleted", (e: unknown) => {
+      const ev = e as MessageDeletedEvent;
       const mine = user?.id;
-      const affectsMe = e.removed || (mine != null && (e.deleted_for || []).includes(mine));
+      const affectsMe = ev.removed || (mine != null && (ev.deleted_for ?? []).includes(mine));
       if (!affectsMe) return;
 
       setMessages((prev) =>
-        e.removed
+        ev.removed
           ? prev.map((m) =>
-              m.id === e.message_id
+              m.id === ev.message_id
                 ? { ...m, is_unsent: true, body: null, attachment_url: null, attachment_name: null }
                 : m
             )
-          : prev.filter((m) => m.id !== e.message_id)
+          : prev.filter((m) => m.id !== ev.message_id)
       );
     });
 

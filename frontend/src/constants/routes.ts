@@ -30,14 +30,14 @@ export const ROUTES = {
   LANDLORD_EDIT: "/landlord/edit/:id",
 } as const;
 
-export type RoutePattern = (typeof ROUTES)[keyof typeof ROUTES];
+export type RoutePattern = string;
 
 /**
  * Fill các segment ":param" của một pattern. Vi du:
  * route(ROUTES.ROOM_DETAIL, { id: 42 }) === "/rooms/42"
  */
 export function route(
-  pattern: RoutePattern | string,
+  pattern: RoutePattern,
   params: Record<string, string | number> = {}
 ): string {
   return Object.entries(params).reduce(

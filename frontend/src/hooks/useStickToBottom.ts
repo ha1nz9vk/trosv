@@ -1,17 +1,21 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import type { RefObject } from "react";
 
 /**
  * Autoscroll for chat threads: follow new content only when the user is
  * already at (or near) the bottom, so reading history is not yanked down
- * while new messages arrive. Returns the thread ref to attach and the
- * scroll handler that keeps future decisions DOM-accurate.
+ * while new messages arrive. The ref is owned by the rendering component
+ * (passed in) and never returned from this hook, so no hook-returned ref
+ * is ever touched in render (react-hooks/refs).
  */
 export function useStickToBottom(
+  threadRef: RefObject<HTMLDivElement>,
   messages: unknown,
   loaded: boolean
-): { threadRef: RefObject<HTMLDivElement>; handleScroll: () => boolean } {
-  const threadRef = useRef<HTMLDivElement>(null);
+): {
+  handleScroll: () => boolean;
+  scrollToBottom: () => void;
+} {
 
   useEffect(() => {
     const el = threadRef.current;
@@ -20,7 +24,7 @@ export function useStickToBottom(
     if (nearBottom) {
       el.scrollTop = el.scrollHeight;
     }
-  }, [messages, loaded]);
+  }, [messages, loaded, threadRef]);
 
   function handleScroll(): boolean {
     const el = threadRef.current;
@@ -28,5 +32,13 @@ export function useStickToBottom(
     return el.scrollHeight - el.scrollTop - el.clientHeight < 120;
   }
 
-  return { threadRef, handleScroll };
+  function scrollToBottom(): void {
+    const el = threadRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }
+
+  return {
+    handleScroll,
+    scrollToBottom,
+  };
 }

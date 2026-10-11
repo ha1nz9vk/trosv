@@ -107,7 +107,7 @@ export function useListingSearch() {
   // Refetch whenever filters change (debounced) or page changes.
   useEffect(() => {
     const t = setTimeout(() => {
-      fetchListings(page);
+      void fetchListings(page);
       if (!firstRender.current) {
         const next: Record<string, string> = {};
         if (filters.q) next.q = filters.q;
@@ -116,7 +116,7 @@ export function useListingSearch() {
       }
       firstRender.current = false;
     }, 300);
-    return () => clearTimeout(t);
+    return () => { clearTimeout(t); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, page]);
 

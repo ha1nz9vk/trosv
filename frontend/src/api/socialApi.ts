@@ -1,22 +1,26 @@
 import api from "./axiosClient";
-import type { Conversation, Favorite, Message, MessagePayload, PaginationMeta } from "../types/api";
+import { envelope, envelopeArray, pagedEnvelope } from "./envelope";
+import type { Conversation, Favorite, Message, MessagePayload } from "../types/api";
 import type { Paged } from "./listingApi";
 
 // API_CONTRACT §4 - "Yêu thích (sinh viên)"
 export const getFavorites = (page = 1): Promise<Paged<Favorite>> =>
   api
     .get("/favorites", { params: { page } })
-    .then((r) => ({ data: r.data.data, meta: r.data.meta as PaginationMeta }));
+    .then((r) => {
+      const body = pagedEnvelope<Favorite>(r);
+      return { data: body.data, meta: body.meta };
+    });
 
 export const addFavorite = (listingId: number): Promise<unknown> =>
-  api.put(`/favorites/${listingId}`).then((r) => r.data.data);
+  api.put(`/favorites/${listingId}`).then((r) => envelope<unknown>(r).data);
 
 export const removeFavorite = (listingId: number): Promise<unknown> =>
-  api.delete(`/favorites/${listingId}`).then((r) => r.data.data);
+  api.delete(`/favorites/${listingId}`).then((r) => envelope<unknown>(r).data);
 
 // API_CONTRACT §4 - "Nhắn tin"
 export const getConversations = (): Promise<Conversation[]> =>
-  api.get("/conversations").then((r) => r.data.data);
+  api.get("/conversations").then((r) => envelopeArray<Conversation>(r).data);
 
 // Facebook-style deletion: scope "unsent" (Thu hồi, sender only) or
 // "self" (Xóa chỉ ở phía mình). Server returns 204-style null data.
@@ -26,7 +30,7 @@ export const deleteMessage = (
   messageId: number,
   scope: DeleteScope
 ): Promise<unknown> =>
-  api.delete(`/messages/${messageId}`, { params: { scope } }).then((r) => r.data.data);
+  api.delete(`/messages/${messageId}`, { params: { scope } }).then((r) => envelope<unknown>(r).data);
 
 // Messenger reactions: PUT dat/doi emoji (cung emoji lan nua = bo/toggle).
 export const reactToMessage = (
@@ -35,14 +39,14 @@ export const reactToMessage = (
 ): Promise<Message["reactions"]> =>
   api
     .put(`/messages/${messageId}/reactions`, { emoji })
-    .then((r) => r.data.data.reactions);
+    .then((r) => envelope<{ reactions: Message["reactions"] }>(r).data.reactions);
 
 export const startConversation = (listingId: number): Promise<Conversation> =>
-  api.post("/conversations", { listing_id: listingId }).then((r) => r.data.data);
+  api.post("/conversations", { listing_id: listingId }).then((r) => envelope<Conversation>(r).data);
 
 // Hội thoại trực tiếp giữa 2 sinh viên (không qua tin đăng) - từ hồ sơ công khai.
 export const startDirectConversation = (userId: number): Promise<Conversation> =>
-  api.post(`/users/${userId}/message`).then((r) => r.data.data);
+  api.post(`/users/${userId}/message`).then((r) => envelope<Conversation>(r).data);
 
 export const getMessages = (
   conversationId: number | string,
@@ -52,7 +56,7 @@ export const getMessages = (
     .get(`/conversations/${conversationId}/messages`, {
       params: { after_id: afterId || undefined },
     })
-    .then((r) => r.data.data);
+    .then((r) => envelopeArray<Message>(r).data);
 
 export interface SendMessagePayload extends MessagePayload {
   file?: File | null;
@@ -70,11 +74,11 @@ export const sendMessage = (
       .post(`/conversations/${conversationId}/messages`, form, {
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((r) => r.data.data);
+      .then((r) => envelope<Message>(r).data);
   }
   return api
     .post(`/conversations/${conversationId}/messages`, { body })
-    .then((r) => r.data.data);
+    .then((r) => envelope<Message>(r).data);
 };
 
 export const markRead = (conversationId: number | string): Promise<unknown> =>

@@ -64,7 +64,9 @@ test.describe("stale credentials on /login", () => {
         await page.getByRole("button", { name: "Đăng nhập" }).click();
 
         // Successful login replaces the stale user and shows the app chrome.
-        await expect(page.locator(".navbar .dropdown-toggle")).toBeVisible({ timeout: 10_000 });
+        await expect(
+            page.getByRole("button", { name: "Menu tài khoản" }),
+        ).toBeVisible({ timeout: 10_000 });
         const stored = await page.evaluate(() => localStorage.getItem("user"));
         expect(stored && JSON.parse(stored).email).toBe("student1@example.com");
     });
