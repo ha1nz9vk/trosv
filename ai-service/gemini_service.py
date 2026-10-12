@@ -420,9 +420,11 @@ def chat_with_gemini(
             "ở khu vực/thành phố nào (ví dụ: gần ĐH Tôn Đức Thắng, Quận 7, TP.HCM) và ngân sách khoảng bao nhiêu."
         )
     elif candidate_listings:
-        room_lines = ["=== CÁC PHÒNG TRỌ THỰC TẾ ĐANG CÓ SẴN TRÊN HỆ THỐNG PHÙ HỢP TIÊU CHÍ ==="]
+        room_lines = [
+            f"=== CÁC PHÒNG TRỌ ĐÃ ĐƯỢC HỆ THỐNG ĐỊNH VỊ VÀ TÌM KIẾM PHÙ HỢP VỚI YÊU CẦU CỦA NGƯỜI DÙNG ({len(candidate_listings)} phòng) ==="
+        ]
         for c in candidate_listings:
-            dist_str = f", Cách trường {c.get('distance_km')} km" if c.get("distance_km") is not None else ""
+            dist_str = f", Khoảng cách: {c.get('distance_km')} km" if c.get("distance_km") is not None else ""
             amenities_str = f", Tiện ích: {', '.join(c.get('amenities') or [])}" if c.get("amenities") else ""
             room_lines.append(
                 f"- [ID {c.get('id')}]: \"{c.get('title')}\", Giá {c.get('price', 0):,} VNĐ/tháng, "
@@ -430,9 +432,12 @@ def chat_with_gemini(
                 f"{dist_str}{amenities_str}"
             )
         room_lines.append(
-            "\nNhiệm vụ: Giới thiệu thân thiện, ngắn gọn các phòng trọ phù hợp nhất ở trên cho người dùng "
-            "(nêu rõ giá, vị trí, khoảng cách và tiện ích nổi bật). Nhắc người dùng có thể bấm vào thẻ phòng bên dưới "
-            "để xem hình ảnh chi tiết và liên hệ chủ nhà. TUYỆT ĐỐI KHÔNG tự bịa phòng trọ không có trong danh sách."
+            "\nQUY TẮC BẮT BUỘC KHI TRẢ LỜI:\n"
+            "1. TẤT CẢ các phòng trọ trên ĐÃ ĐƯỢC HỆ THỐNG XÁC NHẬN PHÙ HỢP VỚI ĐỊA ĐIỂM HOẶC TRƯỜNG HỌC NGƯỜI DÙNG TÌM KIẾM.\n"
+            "2. TUYỆT ĐỐI KHÔNG TỪ CHỐI, KHÔNG ĐƯỢC NÓI LÀ 'hệ thống chưa có phòng' hay 'không có phòng gần trường'.\n"
+            "3. Hãy niềm nở giới thiệu các phòng phù hợp này, nêu rõ giá thuê, khoảng cách (ví dụ: cách địa điểm bạn cần chỉ X km) và các tiện ích nổi bật.\n"
+            "4. Nhắc người dùng có thể bấm trực tiếp vào các thẻ phòng bên dưới tin nhắn để xem hình ảnh chi tiết và liên hệ chủ nhà.\n"
+            "5. Nếu người dùng hỏi bằng tiếng Anh, hãy trả lời bằng tiếng Anh. Nếu hỏi bằng tiếng Việt, trả lời bằng tiếng Việt."
         )
         context_sections.append("\n".join(room_lines))
     elif candidate_listings is not None and len(candidate_listings) == 0:

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Amenity;
+use App\Models\City;
 use App\Models\Listing;
 use App\Models\School;
 use App\Models\User;
@@ -544,6 +545,111 @@ class AiProxyTest extends TestCase
             return $data['needs_location'] === false
                 && $data['candidate_listings'][0]['id'] === $listing->id;
         });
+    }
+
+    public function test_chat_room_hunting_multi_turn_history_resolves_location_and_returns_listings(): void
+    {
+        $school = School::factory()->create([
+            'name' => 'Đại học Tôn Đức Thắng (TDTU)',
+            'latitude' => 10.7324,
+            'longitude' => 106.6992,
+        ]);
+
+        $ward = Ward::factory()->create([
+            'latitude' => 10.7325,
+            'longitude' => 106.6995,
+        ]);
+
+        $listing = Listing::factory()->create([
+            'user_id' => $this->landlord->id,
+            'ward_id' => $ward->id,
+            'type' => Listing::TYPE_ROOM,
+            'price' => 2_800_000,
+            'status' => Listing::STATUS_AVAILABLE,
+            'latitude' => 10.7326,
+            'longitude' => 106.6996,
+        ]);
+
+        Http::fake(['*/chat' => Http::response(['reply' => 'Đây là các phòng gần TDTU.'])]);
+
+        // In turn 2, user just says "gần TDTU" in response to AI's question
+        $response = $this->actingAs($this->student, 'sanctum')
+            ->postJson('/api/ai/chat', [
+                'message' => 'gần TDTU',
+                'history' => [
+                    ['role' => 'user', 'content' => 'Tìm cho mình phòng trọ với'],
+                    ['role' => 'assistant', 'content' => 'Bạn muốn tìm phòng ở thành phố nào hoặc gần trường đại học nào?'],
+                ],
+            ])
+            ->assertOk();
+
+        $this->assertNotEmpty($response->json('data.listings'));
+        $this->assertSame($listing->id, $response->json('data.listings.0.id'));
+
+        Http::assertSent(fn ($request) => $request->data()['needs_location'] === false
+            && ! empty($request->data()['candidate_listings']));
+    }
+
+    public function test_chat_room_hunting_english_language_support(): void
+    {
+        $school = School::factory()->create([
+            'name' => 'Đại học Bách Khoa (HCMUT)',
+            'latitude' => 10.7725,
+            'longitude' => 106.6575,
+        ]);
+
+        $ward = Ward::factory()->create([
+            'latitude' => 10.7726,
+            'longitude' => 106.6576,
+        ]);
+
+        $listing = Listing::factory()->create([
+            'user_id' => $this->landlord->id,
+            'ward_id' => $ward->id,
+            'type' => Listing::TYPE_ROOM,
+            'price' => 3_200_000,
+            'status' => Listing::STATUS_AVAILABLE,
+            'latitude' => 10.7727,
+            'longitude' => 106.6577,
+        ]);
+
+        Http::fake(['*/chat' => Http::response(['reply' => 'Here are rooms near HCMUT.'])]);
+
+        $response = $this->actingAs($this->student, 'sanctum')
+            ->postJson('/api/ai/chat', [
+                'message' => 'can you find me a room near HCMUT under 4 million?',
+            ])
+            ->assertOk();
+
+        $this->assertNotEmpty($response->json('data.listings'));
+        $this->assertSame($listing->id, $response->json('data.listings.0.id'));
+    }
+
+    public function test_chat_room_hunting_district_support(): void
+    {
+        $city = City::factory()->create(['name' => 'TP.HCM']);
+        $ward = Ward::factory()->create([
+            'city_id' => $city->id,
+            'name' => 'Phường Tân Phong',
+        ]);
+
+        $listing = Listing::factory()->create([
+            'user_id' => $this->landlord->id,
+            'ward_id' => $ward->id,
+            'type' => Listing::TYPE_ROOM,
+            'price' => 2_500_000,
+            'status' => Listing::STATUS_AVAILABLE,
+        ]);
+
+        Http::fake(['*/chat' => Http::response(['reply' => 'Đây là các phòng ở Quận 7.'])]);
+
+        $response = $this->actingAs($this->student, 'sanctum')
+            ->postJson('/api/ai/chat', [
+                'message' => 'Tìm phòng ở Quận 7 giá rẻ',
+            ])
+            ->assertOk();
+
+        $this->assertNotEmpty($response->json('data.listings'));
     }
 
     // ------------------------------------------------------------------
