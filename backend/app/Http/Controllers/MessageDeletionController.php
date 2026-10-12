@@ -71,7 +71,7 @@ class MessageDeletionController extends Controller
                 return response()->json(['data' => null]); // racing loser
             }
 
-            broadcast(new MessageDeleted($message, true, []));
+            rescue(fn () => broadcast(new MessageDeleted($message, true, [])), report: false);
 
             return response()->json(['data' => null]);
         }
@@ -87,7 +87,7 @@ class MessageDeletionController extends Controller
 
             // Local effect only - other clients must not hide it, so the
             // payload marks the caller as the sole "deleted_for" recipient.
-            broadcast(new MessageDeleted($message, false, [$user->id]));
+            rescue(fn () => broadcast(new MessageDeleted($message, false, [$user->id])), report: false);
         }
 
         return response()->json(['data' => null]);

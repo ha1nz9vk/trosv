@@ -68,8 +68,8 @@ class ConversationController extends Controller
                 'body' => $roomPath,
             ]);
             $conversation->touch();
-            broadcast(new MessageSent($msg1->load(['sender:id', 'conversation'])));
-            broadcast(new MessageSent($msg2->load(['sender:id', 'conversation'])));
+            rescue(fn () => broadcast(new MessageSent($msg1->load(['sender:id', 'conversation']))), report: false);
+            rescue(fn () => broadcast(new MessageSent($msg2->load(['sender:id', 'conversation']))), report: false);
         }
 
         return $this->respondWithConversation($request, $conversation, $wasCreated);
@@ -203,7 +203,7 @@ class ConversationController extends Controller
         // Realtime bubble delivery over Reverb (replaces 5s client polling).
         // Message shape mirrors MessageResource/contract §3 (body/reactions
         // match MessageResource exactly; seen_at starts null).
-        broadcast(new MessageSent($message->load(['sender:id', 'conversation'])));
+        rescue(fn () => broadcast(new MessageSent($message->load(['sender:id', 'conversation']))), report: false);
 
         return response()->json([
             'data' => (new MessageResource($message->load('sender:id')))->resolve($request),
@@ -230,7 +230,7 @@ class ConversationController extends Controller
             ]);
 
         // Sender hiển thị "Đã xem" ngay khi receiver mở thread.
-        broadcast(new MessageSeen($conversation, $request->user(), $now->toISOString()));
+        rescue(fn () => broadcast(new MessageSeen($conversation, $request->user(), $now->toISOString())), report: false);
 
         return response()->json(['data' => null]);
     }
