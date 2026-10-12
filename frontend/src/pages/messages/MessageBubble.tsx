@@ -178,6 +178,9 @@ export function MessageBubble(props: MessageBubbleProps) {
         side="top"
         sideOffset={6}
         collisionPadding={8}
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+        }}
         className="z-50 w-56 rounded-2xl border border-line bg-card p-2 shadow-pop focus:outline-none"
       >
         {/* Reaction picker */}

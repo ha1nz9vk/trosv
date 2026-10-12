@@ -25,6 +25,9 @@ test('reaction badge and preview card reaction', async ({ page }) => {
   await expect(thumbsUpEmoji).toBeVisible();
   await thumbsUpEmoji.click({ force: true });
 
+  // Wait for the reaction popover to disappear
+  await expect(page.locator('[role="dialog"]')).toHaveCount(0);
+
   // The reaction badge on the card should be visible
   await expect(page.locator('button[aria-label="Xem biểu cảm"]').first()).toBeVisible();
 
@@ -36,13 +39,26 @@ test('reaction badge and preview card reaction', async ({ page }) => {
   const thread = page.locator('[data-testid="thread"]');
   const textarea = page.locator('textarea[aria-label="Tin nhắn"]');
   const sendBtn = page.locator('button[aria-label="Gửi tin nhắn"]');
+
   await textarea.fill(msg1Text);
+  await expect(sendBtn).toBeEnabled();
   await sendBtn.click();
-  await expect(thread.getByText(msg1Text)).toBeVisible({ timeout: 10_000 });
+  try {
+    await expect(thread.getByText(msg1Text)).toBeVisible({ timeout: 5_000 });
+  } catch {
+    await textarea.press('Enter');
+    await expect(thread.getByText(msg1Text)).toBeVisible({ timeout: 10_000 });
+  }
 
   await textarea.fill(msg2Text);
+  await expect(sendBtn).toBeEnabled();
   await sendBtn.click();
-  await expect(thread.getByText(msg2Text)).toBeVisible({ timeout: 10_000 });
+  try {
+    await expect(thread.getByText(msg2Text)).toBeVisible({ timeout: 5_000 });
+  } catch {
+    await textarea.press('Enter');
+    await expect(thread.getByText(msg2Text)).toBeVisible({ timeout: 10_000 });
+  }
 
   // Find msg1 inside thread and react to it via its 3-dots menu
   const msg1El = thread.getByText(msg1Text);

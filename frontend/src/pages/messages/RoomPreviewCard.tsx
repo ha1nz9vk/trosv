@@ -178,6 +178,9 @@ export function RoomPreviewCard({
                       side="bottom"
                       sideOffset={6}
                       collisionPadding={8}
+                      onCloseAutoFocus={(e) => {
+                        e.preventDefault();
+                      }}
                       className="z-50 w-auto rounded-2xl border border-line bg-card p-1.5 shadow-pop focus:outline-none"
                       onClick={(e) => {
                         e.preventDefault();

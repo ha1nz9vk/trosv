@@ -150,8 +150,8 @@ jobs:
         working-directory: backend
         run: |
           # CORS must accept the preview origin the browser will use.
-          FRONTEND_URL=http://localhost:4173 nohup php artisan serve \
-            --host=127.0.0.1 --port=8000 > /tmp/api.log 2>&1 &
+          PHP_CLI_SERVER_WORKERS=4 FRONTEND_URL=http://localhost:4173 nohup php artisan serve \
+            --host=127.0.0.1 --port=8000 --no-reload > /tmp/api.log 2>&1 &
           for i in $(seq 1 30); do
             curl -sf http://127.0.0.1:8000/api/cities > /dev/null && break
             [ "$i" = 30 ] && { cat /tmp/api.log; exit 1; }
@@ -190,6 +190,16 @@ jobs:
         run: npx playwright test
         env:
           E2E_BASE_URL: http://localhost:4173
+
+      - name: Dump server logs on failure
+        if: failure()
+        run: |
+          echo "=== /tmp/api.log ==="
+          cat /tmp/api.log || true
+          echo "=== /tmp/web.log ==="
+          cat /tmp/web.log || true
+          echo "=== backend/storage/logs/laravel.log ==="
+          cat backend/storage/logs/laravel.log || true
 
   secrets:
     runs-on: ubuntu-latest
