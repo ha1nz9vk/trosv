@@ -35,12 +35,13 @@ test('reaction badge and preview card reaction', async ({ page }) => {
 
   const thread = page.locator('[data-testid="thread"]');
   const textarea = page.locator('textarea[aria-label="Tin nhắn"]');
+  const sendBtn = page.locator('button[aria-label="Gửi tin nhắn"]');
   await textarea.fill(msg1Text);
-  await page.keyboard.press('Enter');
+  await sendBtn.click();
   await expect(thread.getByText(msg1Text)).toBeVisible();
 
   await textarea.fill(msg2Text);
-  await page.keyboard.press('Enter');
+  await sendBtn.click();
   await expect(thread.getByText(msg2Text)).toBeVisible();
 
   // Find msg1 inside thread and react to it via its 3-dots menu
