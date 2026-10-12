@@ -10,11 +10,12 @@ hành vi người dùng. Tất cả các phase dưới đây đã hoàn thành v
 | Phase | Nội dung | Bằng chứng |
 |---|---|---|
 | 1. Safety net | PHPUnit chạy trên PostgreSQL; Playwright config cho CI; `GET /api/health` | `backend/tests/` (210+ test), `frontend/playwright.config.js` |
-| 2. Debloat + tối ưu | Tách service/form-request, bỏ N+1, index + JSONB, tách `theme.css` thành 8 lớp có guard, frontend Dockerfile multi-stage | `docs/TECH-DEBT.md`, `frontend/scripts/check-css-parity.mjs` |
+| 2. Debloat + tối ưu | Tách service/form-request, bỏ N+1, index + JSONB, chuyển đổi UI sang Tailwind CSS v4 + Radix UI + Lucide React, tối ưu Dockerfile | `docs/TECH-DEBT.md`, `frontend/src/styles.css` |
 | 3. Đúng đắn | FormRequest cho mọi endpoint ghi, IDOR sweep, idempotency seen/reaction, regression test cho từng fix | `backend/tests/Feature/` |
 | 4. Bảo mật | Security headers + CSP enforcing, prod fail-fast, token TTL 30 ngày, upload validation, gitleaks trong CI, `SECURITY.md` | `SECURITY.md`, `backend/app/Http/Middleware/` |
 | 5. Production | CI 4 job (backend/frontend/e2e/secrets), deploy-on-green qua SSH, image Debian trixie, compose production-tier duy nhất, runbook + backup/restore/rollback | `.github/workflows/`, `docs/DEPLOY.md`, `scripts/` |
 | 6. Kiểm chứng cuối | Suite backend 210+ test xanh trên PostgreSQL, e2e 11+ spec trình duyệt thật, drill backup→restore chạy thật | CI trên `stable` |
+| 7. Audit & tối ưu toàn diện | Sửa foreign key User/School, thêm index hiệu năng, xử lý atomic upload ảnh, tối ưu subquery rating và rate-limiting, khử bỏ Bootstrap hoàn toàn | `docs/BACKEND-AUDIT-REPORT.md`, `database/migrations/2026_10_11_*` |
 
 ## Hợp đồng bất khả xâm phạm
 
@@ -29,9 +30,7 @@ hành vi người dùng. Tất cả các phase dưới đây đã hoàn thành v
    (`DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH`) để
    deploy-on-green vận hành thực tế.
 2. Quên mật khẩu / đặt lại mật khẩu (blocker trước khi có người dùng thật).
-3. HTTP caching cho các endpoint tham chiếu (`/cities`, `/wards`,
-   `/schools`).
-4. Audit dữ liệu ward/school của 11 tỉnh/TP còn lại theo danh mục hành
-   chính sau sáp nhập (TP.HCM đã đúng).
-5. LLM thật cho ai-service (chỉ cần `LLM_API_KEY`, `FAKE_MODE=false`).
-6. httpOnly cookie session (thay localStorage token) - cân nhắc sau.
+3. Audit dữ liệu ward/school của các tỉnh/TP còn lại theo danh mục hành
+   chính sau sáp nhập (TP.HCM đã chuẩn hóa).
+4. LLM thật cho ai-service (chỉ cần `LLM_API_KEY`, `FAKE_MODE=false`).
+5. httpOnly cookie session (thay localStorage token) - cân nhắc sau.

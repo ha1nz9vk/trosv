@@ -96,6 +96,7 @@ Merge vào `stable` khi xanh là tự động deploy.
 | [docs/DEPLOY.md](docs/DEPLOY.md) | Deploy lên máy chủ Debian | Triển khai production |
 | [SECURITY.md](SECURITY.md) | Chính sách bảo mật, cách báo cáo lỗ hổng | Báo cáo hoặc tìm hiểu biện pháp bảo mật |
 | [docs/TECH-DEBT.md](docs/TECH-DEBT.md) | Sổ nợ kỹ thuật và quy trình theo dõi | Trước khi refactor |
+| [docs/BACKEND-AUDIT-REPORT.md](docs/BACKEND-AUDIT-REPORT.md) | Báo cáo kiểm tra và tối ưu hóa backend toàn diện | Tham khảo kiến trúc và hiệu năng backend |
 | [scripts/RESTORE.md](scripts/RESTORE.md) | Quy trình restore từ backup | Khi cần khôi phục dữ liệu |
 | [scripts/ROLLBACK.md](scripts/ROLLBACK.md) | Quy trình rollback code | Khi deployment lỗi |
 
@@ -106,9 +107,9 @@ trosv/
 ├── docker-compose.yml   # DB + backend + frontend + reverb + queue + scheduler
 │                        # (+ caddy khi profile tls, + ai-service khi profile ai)
 ├── .env.example
-├── docs/                # hợp đồng API/AI, ERD, deploy, onboarding
-├── frontend/            # React SPA (TypeScript strict, Vite, Bootstrap 5, Leaflet)
-├── backend/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum)
+├── docs/                # hợp đồng API/AI, ERD, deploy, onboarding, báo cáo audit
+├── frontend/            # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
+├── backend/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
 ├── ai-service/          # FastAPI (stub FAKE_MODE)
 └── scripts/             # backup, restore, rollback
 ```

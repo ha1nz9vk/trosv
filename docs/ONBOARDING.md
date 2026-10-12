@@ -75,14 +75,14 @@ backend/    Laravel API
   app/Models|Policies      Eloquent + quyền (outsider = 404)
   routes/api.php           toàn bộ endpoint + throttle
   tests/Feature/           210+ test, gồm ma trận phân quyền
-frontend/   React 18 + TypeScript strict SPA (Vite, Bootstrap 5, Leaflet)
-  src/api/                 axios client + hàm gọi API theo nhóm
-  src/pages/               mỗi trang một thư mục
-  src/components/          UI dùng chung
-  src/hooks/               useAuthForm, useListingSearch, ...
-  src/styles/              theme → layout → chrome → ... (thứ tự load-bearing)
+frontend/   React 18 + TypeScript strict SPA (Vite 6, Tailwind CSS v4, Radix UI, Leaflet)
+  src/api/                 axios client + hàm gọi API theo nhóm (Sanctum Bearer)
+  src/pages/               màn hình SPA (Home, Search, RoomDetail, Messages, ...)
+  src/ui/                  Design system & Radix UI primitives (button, card, dialog, shell, input, ...)
+  src/hooks/               custom hooks (useAuthForm, useListingSearch, useStickToBottom, ...)
+  src/styles.css           Tailwind CSS v4 + design tokens (màu sắc, typography, shadow)
 ai-service/ FastAPI (stub FAKE_MODE)
-docs/       hợp đồng + runbook + sổ tech debt
+docs/       hợp đồng + runbook + sổ tech debt + báo cáo audit
 scripts/    backup, restore, rollback
 ```
 
