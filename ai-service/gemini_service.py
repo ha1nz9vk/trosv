@@ -27,7 +27,7 @@ from pydantic import BaseModel, Field
 logger = logging.getLogger("ai_service.gemini")
 
 # Model configuration
-DEFAULT_MODEL = "gemini-1.5-flash"
+DEFAULT_MODEL = "gemini-3.5-flash-lite"
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", DEFAULT_MODEL)
 
 # Load domain knowledge base for RAG-lite chatbot grounding
@@ -62,6 +62,39 @@ def _get_client() -> Optional[genai.Client]:
     except Exception as exc:
         logger.error(f"Failed to initialize Google GenAI client: {exc}")
         return None
+
+
+def _generate_with_fallback(
+    client: genai.Client, contents: Any, config: types.GenerateContentConfig
+) -> Optional[str]:
+    """Execute Gemini generation with model fallback on demand spikes or deprecation."""
+    configured_model = os.getenv("GEMINI_MODEL", DEFAULT_MODEL)
+    candidate_models = [configured_model, "gemini-3.5-flash-lite", "gemini-3.5-flash"]
+    # Deduplicate preserving order
+    seen: set[str] = set()
+    models: list[str] = []
+    for m in candidate_models:
+        if m and m not in seen:
+            seen.add(m)
+            models.append(m)
+
+    last_error: Optional[Exception] = None
+    for model_name in models:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=contents,
+                config=config,
+            )
+            if response and response.text:
+                return response.text
+        except Exception as exc:
+            last_error = exc
+            logger.warning(
+                f"Gemini call with model '{model_name}' failed: {exc}. Trying next candidate if available..."
+            )
+    logger.warning(f"All Gemini models exhausted. Last error: {last_error}")
+    return None
 
 
 # ============================================================================
@@ -101,8 +134,8 @@ def generate_description_with_gemini(data: dict[str, Any]) -> Optional[dict[str,
     )
 
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
+        raw_text = _generate_with_fallback(
+            client=client,
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
@@ -111,9 +144,9 @@ def generate_description_with_gemini(data: dict[str, Any]) -> Optional[dict[str,
                 temperature=0.3,
             ),
         )
-        if not response.text:
+        if not raw_text:
             return None
-        res_dict = json.loads(response.text)
+        res_dict = json.loads(raw_text)
         if "description" in res_dict and isinstance(res_dict["description"], str):
             return {"description": res_dict["description"].strip()}
     except Exception as exc:
@@ -163,8 +196,8 @@ def generate_price_advice_with_gemini(
     )
 
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
+        raw_text = _generate_with_fallback(
+            client=client,
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
@@ -173,9 +206,9 @@ def generate_price_advice_with_gemini(
                 temperature=0.2,
             ),
         )
-        if not response.text:
+        if not raw_text:
             return None
-        res_dict = json.loads(response.text)
+        res_dict = json.loads(raw_text)
         if res_dict.get("verdict") in ("high", "fair", "low"):
             return res_dict
     except Exception as exc:
@@ -237,8 +270,8 @@ def rank_roommates_with_gemini(
     )
 
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
+        raw_text = _generate_with_fallback(
+            client=client,
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
@@ -247,9 +280,9 @@ def rank_roommates_with_gemini(
                 temperature=0.2,
             ),
         )
-        if not response.text:
+        if not raw_text:
             return None
-        res_dict = json.loads(response.text)
+        res_dict = json.loads(raw_text)
         cand_ids = {c["id"] for c in candidates}
         valid_results = [
             r for r in res_dict.get("results", []) if r.get("id") in cand_ids
@@ -316,8 +349,8 @@ def recommend_areas_with_gemini(
     )
 
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
+        raw_text = _generate_with_fallback(
+            client=client,
             contents=prompt,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
@@ -326,9 +359,9 @@ def recommend_areas_with_gemini(
                 temperature=0.2,
             ),
         )
-        if not response.text:
+        if not raw_text:
             return None
-        res_dict = json.loads(response.text)
+        res_dict = json.loads(raw_text)
         area_ids = {a["ward_id"] for a in areas}
         valid_results = [
             r for r in res_dict.get("results", []) if r.get("ward_id") in area_ids
@@ -429,8 +462,8 @@ def chat_with_gemini(
     )
 
     try:
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
+        raw_text = _generate_with_fallback(
+            client=client,
             contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
@@ -439,9 +472,9 @@ def chat_with_gemini(
                 temperature=0.3,
             ),
         )
-        if not response.text:
+        if not raw_text:
             return None
-        res_dict = json.loads(response.text)
+        res_dict = json.loads(raw_text)
         reply = res_dict.get("reply", "").strip()
         if reply:
             return {"reply": reply}

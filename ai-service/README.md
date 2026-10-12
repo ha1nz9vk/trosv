@@ -42,5 +42,5 @@ Yêu cầu từ hợp đồng ([docs/AI_CONTRACT.md](../docs/AI_CONTRACT.md)):
 - 5 endpoint: `/roommates`, `/price-advice`, `/areas`, `/chat`, `/description` - request/response shape bám đúng hợp đồng.
 - **Stateless**: backend gửi đủ ngữ cảnh trong body; không kết nối cơ sở dữ liệu.
 - Thời gian phản hồi ≤ 30 giây.
-- `GEMINI_API_KEY` (hoặc `LLM_API_KEY`) đọc từ biến môi trường. `GEMINI_MODEL` mặc định là `gemini-1.5-flash`.
+- `GEMINI_API_KEY` (hoặc `LLM_API_KEY`) đọc từ biến môi trường. `GEMINI_MODEL` mặc định là `gemini-3.5-flash-lite` (tự động thử các model flash dự phòng nếu gặp tải cao).
 
