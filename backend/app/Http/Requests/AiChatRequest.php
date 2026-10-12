@@ -30,6 +30,8 @@ class AiChatRequest extends FormRequest
             // hon bat ky lich su chat hop le nao (message gioi han 1000).
             'history.*.content' => ['required', 'string', 'max:10000'],
             'listing_id' => ['sometimes', 'nullable', 'integer', 'exists:listings,id'],
+            'school_id' => ['sometimes', 'nullable', 'integer', 'exists:schools,id'],
+            'city_id' => ['sometimes', 'nullable', 'integer', 'exists:cities,id'],
         ];
     }
 
@@ -43,6 +45,8 @@ class AiChatRequest extends FormRequest
             'history.*.role' => 'Vai trò trong lịch sử chỉ là user hoặc assistant.',
             'history.*.content.max' => 'Nội dung từng lượt lịch sử tối đa 10.000 ký tự.',
             'listing_id.exists' => 'Tin đăng không tồn tại.',
+            'school_id.exists' => 'Trường học không tồn tại.',
+            'city_id.exists' => 'Thành phố không tồn tại.',
         ];
     }
 

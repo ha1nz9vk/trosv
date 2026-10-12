@@ -384,15 +384,17 @@ def chat_with_gemini(
     message: str,
     history: list[dict[str, Any]],
     listing: Optional[dict[str, Any]] = None,
-) -> Optional[dict[str, str]]:
-    """Answer rental questions using Gemini with domain knowledge injection."""
+    candidate_listings: Optional[list[dict[str, Any]]] = None,
+    needs_location: bool = False,
+) -> Optional[dict[str, Any]]:
+    """Answer rental questions using Gemini with domain knowledge injection and room recommendations."""
     client = _get_client()
     if not client:
         return None
 
     legal_tail = " Thông tin mang tính tham khảo, không thay thế tư vấn pháp lý."
 
-    # Construct context from knowledge base and listing
+    # Construct context from knowledge base, listing, or candidate search results
     context_sections = []
     if KNOWLEDGE_BASE:
         context_sections.append(
@@ -409,6 +411,39 @@ def chat_with_gemini(
             f"- Mô tả: {listing.get('description', '')}"
         )
 
+    if needs_location:
+        context_sections.append(
+            "=== YÊU CẦU ĐẶC BIỆT TÌM PHÒNG ===\n"
+            "Người dùng đang muốn tìm/thuê phòng trọ nhưng CHƯA cung cấp trường đại học "
+            "hoặc thành phố/quận/khu vực muốn thuê. Để tìm phòng chính xác mà không tra cứu tràn lan, "
+            "hãy lịch sự và thân thiện hỏi người dùng: Bạn đang theo học trường nào hoặc muốn tìm trọ "
+            "ở khu vực/thành phố nào (ví dụ: gần ĐH Tôn Đức Thắng, Quận 7, TP.HCM) và ngân sách khoảng bao nhiêu."
+        )
+    elif candidate_listings:
+        room_lines = ["=== CÁC PHÒNG TRỌ THỰC TẾ ĐANG CÓ SẴN TRÊN HỆ THỐNG PHÙ HỢP TIÊU CHÍ ==="]
+        for c in candidate_listings:
+            dist_str = f", Cách trường {c.get('distance_km')} km" if c.get("distance_km") is not None else ""
+            amenities_str = f", Tiện ích: {', '.join(c.get('amenities') or [])}" if c.get("amenities") else ""
+            room_lines.append(
+                f"- [ID {c.get('id')}]: \"{c.get('title')}\", Giá {c.get('price', 0):,} VNĐ/tháng, "
+                f"Diện tích {c.get('area_m2', 0)} m², Địa chỉ: {c.get('address')}, {c.get('ward')}, {c.get('city')}"
+                f"{dist_str}{amenities_str}"
+            )
+        room_lines.append(
+            "\nNhiệm vụ: Giới thiệu thân thiện, ngắn gọn các phòng trọ phù hợp nhất ở trên cho người dùng "
+            "(nêu rõ giá, vị trí, khoảng cách và tiện ích nổi bật). Nhắc người dùng có thể bấm vào thẻ phòng bên dưới "
+            "để xem hình ảnh chi tiết và liên hệ chủ nhà. TUYỆT ĐỐI KHÔNG tự bịa phòng trọ không có trong danh sách."
+        )
+        context_sections.append("\n".join(room_lines))
+    elif candidate_listings is not None and len(candidate_listings) == 0:
+        context_sections.append(
+            "=== KẾT QUẢ TÌM KIẾM PHÒNG TRỌ ===\n"
+            "Hệ thống đã tìm kiếm theo khu vực/tiêu chí của người dùng nhưng hiện tại không có phòng trọ nào "
+            "đang còn trống hoàn toàn khớp với tiêu chí này.\n"
+            "Nhiệm vụ: Nhẹ nhàng thông báo cho người dùng và khuyên họ thử điều chỉnh mức giá, loại phòng "
+            "hoặc mở rộng bán kính tìm kiếm sang các phường/quận lân cận."
+        )
+
     system_instruction = (
         "Bạn là trợ lý ảo thân thiện, đáng tin cậy của nền tảng tìm phòng trọ sinh viên TROSV.\n"
         "Nhiệm vụ của bạn là giải đáp thắc mắc về tìm phòng, giá thuê, tiền cọc, an toàn và hợp đồng thuê trọ.\n\n"
@@ -418,7 +453,7 @@ def chat_with_gemini(
         "3. Nếu câu hỏi liên quan đến hợp đồng, tiền cọc, hoặc pháp lý, BẮT BUỘC kết thúc câu trả lời bằng câu: "
         f"'{legal_tail.strip()}'\n"
         "4. Nếu không có thông tin hoặc không chắc chắn, hãy thành thật nói không biết, không tự bịa đặt.\n"
-        "5. Tuyệt đối không bịa đặt thêm thông tin sai lệch về phòng trọ đang xem.\n"
+        "5. Tuyệt đối không bịa đặt thêm thông tin sai lệch về phòng trọ.\n"
         "6. Luôn trả về định dạng JSON theo schema đã cho."
     )
 
@@ -477,7 +512,7 @@ def chat_with_gemini(
         res_dict = json.loads(raw_text)
         reply = res_dict.get("reply", "").strip()
         if reply:
-            return {"reply": reply}
+            return {"reply": reply, "listings": candidate_listings or []}
     except Exception as exc:
         logger.warning(f"Gemini chat failed: {exc}")
     return None

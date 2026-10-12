@@ -260,9 +260,23 @@ export interface ReviewPayload {
 
 // ---- AI (API_CONTRACT §4 - response shape tu AI service, loose) ----
 
+export interface AiSuggestedListing {
+  id: number;
+  title: string;
+  price: number;
+  area_m2?: number | null;
+  address: string;
+  ward?: string | null;
+  city?: string | null;
+  amenities?: string[] | null;
+  distance_km?: number | null;
+  cover_image?: string | null;
+}
+
 export interface AiChatTurn {
   role: "user" | "assistant";
   content: string;
+  listings?: AiSuggestedListing[];
 }
 
 export interface AiRoommate {
@@ -307,4 +321,5 @@ export interface AiDescriptionResult {
 
 export interface AiChatResult {
   reply?: string;
+  listings?: AiSuggestedListing[];
 }

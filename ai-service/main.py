@@ -71,11 +71,13 @@ class AreasReq(BaseReq):
 
 
 class ChatReq(BaseReq):
-    """POST /chat - cau hoi + lich su hoi thoai + ngu canh tin dang."""
+    """POST /chat - cau hoi + lich su hoi thoai + ngu canh tin dang / tim phong."""
 
     message: str
     history: Optional[list[dict[str, Any]]] = []
     listing: Optional[dict[str, Any]] = None
+    candidate_listings: Optional[list[dict[str, Any]]] = None
+    needs_location: Optional[bool] = False
 
 
 class DescriptionReq(BaseReq):
@@ -318,25 +320,59 @@ def chat(req: ChatReq) -> dict[str, Any]:
     """Tra loi FAKE_MODE theo tu khoa; ket thuc bang mui ten phap ly khi can."""
     if is_gemini_enabled():
         gemini_res = chat_with_gemini(
-            req.message, req.history or [], req.listing
+            req.message,
+            req.history or [],
+            req.listing,
+            req.candidate_listings,
+            req.needs_location or False,
         )
         if gemini_res:
             return gemini_res
 
     guard_fake()
+    if req.needs_location:
+        return {
+            "reply": (
+                "De minh tim phong tro phu hop nhat cho ban, ban cho minh biet ban muon tim o thanh pho nao "
+                "hoac gan truong dai hoc nao va ngan sach khoang bao nhieu nhe!"
+            ),
+            "listings": [],
+        }
+
+    if req.candidate_listings:
+        titles = [c.get("title", "") for c in req.candidate_listings[:2] if c.get("title")]
+        title_hint = f" (nhu {', '.join(titles)})" if titles else ""
+        return {
+            "reply": (
+                f"Minh tim thay {len(req.candidate_listings)} phong tro phu hop voi yeu cau cua ban{title_hint}. "
+                "Ban xem chi tiet cac phong ben duoi nhe!"
+            ),
+            "listings": req.candidate_listings,
+        }
+
+    if req.candidate_listings is not None and len(req.candidate_listings) == 0:
+        return {
+            "reply": (
+                "Hien tai he thong chua tim thay phong tro nao con trong phu hop voi tieu chi nay. "
+                "Ban thu dieu chinh ngan sach hoac tim kiem o khu vuc lan can xem sao nhe!"
+            ),
+            "listings": [],
+        }
+
     msg = req.message.lower()
     tail = " Thong tin mang tinh tham khao, khong thay the tu van phap ly."
     if any(k in msg for k in _DEPOSIT_KW):
-        return {"reply": _reply_about_deposit() + tail}
+        return {"reply": _reply_about_deposit() + tail, "listings": []}
     if any(k in msg for k in _PRICE_KW):
-        return {"reply": _reply_about_price(req.listing)}
+        return {"reply": _reply_about_price(req.listing), "listings": []}
     if req.listing:
-        return {"reply": _reply_about_listing(req.listing)}
+        return {"reply": _reply_about_listing(req.listing), "listings": []}
     return {
         "reply": (
             "Minh co the giu ve tim phong, gia ca, tien coc va hop dong thue tro. "
             "Ban muon hoi dieu gi truoc?"
-        )
+        ),
+        "listings": [],
     }
 
 

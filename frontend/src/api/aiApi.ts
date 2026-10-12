@@ -28,13 +28,16 @@ export const aiAreaSuggestions = (
 export const aiChat = (
   message: string,
   history: AiChatTurn[] = [],
-  listingId: number | null = null
+  listingId: number | null = null,
+  options: { schoolId?: number | null; cityId?: number | null } = {}
 ): Promise<AiChatResult> =>
   api
     .post("/ai/chat", {
       message,
-      history: history.slice(-10),
+      history: history.slice(-10).map((h) => ({ role: h.role, content: h.content })),
       listing_id: listingId || undefined,
+      school_id: options.schoolId || undefined,
+      city_id: options.cityId || undefined,
     })
     .then((r) => envelope<AiChatResult>(r).data);
 

@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Models\Amenity;
+use App\Models\City;
 use App\Models\Listing;
 use App\Models\School;
 use App\Models\User;
 use App\Models\Ward;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -255,12 +257,13 @@ class AiService
     }
 
     /**
-     * Chatbot proxy with optional listing context.
+     * Chatbot proxy with optional listing context or secure room recommendation.
      *
      * @param  array<string, mixed>  $data  validated request data
+     * @param  User|null  $user  authenticated user
      * @return array<string, mixed>
      */
-    public function chat(array $data): array
+    public function chat(array $data, ?User $user = null): array
     {
         $listingPayload = null;
         if (! empty($data['listing_id'])) {
@@ -282,6 +285,24 @@ class AiService
             }
         }
 
+        $message = (string) ($data['message'] ?? '');
+        $candidateListings = null;
+        $needsLocation = false;
+
+        // If user is not asking about a specific listing, check for room finding intent
+        if ($listingPayload === null && $this->hasRoomSearchIntent($message)) {
+            $locationAnchor = $this->resolveLocationAnchor($data, $user);
+
+            if ($locationAnchor === null) {
+                // Security check: user wants rooms, but no school/city/district information is known.
+                // Do NOT query the listings table indiscriminately or scrape rooms in DB.
+                // Ask user to provide location information first.
+                $needsLocation = true;
+            } else {
+                $candidateListings = $this->findCandidateListings($locationAnchor, $message, $user);
+            }
+        }
+
         $response = $this->ai->post('/chat', [
             'message' => $data['message'],
             'history' => array_map(
@@ -289,9 +310,225 @@ class AiService
                 array_slice($data['history'] ?? [], -10),
             ),
             'listing' => $listingPayload,
+            'candidate_listings' => $candidateListings,
+            'needs_location' => $needsLocation,
         ], ['reply']);
 
-        return ['reply' => $response['reply']];
+        return [
+            'reply' => $response['reply'],
+            'listings' => $candidateListings ?? [],
+        ];
+    }
+
+    /**
+     * Check if message indicates an intent to find/search for rooms.
+     */
+    private function hasRoomSearchIntent(string $message): bool
+    {
+        $normalized = mb_strtolower($message, 'UTF-8');
+
+        $phrases = [
+            'tìm phòng', 'kiếm phòng', 'thuê phòng', 'tìm trọ', 'kiếm trọ', 'thuê trọ',
+            'cần thuê', 'muốn thuê', 'gợi ý phòng', 'có phòng nào', 'tìm nhà trọ',
+            'muốn tìm phòng', 'tìm chỗ ở', 'có phòng trọ nào', 'xem phòng', 'phòng trọ gần',
+            'phòng trọ ở', 'phòng trọ giá', 'phòng ở', 'trọ ở', 'trọ gần', 'phòng giá',
+        ];
+
+        foreach ($phrases as $phrase) {
+            if (str_contains($normalized, $phrase)) {
+                return true;
+            }
+        }
+
+        return (bool) preg_match('/(tìm|kiếm|thuê|gợi ý|có phòng|muốn tìm)\b.*?\b(phòng|trọ|nhà)/iu', $message);
+    }
+
+    /**
+     * Determine location anchor from request data, message text, or user student profile.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array{type: string, model?: mixed, name?: string}|null
+     */
+    private function resolveLocationAnchor(array $data, ?User $user): ?array
+    {
+        // 1. Explicit school_id in request
+        if (! empty($data['school_id'])) {
+            $school = School::with('city')->find($data['school_id']);
+            if ($school) {
+                return ['type' => 'school', 'model' => $school];
+            }
+        }
+
+        // 2. Explicit city_id in request
+        if (! empty($data['city_id'])) {
+            $city = City::find($data['city_id']);
+            if ($city) {
+                return ['type' => 'city', 'model' => $city];
+            }
+        }
+
+        $message = (string) ($data['message'] ?? '');
+        $normalized = mb_strtolower($message, 'UTF-8');
+
+        // 3. Match against known universities / schools
+        $schools = School::with('city')->get();
+        foreach ($schools as $school) {
+            if (preg_match('/\(([^)]+)\)/', $school->name, $matches)) {
+                $acronym = mb_strtolower(trim($matches[1]), 'UTF-8');
+                if (preg_match('/\b'.preg_quote($acronym, '/').'\b/iu', $normalized)) {
+                    return ['type' => 'school', 'model' => $school];
+                }
+            }
+
+            $cleanName = preg_replace('/^(đh|đhqg|học viện|đại học)\s+/iu', '', $school->name);
+            $cleanName = preg_replace('/\s*\([^)]*\)/', '', (string) $cleanName);
+            $cleanName = trim(mb_strtolower((string) $cleanName, 'UTF-8'));
+
+            if (! empty($cleanName) && mb_strlen($cleanName) >= 4 && str_contains($normalized, $cleanName)) {
+                return ['type' => 'school', 'model' => $school];
+            }
+        }
+
+        // 4. Match student's own school if they ask "gần trường mình/em/tôi"
+        if ($user !== null && $user->school_id && $user->school) {
+            if (preg_match('/(gần trường|trường mình|trường em|trường tôi|quanh trường)/iu', $normalized)) {
+                return ['type' => 'school', 'model' => $user->school];
+            }
+        }
+
+        // 5. Match cities
+        $cities = City::all();
+        $cityAliases = [
+            'tp.hcm' => 'TP.HCM', 'tphcm' => 'TP.HCM', 'hồ chí minh' => 'TP.HCM', 'sài gòn' => 'TP.HCM',
+            'hà nội' => 'Hà Nội', 'hn' => 'Hà Nội',
+            'đà nẵng' => 'Đà Nẵng', 'đn' => 'Đà Nẵng',
+        ];
+        foreach ($cityAliases as $alias => $canonical) {
+            if (str_contains($normalized, $alias)) {
+                $c = $cities->first(fn ($item) => mb_strtolower($item->name, 'UTF-8') === mb_strtolower($canonical, 'UTF-8'));
+                if ($c) {
+                    return ['type' => 'city', 'model' => $c];
+                }
+            }
+        }
+        foreach ($cities as $c) {
+            if (str_contains($normalized, mb_strtolower($c->name, 'UTF-8'))) {
+                return ['type' => 'city', 'model' => $c];
+            }
+        }
+
+        // 6. Match districts (e.g. "Quận 7", "Quận 1", "Cầu Giấy", "Bình Thạnh")
+        if (preg_match('/\b(quận\s*\d+|quận\s+[a-zà-ỹ\s]+|huyện\s+[a-zà-ỹ\s]+|phường\s+[a-zà-ỹ\s]+)/iu', $message, $dMatches)) {
+            $districtName = trim($dMatches[1]);
+
+            return ['type' => 'district', 'name' => $districtName];
+        }
+
+        // 7. If student has a registered school in profile and no conflicting location mentioned,
+        // use student's school as anchor
+        if ($user !== null && $user->school_id && $user->school) {
+            return ['type' => 'school', 'model' => $user->school];
+        }
+
+        return null;
+    }
+
+    /**
+     * Securely query a small set of matching candidate listings based on location anchor,
+     * budget, room type, and amenities.
+     *
+     * @param  array{type: string, model?: mixed, name?: string}  $anchor
+     * @return list<array<string, mixed>>
+     */
+    private function findCandidateListings(array $anchor, string $message, ?User $user): array
+    {
+        $normalized = mb_strtolower($message, 'UTF-8');
+
+        $query = Listing::query()
+            ->select('listings.*')
+            ->visible()
+            ->where('status', Listing::STATUS_AVAILABLE);
+
+        if ($anchor['type'] === 'school') {
+            /** @var School $school */
+            $school = $anchor['model'];
+            if ($school->latitude !== null && $school->longitude !== null) {
+                $query->nearby((float) $school->latitude, (float) $school->longitude, 10.0)
+                    ->orderBy('distance_km');
+            } elseif ($school->city_id !== null) {
+                $query->whereHas('ward', fn ($q) => $q->where('city_id', $school->city_id));
+            }
+        } elseif ($anchor['type'] === 'city') {
+            /** @var City $city */
+            $city = $anchor['model'];
+            $query->whereHas('ward', fn ($q) => $q->where('city_id', $city->id));
+        } elseif ($anchor['type'] === 'district') {
+            $distName = $anchor['name'];
+            $query->whereHas('ward', fn ($q) => $q->where('name', 'ilike', "%{$distName}%"));
+        }
+
+        // Budget filters
+        if (preg_match('/dưới\s*([0-9]+(?:[.,][0-9]+)?)\s*(triệu|tr)/iu', $normalized, $bMatch)) {
+            $val = (float) str_replace(',', '.', $bMatch[1]);
+            $query->where('price', '<=', (int) ($val * 1_000_000));
+        } elseif (preg_match('/(?:tầm|khoảng)\s*([0-9]+(?:[.,][0-9]+)?)\s*(triệu|tr)/iu', $normalized, $bMatch)) {
+            $val = (float) str_replace(',', '.', $bMatch[1]);
+            $min = (int) (($val - 0.5) * 1_000_000);
+            $max = (int) (($val + 0.5) * 1_000_000);
+            $query->whereBetween('price', [max(0, $min), $max]);
+        } elseif (preg_match('/từ\s*([0-9]+(?:[.,][0-9]+)?)\s*(?:đến|-)\s*([0-9]+(?:[.,][0-9]+)?)\s*(triệu|tr)/iu', $normalized, $bMatch)) {
+            $minVal = (float) str_replace(',', '.', $bMatch[1]);
+            $maxVal = (float) str_replace(',', '.', $bMatch[2]);
+            $query->whereBetween('price', [(int) ($minVal * 1_000_000), (int) ($maxVal * 1_000_000)]);
+        } elseif ($user !== null && $user->budget_max) {
+            $query->where('price', '<=', (int) $user->budget_max);
+        }
+
+        // Room type filters
+        if (str_contains($normalized, 'căn hộ') || str_contains($normalized, 'chung cư')) {
+            $query->where('type', Listing::TYPE_APARTMENT);
+        } elseif (str_contains($normalized, 'nguyên căn') || str_contains($normalized, 'nhà riêng')) {
+            $query->where('type', Listing::TYPE_HOUSE);
+        } elseif (str_contains($normalized, 'phòng trọ') || str_contains($normalized, 'phòng đơn')) {
+            $query->where('type', Listing::TYPE_ROOM);
+        }
+
+        // Amenities filters
+        if (str_contains($normalized, 'máy lạnh') || str_contains($normalized, 'điều hòa')) {
+            $query->whereHas('amenities', fn ($q) => $q->where('name', 'ilike', '%máy lạnh%'));
+        }
+        if (str_contains($normalized, 'máy giặt')) {
+            $query->whereHas('amenities', fn ($q) => $q->where('name', 'ilike', '%máy giặt%'));
+        }
+        if (str_contains($normalized, 'ban công')) {
+            $query->whereHas('amenities', fn ($q) => $q->where('name', 'ilike', '%ban công%'));
+        }
+        if (str_contains($normalized, 'gác')) {
+            $query->whereHas('amenities', fn ($q) => $q->where('name', 'ilike', '%gác%'));
+        }
+
+        $candidates = $query
+            ->with(['ward.city', 'amenities', 'coverImage'])
+            ->limit(4)
+            ->get();
+
+        return $candidates->map(function (Listing $l) {
+            $cover = $l->coverImage->first();
+            $coverUrl = $cover ? Storage::disk('public')->url($cover->path) : null;
+
+            return [
+                'id' => $l->id,
+                'title' => $l->title,
+                'price' => (int) $l->price,
+                'area_m2' => $l->area_m2 !== null ? (float) $l->area_m2 : null,
+                'address' => $l->address,
+                'ward' => $l->ward?->name,
+                'city' => $l->ward?->city?->name,
+                'amenities' => $l->amenities->pluck('name')->values()->all(),
+                'distance_km' => isset($l->distance_km) ? round((float) $l->distance_km, 1) : null,
+                'cover_image' => $coverUrl,
+            ];
+        })->values()->all();
     }
 
     /**

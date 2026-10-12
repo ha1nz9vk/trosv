@@ -418,6 +418,134 @@ class AiProxyTest extends TestCase
             ->assertOk();
     }
 
+    public function test_chat_room_hunting_without_location_flags_needs_location_and_does_not_query_listings(): void
+    {
+        // Student with no school profile asks to find a room without specifying location
+        Http::fake(['*/chat' => Http::response(['reply' => 'Bạn muốn tìm phòng ở thành phố hoặc gần trường đại học nào?'])]);
+
+        $response = $this->actingAs($this->student, 'sanctum')
+            ->postJson('/api/ai/chat', [
+                'message' => 'Tìm cho mình phòng trọ giá sinh viên với',
+            ])
+            ->assertOk();
+
+        $this->assertSame('Bạn muốn tìm phòng ở thành phố hoặc gần trường đại học nào?', $response->json('data.reply'));
+        $this->assertSame([], $response->json('data.listings'));
+
+        Http::assertSent(function ($request) {
+            $data = $request->data();
+
+            return $data['needs_location'] === true
+                && $data['candidate_listings'] === null;
+        });
+    }
+
+    public function test_chat_room_hunting_with_school_matches_listings_and_returns_cards(): void
+    {
+        $school = School::factory()->create([
+            'name' => 'Đại học Tôn Đức Thắng (TDTU)',
+            'latitude' => 10.7324,
+            'longitude' => 106.6992,
+        ]);
+
+        $ward = Ward::factory()->create([
+            'latitude' => 10.7325,
+            'longitude' => 106.6995,
+        ]);
+
+        $listing = Listing::factory()->create([
+            'user_id' => $this->landlord->id,
+            'ward_id' => $ward->id,
+            'title' => 'Phòng trọ cao cấp Tân Phong',
+            'type' => Listing::TYPE_ROOM,
+            'price' => 3_500_000,
+            'area_m2' => 25,
+            'status' => Listing::STATUS_AVAILABLE,
+            'latitude' => 10.7326,
+            'longitude' => 106.6996,
+        ]);
+
+        $listing->images()->create([
+            'path' => 'listings/cover.jpg',
+        ]);
+
+        Http::fake([
+            '*/chat' => Http::response([
+                'reply' => 'Mình tìm thấy phòng trọ gần Đại học Tôn Đức Thắng phù hợp với bạn.',
+            ]),
+        ]);
+
+        $response = $this->actingAs($this->student, 'sanctum')
+            ->postJson('/api/ai/chat', [
+                'message' => 'Tìm phòng trọ gần TDTU dưới 4 triệu',
+            ])
+            ->assertOk();
+
+        $this->assertSame('Mình tìm thấy phòng trọ gần Đại học Tôn Đức Thắng phù hợp với bạn.', $response->json('data.reply'));
+        $listings = $response->json('data.listings');
+        $this->assertNotEmpty($listings);
+        $this->assertSame($listing->id, $listings[0]['id']);
+        $this->assertSame('Phòng trọ cao cấp Tân Phong', $listings[0]['title']);
+        $this->assertSame(3_500_000, $listings[0]['price']);
+        $this->assertNotNull($listings[0]['cover_image']);
+
+        // Landlord PII must NOT be sent to AI or leaked in room card
+        $this->assertArrayNotHasKey('landlord_phone', $listings[0]);
+        $this->assertArrayNotHasKey('landlord_email', $listings[0]);
+
+        Http::assertSent(function ($request) use ($listing) {
+            $data = $request->data();
+
+            return $data['needs_location'] === false
+                && is_array($data['candidate_listings'])
+                && count($data['candidate_listings']) >= 1
+                && $data['candidate_listings'][0]['id'] === $listing->id
+                && ! str_contains(json_encode($data['candidate_listings']), $this->landlord->email)
+                && (! $this->landlord->phone || ! str_contains(json_encode($data['candidate_listings']), (string) $this->landlord->phone));
+        });
+    }
+
+    public function test_chat_room_hunting_with_explicit_school_id_in_payload(): void
+    {
+        $school = School::factory()->create([
+            'latitude' => 10.7725,
+            'longitude' => 106.6575,
+        ]);
+
+        $ward = Ward::factory()->create([
+            'latitude' => 10.7726,
+            'longitude' => 106.6576,
+        ]);
+
+        $listing = Listing::factory()->create([
+            'user_id' => $this->landlord->id,
+            'ward_id' => $ward->id,
+            'type' => Listing::TYPE_ROOM,
+            'price' => 3_000_000,
+            'status' => Listing::STATUS_AVAILABLE,
+            'latitude' => 10.7727,
+            'longitude' => 106.6577,
+        ]);
+
+        Http::fake(['*/chat' => Http::response(['reply' => 'Gợi ý phòng theo trường của bạn.'])]);
+
+        $response = $this->actingAs($this->student, 'sanctum')
+            ->postJson('/api/ai/chat', [
+                'message' => 'Tìm phòng trọ',
+                'school_id' => $school->id,
+            ])
+            ->assertOk();
+
+        $this->assertNotEmpty($response->json('data.listings'));
+
+        Http::assertSent(function ($request) use ($listing) {
+            $data = $request->data();
+
+            return $data['needs_location'] === false
+                && $data['candidate_listings'][0]['id'] === $listing->id;
+        });
+    }
+
     // ------------------------------------------------------------------
     // POST /ai/description
     // ------------------------------------------------------------------
