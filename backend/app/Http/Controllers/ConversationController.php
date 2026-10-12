@@ -230,7 +230,10 @@ class ConversationController extends Controller
             ]);
 
         // Sender hiển thị "Đã xem" ngay khi receiver mở thread.
-        rescue(fn () => broadcast(new MessageSeen($conversation, $request->user(), $now->toISOString())), report: false);
+        rescue(
+            fn () => broadcast(new MessageSeen($conversation, $request->user(), $now->toISOString())),
+            report: false
+        );
 
         return response()->json(['data' => null]);
     }

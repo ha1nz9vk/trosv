@@ -67,7 +67,10 @@ function Header() {
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-line"
+                className={cn(
+                  "flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium",
+                  "text-ink transition-colors hover:bg-line"
+                )}
                 aria-expanded={aiOpen}
                 aria-haspopup="menu"
               >
@@ -128,7 +131,10 @@ function Header() {
             <DropdownMenuPrimitive.Trigger asChild>
               <button
                 type="button"
-                className="flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                className={cn(
+                  "flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-line",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                )}
                 aria-expanded={menuOpen}
                 aria-haspopup="menu"
                 aria-label="Menu tài khoản"
@@ -146,7 +152,10 @@ function Header() {
                 <DropdownMenuPrimitive.Item asChild>
                   <Link
                     to={ROUTES.PROFILE}
-                    className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-tint"
+                    className={cn(
+                      "block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none",
+                      "data-[highlighted]:bg-tint"
+                    )}
                   >
                     Hồ sơ
                   </Link>
@@ -161,7 +170,10 @@ function Header() {
                       void navigate(ROUTES.HOME);
                     })();
                   }}
-                  className="cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-tint flex items-center"
+                  className={cn(
+                    "cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none",
+                    "data-[highlighted]:bg-tint flex items-center"
+                  )}
                 >
                   <LogOut className="mr-2 inline size-4" aria-hidden />
                   Đăng xuất
@@ -232,7 +244,8 @@ function Rail() {
         className={cn(
           "relative z-30 flex items-center justify-around bg-card border-t border-line lg:border-t-0 lg:border-r",
           "h-14 fixed bottom-0 left-0 right-0",
-          "lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:w-16 lg:flex-col lg:items-center lg:justify-start lg:gap-4 lg:p-2",
+          "lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:w-16 lg:flex-col",
+          "lg:items-center lg:justify-start lg:gap-4 lg:p-2",
           isConversationThread && "hidden lg:flex"
         )}
       >
@@ -310,7 +323,10 @@ export function Footer() {
                 aria-label={s.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-10 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-tint hover:text-ink"
+                className={cn(
+                  "flex size-10 items-center justify-center rounded-full text-ink-2",
+                  "transition-colors hover:bg-tint hover:text-ink"
+                )}
               >
                 <SocialIcon />
               </a>
@@ -382,7 +398,10 @@ export function AppShell({
       {/* Skip-to-content link for keyboard users */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+        className={cn(
+          "sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50",
+          "focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
+        )}
       >
         Bỏ qua điều hướng
       </a>

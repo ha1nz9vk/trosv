@@ -24,7 +24,12 @@ APP_PREFIXES = ("backend/", "frontend/", "ai-service/")
 # Test code bị loại khỏi scope: feature test in thẳng URL /api/... (đúng
 # phong cách test - assert endpoint thật) nên hardcoded_paths của test là
 # noise, không phải debt. Dồn số vào app code để trend so sánh được.
-EXCLUDE_PREFIXES = ("backend/tests/", "frontend/e2e/", "frontend/.browser-check/")
+EXCLUDE_PREFIXES = (
+    "backend/tests/",
+    "frontend/e2e/",
+    "frontend/.browser-check/",
+    "backend/bootstrap/cache/",
+)
 NOISE_TODO = re.compile(r"(?i)(^|\W)(BUG|APP_DEBUG)(\W|$)")
 
 

@@ -1,14 +1,14 @@
 # Sổ theo dõi nợ kỹ thuật (Tech Debt Register)
 
 Sinh bằng skill `tech-debt-tracker` (scan → filter → prioritize → dashboard).
-Snapshot mới nhất 2026-10-12: **1,711 item** sau lọc, mật độ **8.55%**
-(so với 1,872 @ 9.31% trước đợt dọn nợ: giảm ngoạn mục **161 item debt** nhờ
+Snapshot mới nhất 2026-10-12: **1,699 item** sau lọc, mật độ **8.50%**
+(so với 1,872 @ 9.31% trước đợt dọn nợ: giảm ngoạn mục **173 item debt** nhờ
 dọn sạch `welcome.blade.php`, DRY `ConversationController` và `SearchFilterBar`,
-đồng thời bẻ gọn toàn bộ dòng dài > 120 ký tự ở các component chính;
-mật độ nợ kỹ thuật rơi thẳng từ 9.31% xuống 8.55%, số block trùng giảm 112,
-số dòng dài giảm 48).
+chuẩn hóa 100% TypeScript cho E2E specs và Playwright config, dọn sạch dead
+boilerplate backend, đồng thời bẻ gọn toàn bộ dòng dài > 120 ký tự; mật độ
+nợ kỹ thuật giảm xuống 8.50%, duplicate blocks giảm về 1,490, long line giảm về 143).
 Bước lọc app-only dùng `scripts/filter-debt-app-only.py` giữ `backend/` +
-`frontend/` + `ai-service/`, loại tests và noise regex.
+`frontend/` + `ai-service/`, loại tests, cache và noise regex.
 
 ## Cách tái tạo snapshot
 
@@ -57,6 +57,8 @@ python3 .agents/skills/tech-debt-tracker/scripts/debt_dashboard.py \
 | 17 | DRY hội thoại `ConversationController` (`store` ≈ `storeDirect`) | 12 block trùng assembly query | Lặp logic tìm kiếm/tạo mới cuộc hội thoại | ✅ **Xong** (2026-10-12): Tách helper `findOrCreateConversation` và `respondWithConversation`, thống nhất luồng phản hồi | done |
 | 18 | DRY bộ lọc thành phố / phường trong `SearchFilterBar.tsx` | ~35 block trùng giữa 2 popover | Lặp code select city/ward và classes | ✅ **Xong** (2026-10-12): Tách subcomponent `LocationSelects` và hằng số `SELECT_FIELD_CLASS`, giữ nguyên DOM ID cho E2E test | done |
 | 19 | Wrap dòng dài còn lại ở frontend (`SchoolCombobox`, `ConversationDetail`, `Search`, `LandlordForm`) | 26 dòng dài > 120 ký tự | Khó đọc và review code | ✅ **Xong** (2026-10-12): Bẻ dòng gọn gàng, giảm 48 long line toàn hệ thống | done |
+| 20 | Dọn dẹp JS thừa ở backend & chuẩn hóa 100% TypeScript | `smoke.spec.js`, `playwright.config.js`, dead Laravel JS/CSS | Thiếu type-safety trong E2E, tồn dư boilerplate frontend ở backend | ✅ **Xong** (`b396cfc`): Chuyển specs E2E & config sang TypeScript (`smoke.spec.ts`, `playwright.config.ts`); xóa triệt để `backend/package.json`, `backend/vite.config.js`, `backend/tailwind.config.js`, `backend/postcss.config.js`, `backend/resources/js/` và `css/`; repo chỉ còn duy nhất 1 file `.js` là `eslint.config.js` | done |
+| 21 | Căn chỉnh vi sai nút đăng nhập ở Gate screens & bọc phòng thủ WebSocket | Nút Đăng nhập lệch nhẹ giữa Inbox và Favorites; `BroadcastException` khi CI thiếu Reverb | Trải nghiệm chuyển tab bị giật micro-pixel; CI crash 500 ở chat endpoints | ✅ **Xong** (`0c102ca`, `ef45e49`): Đồng bộ tỷ lệ SVG `aspect-[16/9]`, `min-h-[4.5rem]` và `w-full sm:w-60 min-w-60` đạt `dx=0, dy=0` tuyệt đối; bọc `rescue(..., report: false)` an toàn cho broadcast event | done |
 
 **Không phải debt (giữ nguyên):** test file dài (`ConversationTest` 564 dòng - test feature dài là bình thường),
 boilerplate FormRequest/config/migration (khung framework), `docker-compose*.yml` (override cố ý, có comment giải thích),
@@ -64,7 +66,7 @@ boilerplate FormRequest/config/migration (khung framework), `docker-compose*.yml
 
 ## Cảnh báo về con số tự động
 
-`debt_prioritizer.py` ước tính tổng effort **23,122 giờ / 1,558 sprint** - đây là
+`debt_prioritizer.py` ước tính tổng effort **23,054 giờ / 1,553 sprint** - đây là
 heuristic gán mặc định cho từng item thô (phần lớn là boilerplate), **không dùng để
 lập kế hoạch**. Con số đáng tin là bảng tinh chỉnh ở trên (~2.75 ngày công).
 
@@ -80,6 +82,7 @@ lập kế hoạch**. Con số đáng tin là bảng tinh chỉnh ở trên (~2.
 | 2026-10-12 (post-refactor) | 1,898 (−5) | Sau refactor #12 Profile.tsx: `large_file` logic = 0, density giảm tiếp 9.42% → 9.39% |
 | 2026-10-12 (format-cleanup) | 1,877 (−21) | Chuẩn hóa toàn diện các dòng dài > 120 ký tự ở backend (controllers, resources, services, queries) và frontend (UI components, modals, preview cards); density giảm còn 9.35% |
 | 2026-10-12 (arch-refactor) | 1,872 (−5) | Tách `ListingFilterService`, module hóa `illustrations.tsx` (`large_file` = 0), thêm docstring `ai-service` (`missing_docstring` = 0), chuẩn hóa `constants/assets.ts` và wrap dòng dài; density 9.31% |
-| 2026-10-12 (debt-reduction-sprint) | **1,711 (−161)** | Dọn sạch `welcome.blade.php` (57 items), DRY `ConversationController` & `SearchFilterBar` (LocationSelects), bẻ dòng dài ở 4 component frontend. Mật độ nợ kỹ thuật giảm kỷ lục từ **9.31% → 8.55%** (giảm 161 debt item), 13/13 E2E test pass |
+| 2026-10-12 (debt-reduction-sprint) | 1,711 (−161) | Dọn sạch `welcome.blade.php` (57 items), DRY `ConversationController` & `SearchFilterBar` (LocationSelects), bẻ dòng dài ở 4 component frontend. Mật độ nợ kỹ thuật giảm kỷ lục từ 9.31% → 8.55% |
+| 2026-10-12 (ts-norm-and-cleanup) | **1,699 (−12)** | Chuẩn hóa 100% TypeScript (E2E & config), xóa dead boilerplate backend, căn chỉnh pixel-perfect gate screens, wrap long lines shell/preview/conversation. Mật độ nợ kỹ thuật giảm kỷ lục về **8.50%** (tổng giảm **204 item debt** từ đỉnh 1,903) |
 
-**Kết quả 5 mục targeted (baseline → final):** #1 FormRequests 44→0 block rules thật (10 còn lại là boilerplate `}`/docblock khớp chéo) · #2 auth 45→30 (30 = coincidental line-match sau khi tách hết hook/layout) · #3 Fv↔ML 34→6 (6 = khung import/div) · #4 large_file CSS 2→0 · #5 hardcode 13→0. Mọi refactor giữ hành vi: 209 test backend + e2e + CI xanh xuyên suốt |
+**Kết quả các mục targeted (baseline → final):** #1 FormRequests 44→0 block rules thật · #2 auth 45→30 (coincidental line-match sau khi tách hook/layout) · #3 Fv↔ML 34→6 · #4 large_file CSS 2→0 · #5 hardcode 13→0 · #20 TypeScript 100% & zero dead backend boilerplate · #21 Gate layout dx=0, dy=0 & WebSocket safe rescue. Mọi refactor giữ hành vi: 209 test backend + e2e + CI xanh xuyên suốt |

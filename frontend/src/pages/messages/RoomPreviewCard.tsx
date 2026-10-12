@@ -194,7 +194,8 @@ export function RoomPreviewCard({
                             type="button"
                             className={cn(
                               "flex size-7 shrink-0 items-center justify-center rounded-full text-base",
-                              "transition-transform hover:scale-125 hover:bg-tint active:scale-110 focus-visible:outline-none",
+                              "transition-transform hover:scale-125 hover:bg-tint",
+                              "active:scale-110 focus-visible:outline-none",
                               myReaction === e ? "bg-plate/15 ring-2 ring-plate/40" : ""
                             )}
                             onClick={(ev) => {
@@ -227,7 +228,9 @@ export function RoomPreviewCard({
             <span className="text-xs font-bold text-plate tabular-nums">
               {formatPriceShort(room.price)}/tháng
             </span>
-            <span className="text-[10px] text-muted group-hover:text-plate flex items-center gap-0.5 font-medium shrink-0">
+            <span
+              className="text-[10px] text-muted group-hover:text-plate flex items-center gap-0.5 font-medium shrink-0"
+            >
               Xem chi tiết
               <ExternalLink className="size-2.5" />
             </span>

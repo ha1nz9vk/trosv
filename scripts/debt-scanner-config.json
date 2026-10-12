@@ -35,6 +35,9 @@
     "playwright-report",
     ".system_generated",
     "coverage",
-    ".phpunit.cache"
+    ".phpunit.cache",
+    ".phpunit.result.cache",
+    "*.cache",
+    "bootstrap/cache"
   ]
 }
