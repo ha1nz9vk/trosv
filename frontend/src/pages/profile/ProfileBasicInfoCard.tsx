@@ -5,7 +5,7 @@ interface ProfileBasicInfoCardProps {
   name: string;
   phone: string;
   bio: string;
-  onChange: <K extends "name" | "phone" | "bio">(key: K, value: string) => void;
+  onChange: (key: "name" | "phone" | "bio", value: string) => void;
   errors: { name?: string | undefined; phone?: string | undefined; bio?: string | undefined };
   bioPlaceholder?: string;
   bioRows?: number;

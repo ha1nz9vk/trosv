@@ -37,7 +37,7 @@ export interface ProfileFormState {
 
 export function getInitialForm(user: User): ProfileFormState {
   return {
-    name: user.name ?? "",
+    name: user.name,
     phone: user.phone ?? "",
     bio: user.bio ?? "",
     school_id: user.school_id != null ? String(user.school_id) : "",

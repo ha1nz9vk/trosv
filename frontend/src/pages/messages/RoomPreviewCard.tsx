@@ -146,18 +146,17 @@ export function RoomPreviewCard({
 
               {/* Reaction button on preview card */}
               {onReact ? (
-                <div
-                  className="relative shrink-0"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                >
+                <div className="relative shrink-0">
                   <Popover open={reactOpen} onOpenChange={setReactOpen}>
                     <PopoverTrigger asChild>
                       <button
                         type="button"
                         aria-label="Thả cảm xúc phòng này"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setReactOpen((prev) => !prev);
+                        }}
                         className={cn(
                           "flex size-6 items-center justify-center rounded-full border border-line",
                           "bg-card/95 text-muted transition-all hover:bg-tint hover:text-plate hover:scale-110",

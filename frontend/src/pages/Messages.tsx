@@ -17,7 +17,7 @@ export default function Messages() {
   if (loading) return null;
   if (!user) {
     return (
-      <div className="flex min-h-[calc(100svh-var(--nav-h))] flex-col bg-card">
+      <div className="flex flex-1 flex-col bg-card">
         <GateScreen
           testId="messages-gate"
           title="Trung tâm tin nhắn"

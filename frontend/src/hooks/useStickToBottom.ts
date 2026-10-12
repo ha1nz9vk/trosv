@@ -20,7 +20,7 @@ export function useStickToBottom(
   threadRef: RefObject<HTMLDivElement>,
   messages: unknown,
   loaded: boolean,
-  conversationId?: string | number | undefined
+  conversationId?: string | number  
 ): {
   handleScroll: () => boolean;
   scrollToBottom: (smooth?: boolean) => void;

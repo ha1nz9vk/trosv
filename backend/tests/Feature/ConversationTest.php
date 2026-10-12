@@ -134,7 +134,7 @@ class ConversationTest extends TestCase
             ->assertJsonPath('data.listing.id', $this->listing->id)
             ->assertJsonPath('data.other_user.id', $this->landlord->id)
             ->assertJsonPath('data.unread_count', 0)
-            ->assertJsonPath('data.last_message', null);
+            ->assertJsonPath('data.last_message.body', "/rooms/{$this->listing->id}");
 
         $this->assertDatabaseHas('conversations', [
             'listing_id' => $this->listing->id,
@@ -209,9 +209,10 @@ class ConversationTest extends TestCase
     public function test_list_orders_by_latest_activity(): void
     {
         $older = $this->createConversation();
+        $otherStudent = User::factory()->create(['role' => User::ROLE_STUDENT]);
         $newer = Conversation::factory()->create([
             'listing_id' => Listing::factory()->create(['user_id' => $this->landlord->id])->id,
-            'student_id' => $this->student->id,
+            'student_id' => $otherStudent->id,
             'landlord_id' => $this->landlord->id,
         ]);
 

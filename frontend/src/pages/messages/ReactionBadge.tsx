@@ -16,7 +16,7 @@ export function ReactionBadge({
   onClick,
   className,
 }: ReactionBadgeProps) {
-  if (!reactions || reactions.length === 0) return null;
+  if (reactions.length === 0) return null;
 
   // Aggregate count by emoji while preserving order of appearance
   const counts = new Map<string, number>();

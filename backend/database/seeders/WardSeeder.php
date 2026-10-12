@@ -23,7 +23,7 @@ class WardSeeder extends Seeder
                 ['name' => 'Phường Đức Thắng',       'latitude' => 21.0770, 'longitude' => 105.7760],
                 ['name' => 'Phường Mộ Lao',          'latitude' => 20.9840, 'longitude' => 105.7860],
                 ['name' => 'Phường Thanh Xuân Bắc',  'latitude' => 20.9960, 'longitude' => 105.7980],
-                ['name' => 'Phường Thanh Xuân Trung','latitude' => 20.9970, 'longitude' => 105.8080],
+                ['name' => 'Phường Thanh Xuân Trung', 'latitude' => 20.9970, 'longitude' => 105.8080],
                 ['name' => 'Phường Minh Khai',       'latitude' => 21.0530, 'longitude' => 105.7350],
                 ['name' => 'Phường Quan Hoa',        'latitude' => 21.0350, 'longitude' => 105.8010],
                 ['name' => 'Phường Nghĩa Tân',       'latitude' => 21.0425, 'longitude' => 105.7930],

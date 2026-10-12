@@ -102,8 +102,8 @@ class Listing extends Model
      */
     public const DISTANCE_SQL =
         '6371 * ACOS(LEAST(1, COS(RADIANS(CAST(? AS float8))) * COS(RADIANS(latitude)) * '
-        . 'COS(RADIANS(longitude) - RADIANS(CAST(? AS float8))) + '
-        . 'SIN(RADIANS(CAST(? AS float8))) * SIN(RADIANS(latitude))))';
+        .'COS(RADIANS(longitude) - RADIANS(CAST(? AS float8))) + '
+        .'SIN(RADIANS(CAST(? AS float8))) * SIN(RADIANS(latitude))))';
 
     /** Scope: public listings only. */
     public function scopeVisible(Builder $query): Builder

@@ -23,10 +23,10 @@ class SeedAndRelationsTest extends TestCase
         $this->artisan('db:seed', ['--force' => true])->assertExitCode(0);
 
         $this->assertDatabaseCount('users', 13);
-        $this->assertDatabaseCount('listings', 30);
+        $this->assertDatabaseCount('listings', 48);
         // Sample image files need GD (bundled in the Docker image); without GD
         // the seeder still seeds everything except the picture files.
-        $this->assertDatabaseCount('listing_images', extension_loaded('gd') ? 30 : 0);
+        $this->assertDatabaseCount('listing_images', extension_loaded('gd') ? 48 : 0);
         $this->assertDatabaseCount('conversations', 6);
         $this->assertDatabaseCount('reviews', 4);
 
@@ -38,8 +38,8 @@ class SeedAndRelationsTest extends TestCase
         $this->assertTrue(Hash::check('password', $student->password));
         $this->assertTrue(Hash::check('password', $landlord->password));
 
-        // Seeded prices stay in the 1.5M..6M VND range.
-        $this->assertTrue(Listing::whereBetween('price', [1_500_000, 6_000_000])->count() === 30);
+        // Seeded prices stay in the 1.5M..12M VND range (including student houses).
+        $this->assertTrue(Listing::whereBetween('price', [1_500_000, 12_000_000])->count() === 48);
     }
 
     public function test_hcmc_schools_are_pinned_to_wards(): void
@@ -71,8 +71,8 @@ class SeedAndRelationsTest extends TestCase
 
         $this->assertNotNull($listing->ward);
         $this->assertDatabaseHas('wards', ['id' => $listing->ward_id]);
-        $this->assertGreaterThanOrEqual(3, $listing->amenities->count());
-        $this->assertLessThanOrEqual(6, $listing->amenities->count());
+        $this->assertGreaterThanOrEqual(4, $listing->amenities->count());
+        $this->assertLessThanOrEqual(7, $listing->amenities->count());
         $this->assertSame($listing->user_id, $listing->landlord->id);
     }
 

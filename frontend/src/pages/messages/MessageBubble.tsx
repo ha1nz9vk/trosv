@@ -134,7 +134,7 @@ export function MessageBubble(props: MessageBubbleProps) {
     : "";
   const fullTimeStr = dateObj
     ? `${dateObj.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}, ` +
-      `${dateObj.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}`
+      dateObj.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })
     : "";
 
   // Extract room link if present
@@ -329,7 +329,7 @@ export function MessageBubble(props: MessageBubbleProps) {
                 <ReactionBadge
                   reactions={reactions}
                   isMine={isMine}
-                  onClick={() => setOpen(true)}
+                  onClick={() => { setOpen(true); }}
                 />
               ) : null}
             </div>
@@ -354,7 +354,7 @@ export function MessageBubble(props: MessageBubbleProps) {
                 <ReactionBadge
                   reactions={reactions}
                   isMine={isMine}
-                  onClick={() => setOpen(true)}
+                  onClick={() => { setOpen(true); }}
                 />
               ) : null}
             </div>
@@ -373,7 +373,7 @@ export function MessageBubble(props: MessageBubbleProps) {
                 isMine={isMine}
                 reactions={badgeTarget === "room" ? reactions : []}
                 myReaction={myReaction}
-                onReact={(emoji) => onReact(msg, emoji)}
+                onReact={(emoji) => { onReact(msg, emoji); }}
               />
             </div>
           ) : null}

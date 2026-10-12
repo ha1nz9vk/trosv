@@ -9,8 +9,8 @@ interface ProfileAcademicCardProps {
   budgetMin: string;
   budgetMax: string;
   budgetHint?: string;
-  onChange: <K extends "school_id" | "budget_min" | "budget_max">(
-    key: K,
+  onChange: (
+    key: "school_id" | "budget_min" | "budget_max",
     value: string
   ) => void;
   errors: {

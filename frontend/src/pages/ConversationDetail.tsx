@@ -105,7 +105,7 @@ function Thread({ id }: ThreadProps) {
         stick.notifyMounted(node);
       }
     },
-    [stick.notifyMounted]
+    [stick]
   );
 
   const [draft, setDraft] = useState("");
@@ -462,7 +462,7 @@ export default function ConversationDetail() {
      redirect — the route is intentionally left outside ProtectedRoute. */
   if (!user) {
     return (
-      <div className="flex min-h-[calc(100svh-var(--nav-h))] flex-col bg-card">
+      <div className="flex flex-1 flex-col bg-card">
         <GateScreen
           testId="messages-gate"
           title="Trung tâm tin nhắn"

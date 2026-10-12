@@ -367,15 +367,16 @@ export function AppShell({
   /** Route-level Suspense fallback container, provided by main.tsx. */
   screenSuspense?: React.ReactNode;
 }) {
+  const { user } = useAuth();
   const location = useLocation();
   const isConversationThread = /^\/messages\/\d+/.test(location.pathname);
-  const isMessagesPage = /^\/messages/.test(location.pathname);
+  const isMessagesChat = Boolean(user) && /^\/messages/.test(location.pathname);
 
   return (
     <div
       className={cn(
         "flex min-h-screen flex-col bg-paper",
-        isMessagesPage && "h-dvh max-h-dvh overflow-hidden"
+        isMessagesChat && "h-dvh max-h-dvh overflow-hidden"
       )}
     >
       {/* Skip-to-content link for keyboard users */}
@@ -389,22 +390,22 @@ export function AppShell({
       <div
         className={cn(
           "flex flex-1 flex-col lg:flex-row min-h-0",
-          isMessagesPage && "overflow-hidden"
+          isMessagesChat && "overflow-hidden"
         )}
       >
         <Rail />
         <div
           className={cn(
             "flex min-w-0 flex-1 flex-col min-h-0 pb-14 lg:pb-0",
-            (isConversationThread || isMessagesPage) && "pb-0",
-            isMessagesPage && "overflow-hidden"
+            (isConversationThread || isMessagesChat) && "pb-0",
+            isMessagesChat && "overflow-hidden"
           )}
         >
           <main
             id="main"
             className={cn(
               "min-w-0 flex-1 flex flex-col min-h-0",
-              isMessagesPage && "overflow-hidden",
+              isMessagesChat && "overflow-hidden",
               className
             )}
           >
