@@ -7,7 +7,7 @@ import prettier from "eslint-config-prettier";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 
 export default tseslint.config(
-  { ignores: ["dist", "node_modules", "e2e", "playwright.config.js"] },
+  { ignores: ["dist", "node_modules", "e2e", "playwright.config.ts", "playwright.config.js"] },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [

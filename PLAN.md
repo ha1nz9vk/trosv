@@ -9,7 +9,7 @@ hành vi người dùng. Tất cả các phase dưới đây đã hoàn thành v
 
 | Phase | Nội dung | Bằng chứng |
 |---|---|---|
-| 1. Safety net | PHPUnit chạy trên PostgreSQL; Playwright config cho CI; `GET /api/health` | `backend/tests/` (210+ test), `frontend/playwright.config.js` |
+| 1. Safety net | PHPUnit chạy trên PostgreSQL; Playwright config cho CI; `GET /api/health` | `backend/tests/` (210+ test), `frontend/playwright.config.ts` |
 | 2. Debloat + tối ưu | Tách service/form-request, bỏ N+1, index + JSONB, chuyển đổi UI sang Tailwind CSS v4 + Radix UI + Lucide React, tối ưu Dockerfile | `docs/TECH-DEBT.md`, `frontend/src/styles.css` |
 | 3. Đúng đắn | FormRequest cho mọi endpoint ghi, IDOR sweep, idempotency seen/reaction, regression test cho từng fix | `backend/tests/Feature/` |
 | 4. Bảo mật | Security headers + CSP enforcing, prod fail-fast, token TTL 30 ngày, upload validation, gitleaks trong CI, `SECURITY.md` | `SECURITY.md`, `backend/app/Http/Middleware/` |
