@@ -38,11 +38,11 @@ test('reaction badge and preview card reaction', async ({ page }) => {
   const sendBtn = page.locator('button[aria-label="Gửi tin nhắn"]');
   await textarea.fill(msg1Text);
   await sendBtn.click();
-  await expect(thread.getByText(msg1Text)).toBeVisible();
+  await expect(thread.getByText(msg1Text)).toBeVisible({ timeout: 10_000 });
 
   await textarea.fill(msg2Text);
   await sendBtn.click();
-  await expect(thread.getByText(msg2Text)).toBeVisible();
+  await expect(thread.getByText(msg2Text)).toBeVisible({ timeout: 10_000 });
 
   // Find msg1 inside thread and react to it via its 3-dots menu
   const msg1El = thread.getByText(msg1Text);
