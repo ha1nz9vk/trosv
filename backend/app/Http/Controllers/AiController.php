@@ -48,11 +48,11 @@ class AiController extends Controller
     }
 
     /**
-     * POST /api/ai/chat (any authenticated user). Optional listing context or room recommendations.
+     * POST /api/ai/chat (any authenticated user). Optional listing context.
      */
     public function chat(AiChatRequest $request): JsonResponse
     {
-        return response()->json(['data' => $this->ai->chat($request->validated(), $request->user())]);
+        return response()->json(['data' => $this->ai->chat($request->validated())]);
     }
 
     /**

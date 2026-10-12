@@ -1,23 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { aiChat } from "@/api/aiApi";
 import type { AiChatTurn } from "@/types/api";
 import { AI_CHAT_OPEN_EVENT } from "@/constants/events";
-import { formatPriceShort } from "@/api/format";
 import { Button } from "@/ui/button";
 import { cn } from "@/lib/utils";
-import { Bot, X, Send, Home, ExternalLink } from "lucide-react";
+import { Bot, X, Send } from "lucide-react";
 
 /*
   Floating AI chat: site-wide widget listening for AI_CHAT_OPEN_EVENT
   (Home tiles dispatch it). POST /ai/chat with rolling history; handles
-  room recommendations with clickable preview cards; handles ~30s latency.
+  ~30s latency (spinner in the thread) and 503 (friendly note).
 */
 
 const WELCOME: AiChatTurn = {
   role: "assistant",
   content:
-    "Chào bạn. Mình là trợ lý AI của TROSV. Bạn có thể hỏi mình về giá phòng, kinh nghiệm thuê trọ hoặc nhờ mình gợi ý phòng trọ phù hợp nhé!",
+    "Chào bạn. Mình là trợ lý AI của TROSV. Bạn hỏi mình về giá phòng, khu vực, hay phong trọ nhé.",
 };
 
 export function AiChatWidget() {
@@ -49,15 +48,8 @@ export function AiChatWidget() {
     setTurns(next);
     setBusy(true);
     try {
-      const res = await aiChat(text, next.filter((t) => t !== WELCOME));
-      setTurns((cur) => [
-        ...cur,
-        {
-          role: "assistant",
-          content: res.reply ?? "",
-          listings: res.listings ?? [],
-        },
-      ]);
+      const { reply } = await aiChat(text, next.filter((t) => t !== WELCOME));
+      setTurns((cur) => [...cur, { role: "assistant", content: reply ?? "" }]);
     } catch {
       setTurns((cur) => [
         ...cur,
@@ -114,63 +106,13 @@ export function AiChatWidget() {
               <div
                 key={i}
                 className={cn(
-                  "max-w-[88%] px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words",
+                  "max-w-[85%] px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap break-words",
                   t.role === "user"
                     ? "self-end rounded-2xl rounded-br-xs bg-plate text-white shadow-xs"
                     : "self-start rounded-2xl rounded-bl-xs bg-card text-ink border border-line shadow-xs"
                 )}
               >
-                <div>{t.content}</div>
-                {t.listings && t.listings.length > 0 ? (
-                  <div className="mt-2.5 flex flex-col gap-2 pt-2 border-t border-line/60">
-                    <p className="text-[10px] font-semibold text-muted uppercase tracking-wider">
-                      Phòng gợi ý ({t.listings.length})
-                    </p>
-                    {t.listings.map((l) => (
-                      <Link
-                        key={l.id}
-                        to={`/rooms/${l.id}`}
-                        onClick={() => { setOpen(false); }}
-                        className="group flex items-center gap-2.5 rounded-xl border border-line bg-paper/60 p-2 text-left transition-all hover:border-plate hover:bg-card hover:shadow-xs active:scale-[0.99]"
-                      >
-                        <div className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-paper border border-line/40">
-                          {l.cover_image ? (
-                            <img
-                              src={l.cover_image}
-                              alt={l.title}
-                              className="size-full object-cover transition-transform group-hover:scale-105"
-                              loading="lazy"
-                            />
-                          ) : (
-                            <div className="flex size-full items-center justify-center text-muted">
-                              <Home className="size-5" aria-hidden />
-                            </div>
-                          )}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="line-clamp-1 font-medium text-xs text-ink group-hover:text-plate transition-colors">
-                            {l.title}
-                          </p>
-                          <div className="mt-0.5 flex items-center gap-1 text-[11px]">
-                            <span className="font-semibold text-plate">
-                              {formatPriceShort(l.price)}/tháng
-                            </span>
-                            {l.area_m2 ? (
-                              <span className="text-muted">· {l.area_m2}m²</span>
-                            ) : null}
-                            {l.distance_km != null ? (
-                              <span className="text-muted">· {l.distance_km}km</span>
-                            ) : null}
-                          </div>
-                          <p className="line-clamp-1 text-[10px] text-muted">
-                            {l.ward ? `${l.ward}, ` : ""}{l.city || l.address}
-                          </p>
-                        </div>
-                        <ExternalLink className="size-3.5 shrink-0 text-muted transition-colors group-hover:text-plate" aria-hidden />
-                      </Link>
-                    ))}
-                  </div>
-                ) : null}
+                {t.content}
               </div>
             ))}
             {busy ? (
