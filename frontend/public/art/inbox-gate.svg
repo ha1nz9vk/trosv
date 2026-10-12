@@ -1,160 +1,150 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 780" width="1400" height="780" role="img" aria-label="Hand-drawn chat bubbles with a house listing card and three avatars" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTo1MTQ2ZjliNS0yYTZlLTQxZmQtYTM4MS01MTM1ZDU0MGQzOGUAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaEOy2IH4oHo+PFoF7buXaIkAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDo2NzFiZDk3My05MWM3LTQ5MGItYTEwZC1mY2E2ZmMzZGJhOGJscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNopVcLPQ3dcOrdvCLbYS//IgAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggKnrHGQjOzoNs13xfass9xc7+9TP8ducM97MboQjeOJCkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaP6ig1vttOnCb1P4zq4tK+4AAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCAkVbKtVfpzmv2xqeSaLs3GvS2UUy6l44xpX3zP3uS+hGRuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBj0Zmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOjUxNDZmOWI1LTJhNmUtNDFmZC1hMzgxLTUxMzVkNTQwZDM4ZS9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOmJkYTFiYjI5LTAwZGEtNGQyNS05YmQyLTFmYWFlYzIwODZkOXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCAqescZCM7Og2zXfF9qyz3Fzv71M/x25wz3sxuhCN44kKJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggFB/RIfIyGK2RmYkZkseH6W9GcWJGP1S3agH2cInSf/uiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggDFsi2UBwoV+4agL0fa3lf+BeK2sqP/s16HCbiXohrDZ0Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQK7+hOCDD5jLS86ILYFOiY89svFs13s5dnHWKfgWhR5qbgBykV2Pnp0f4y3ISic8E8FPgvPi8yHJQYaI6yXIZ/g=</c2pa:manifest></metadata>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 780" width="1400" height="780" role="img" aria-label="Hand-drawn colorful chat bubbles with a house listing card and three avatars">
   <defs>
-    <!-- wobble + paper grain (grain only lands on drawn shapes) -->
-    <filter id="paper" filterUnits="userSpaceOnUse" x="0" y="0" width="1400" height="780" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.014" numOctaves="2" seed="6" result="w"/>
-      <feDisplacementMap in="SourceGraphic" in2="w" scale="7" xChannelSelector="R" yChannelSelector="G" result="d"/>
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="12" result="n"/>
-      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.5 0" result="g"/>
-      <feComposite in="g" in2="d" operator="in" result="gg"/>
-      <feMerge><feMergeNode in="d"/><feMergeNode in="gg"/></feMerge>
+    <filter id="igRough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="6" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
 
-    <clipPath id="cardClip"><rect x="245" y="68" width="376" height="360" rx="24"/></clipPath>
-    <clipPath id="sceneClip"><rect x="245" y="68" width="376" height="248"/></clipPath>
-    <clipPath id="avatarClip"><circle cx="0" cy="0" r="78"/></clipPath>
-    <path id="heart" d="M0 6 C-12 -2 -10 -11 -4 -11 C-1.5 -11 0 -9 0 -7.5 C0 -9 1.5 -11 4 -11 C10 -11 12 -2 0 6Z"/>
+    <filter id="igGrain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="8"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.25 0"/>
+    </filter>
 
-    <!-- fern leaflet (fill inherited) -->
-    <path id="lf" d="M0,0 Q16,-9 34,0 Q16,9 0,0 Z" stroke="#17171C" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+    <clipPath id="igCardClip"><rect x="245" y="68" width="376" height="360" rx="24"/></clipPath>
+    <clipPath id="igSceneClip"><rect x="245" y="68" width="376" height="248"/></clipPath>
+    <clipPath id="igAvatarClip"><circle r="72"/></clipPath>
+    <path id="igHeart" d="M0 6 C-12 -2 -10 -11 -4 -11 C-1.5 -11 0 -9 0 -7.5 C0 -9 1.5 -11 4 -11 C10 -11 12 -2 0 6Z"/>
 
-    <g id="fern">
-      <path d="M0,0 L0,-118" stroke="#17171C" stroke-width="4" stroke-linecap="round" fill="none"/>
-      <use href="#lf" transform="translate(0,-12) rotate(-38)"/>
-      <use href="#lf" transform="translate(0,-12) scale(-1,1) rotate(-38)"/>
-      <use href="#lf" transform="translate(0,-26) rotate(-38) scale(0.95)"/>
-      <use href="#lf" transform="translate(0,-26) scale(-1,1) rotate(-38) scale(0.95)"/>
-      <use href="#lf" transform="translate(0,-40) rotate(-40) scale(0.86)"/>
-      <use href="#lf" transform="translate(0,-40) scale(-1,1) rotate(-40) scale(0.86)"/>
-      <use href="#lf" transform="translate(0,-54) rotate(-42) scale(0.76)"/>
-      <use href="#lf" transform="translate(0,-54) scale(-1,1) rotate(-42) scale(0.76)"/>
-      <use href="#lf" transform="translate(0,-68) rotate(-45) scale(0.64)"/>
-      <use href="#lf" transform="translate(0,-68) scale(-1,1) rotate(-45) scale(0.64)"/>
-      <use href="#lf" transform="translate(0,-82) rotate(-50) scale(0.52)"/>
-      <use href="#lf" transform="translate(0,-82) scale(-1,1) rotate(-50) scale(0.52)"/>
-      <use href="#lf" transform="translate(0,-96) rotate(-90) scale(0.5)"/>
+    <g id="igBurst" stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M-30,0 H30"/>
+      <path d="M-30,0 H30" transform="rotate(30)"/>
+      <path d="M-30,0 H30" transform="rotate(60)"/>
+      <path d="M-30,0 H30" transform="rotate(90)"/>
+      <path d="M-30,0 H30" transform="rotate(120)"/>
+      <path d="M-30,0 H30" transform="rotate(150)"/>
+    </g>
+
+    <g id="igSprout" fill="#7A9160" stroke="#17171C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0,0 V-28 M0,-14 q-20,-4 -20,-24 q19,2 20,24 M0,-16 q20,-4 20,-24 q-19,2 -20,24"/>
     </g>
   </defs>
 
-  <g filter="url(#paper)" stroke-linecap="round" stroke-linejoin="round">
+  <g filter="url(#igRough)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Starbursts floating in background -->
+    <use href="#igBurst" stroke="#FFD23F" transform="translate(180, 100) scale(1.1)"/>
+    <use href="#igBurst" stroke="#8B8BE0" transform="translate(1260, 110) scale(0.9)"/>
+    <use href="#igBurst" stroke="#7A9160" transform="translate(680, 50) scale(0.8)"/>
+    <use href="#igBurst" stroke="#FFD23F" transform="translate(1280, 680) scale(0.9)"/>
 
-    <!-- Large bubble (left): paper shadow, then bubble -->
-    <path d="M287,22 H578 A112,112 0 0 1 690,134 V488 A112,112 0 0 1 578,600 H410 Q398,650 292,664 Q328,640 330,600 H287 A112,112 0 0 1 175,488 V134 A112,112 0 0 1 287,22 Z" fill="#17171C" opacity="0.13" transform="translate(9,11)"/>
-    <path d="M287,22 H578 A112,112 0 0 1 690,134 V488 A112,112 0 0 1 578,600 H410 Q398,650 292,664 Q328,640 330,600 H287 A112,112 0 0 1 175,488 V134 A112,112 0 0 1 287,22 Z" fill="#E8DABB" stroke="#17171C" stroke-width="5"/>
+    <!-- Large message bubble on left (Warm cream) -->
+    <path d="M287,22 H578 A112,112 0 0 1 690,134 V488 A112,112 0 0 1 578,600 H410 Q398,650 292,664 Q328,640 330,600 H287 A112,112 0 0 1 175,488 V134 A112,112 0 0 1 287,22 Z" fill="#17171C" opacity="0.08" transform="translate(8,10)"/>
+    <path d="M287,22 H578 A112,112 0 0 1 690,134 V488 A112,112 0 0 1 578,600 H410 Q398,650 292,664 Q328,640 330,600 H287 A112,112 0 0 1 175,488 V134 A112,112 0 0 1 287,22 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="4.5"/>
 
-    <!-- Listing card -->
+    <!-- Property Card inside large bubble -->
     <rect x="245" y="68" width="376" height="360" rx="24" fill="#FAF8F5"/>
-    <g clip-path="url(#cardClip)">
-      <g clip-path="url(#sceneClip)">
-        <rect x="245" y="68" width="376" height="248" fill="#DC7856"/>
-        <!-- soft hills -->
-        <circle cx="272" cy="240" r="62" fill="#E48B6B"/>
-        <circle cx="316" cy="214" r="42" fill="#E48B6B"/>
-        <circle cx="590" cy="258" r="56" fill="#E48B6B"/>
-        <circle cx="560" cy="228" r="34" fill="#E48B6B"/>
-        <!-- grass -->
-        <rect x="245" y="298" width="376" height="20" fill="#7A9160"/>
-        <path d="M245,298 H621" stroke="#17171C" stroke-width="4"/>
+    <g clip-path="url(#igCardClip)">
+      <g clip-path="url(#igSceneClip)">
+        <!-- Bright sky in periwinkle -->
+        <rect x="245" y="68" width="376" height="248" fill="#8B8BE0"/>
+        <!-- Golden yellow sun -->
+        <circle cx="530" cy="125" r="32" fill="#FFD23F" stroke="#17171C" stroke-width="3"/>
+        <!-- Rolling hills -->
+        <circle cx="280" cy="245" r="70" fill="#E8DABB"/>
+        <circle cx="580" cy="255" r="65" fill="#E8DABB"/>
+        <!-- Grass ground -->
+        <rect x="245" y="296" width="376" height="22" fill="#7A9160"/>
+        <path d="M245,296 H621" stroke="#17171C" stroke-width="3.5"/>
 
-        <!-- ferns beside the house -->
-        <g fill="#6E9F5C"><use href="#fern" transform="translate(300,300) rotate(-14) scale(0.95)"/></g>
-        <g fill="#4F7942"><use href="#fern" transform="translate(284,300) rotate(-34) scale(0.7)"/></g>
-        <g fill="#4F7942"><use href="#fern" transform="translate(572,300) rotate(16) scale(0.8)"/></g>
-
-        <!-- house: side wall, roof, front gable -->
-        <rect x="440" y="244" width="106" height="72" fill="#F3EBD6" stroke="#17171C" stroke-width="4.5"/>
-        <polygon points="322,252 380,172 440,252 440,316 322,316" fill="#FAF8F5" stroke="#17171C" stroke-width="4.5"/>
-        <polygon points="310,254 378,157 496,157 548,246 440,246" fill="#E8DABB" stroke="#17171C" stroke-width="4.5"/>
-        <polygon points="322,252 380,172 440,252" fill="#FAF8F5" stroke="#17171C" stroke-width="4.5"/>
-        <!-- windows & door -->
-        <rect x="332" y="262" width="26" height="38" fill="#8B8BE0" stroke="#17171C" stroke-width="3.5"/>
-        <rect x="404" y="262" width="26" height="38" fill="#8B8BE0" stroke="#17171C" stroke-width="3.5"/>
-        <path d="M372,222 v-14 a8,8 0 0 1 16,0 v14 Z" fill="#8B8BE0" stroke="#17171C" stroke-width="3.5"/>
-        <rect x="462" y="262" width="24" height="34" fill="#8B8BE0" stroke="#17171C" stroke-width="3.5"/>
-        <rect x="502" y="262" width="24" height="34" fill="#8B8BE0" stroke="#17171C" stroke-width="3.5"/>
-        <path d="M362,318 v-40 a18,18 0 0 1 36,0 v40 Z" fill="#DC7856" stroke="#17171C" stroke-width="4"/>
-        <circle cx="390" cy="298" r="3.5" fill="#17171C"/>
+        <!-- Charming cottage -->
+        <rect x="430" y="235" width="106" height="72" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5"/>
+        <polygon points="322,245 380,165 440,245 440,308 322,308" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5"/>
+        <polygon points="310,247 378,150 496,150 548,239 440,239" fill="#DC7856" stroke="#17171C" stroke-width="3.5"/>
+        <!-- Windows and door -->
+        <rect x="334" y="255" width="24" height="36" fill="#8B8BE0" stroke="#17171C" stroke-width="2.5"/>
+        <rect x="402" y="255" width="24" height="36" fill="#8B8BE0" stroke="#17171C" stroke-width="2.5"/>
+        <path d="M372,216 v-12 a8,8 0 0 1 16,0 v12 Z" fill="#8B8BE0" stroke="#17171C" stroke-width="2.5"/>
+        <rect x="456" y="255" width="22" height="32" fill="#8B8BE0" stroke="#17171C" stroke-width="2.5"/>
+        <rect x="496" y="255" width="22" height="32" fill="#8B8BE0" stroke="#17171C" stroke-width="2.5"/>
+        <path d="M362,308 v-36 a18,18 0 0 1 36,0 v36 Z" fill="#7A9160" stroke="#17171C" stroke-width="3"/>
+        <circle cx="390" cy="290" r="3" fill="#17171C"/>
       </g>
-      <path d="M245,316 H621" stroke="#17171C" stroke-width="4.5"/>
+      <path d="M245,316 H621" stroke="#17171C" stroke-width="4"/>
     </g>
-    <rect x="245" y="68" width="376" height="360" rx="24" fill="none" stroke="#17171C" stroke-width="5"/>
+    <rect x="245" y="68" width="376" height="360" rx="24" fill="none" stroke="#17171C" stroke-width="4.5"/>
 
-    <!-- heart badge (fern green) -->
-    <circle cx="566" cy="121" r="34" fill="#FAF8F5" stroke="#17171C" stroke-width="4"/>
-    <use href="#heart" transform="translate(566,123) scale(2.6)" fill="#DC7856" stroke="#17171C" stroke-width="1.4"/>
+    <!-- Heart badge -->
+    <circle cx="566" cy="115" r="30" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5"/>
+    <use href="#igHeart" transform="translate(566,117) scale(2.4)" fill="#FFD23F" stroke="#17171C" stroke-width="1.4"/>
 
-    <!-- price + address placeholders -->
-    <text x="268" y="366" font-family="Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#17171C" stroke="none">$</text>
-    <path d="M308,356 H414" stroke="#17171C" stroke-width="9" fill="none"/>
-    <path d="M272,390 H594" stroke="#DC7856" stroke-width="9" fill="none"/>
+    <!-- Price and info lines -->
+    <text x="268" y="364" font-family="Helvetica, Arial, sans-serif" font-size="32" font-weight="700" fill="#17171C" stroke="none">2.5 tr</text>
+    <path d="M368,354 H484" stroke="#17171C" stroke-width="6" fill="none"/>
+    <path d="M272,390 H564" stroke="#7A9160" stroke-width="6" fill="none"/>
 
-    <!-- caption lines under card -->
-    <path d="M258,481 H594" stroke="#17171C" stroke-width="18" fill="none"/>
-    <path d="M258,528 H476" stroke="#17171C" stroke-width="18" fill="none"/>
+    <!-- Message lines below card -->
+    <path d="M258,475 H560" stroke="#17171C" stroke-width="10" fill="none"/>
+    <path d="M258,515 H440" stroke="#8B8BE0" stroke-width="10" fill="none"/>
 
-    <!-- Reply bubble (top right) -->
-    <path d="M719,92 H1061 A74,74 0 0 1 1135,166 A74,74 0 0 1 1061,240 H1038 Q1040,282 1074,299 Q996,296 962,240 H719 A74,74 0 0 1 645,166 A74,74 0 0 1 719,92 Z" fill="#17171C" opacity="0.13" transform="translate(9,11)"/>
-    <path d="M719,92 H1061 A74,74 0 0 1 1135,166 A74,74 0 0 1 1061,240 H1038 Q1040,282 1074,299 Q996,296 962,240 H719 A74,74 0 0 1 645,166 A74,74 0 0 1 719,92 Z" fill="#DC7856" stroke="#17171C" stroke-width="5"/>
-    <path d="M745,166 H1022" stroke="#FAF8F5" stroke-width="16" fill="none"/>
+    <!-- Reply bubble 1: Cheerful Periwinkle (Top right) -->
+    <path d="M719,92 H1061 A74,74 0 0 1 1135,166 A74,74 0 0 1 1061,240 H1038 Q1040,282 1074,299 Q996,296 962,240 H719 A74,74 0 0 1 645,166 A74,74 0 0 1 719,92 Z" fill="#17171C" opacity="0.08" transform="translate(8,10)"/>
+    <path d="M719,92 H1061 A74,74 0 0 1 1135,166 A74,74 0 0 1 1061,240 H1038 Q1040,282 1074,299 Q996,296 962,240 H719 A74,74 0 0 1 645,166 A74,74 0 0 1 719,92 Z" fill="#8B8BE0" stroke="#17171C" stroke-width="4.5"/>
+    <path d="M745,166 H1022" stroke="#FAF8F5" stroke-width="12" fill="none"/>
 
-    <!-- Reply bubble (bottom right) -->
-    <path d="M763,363 H1093 A100,100 0 0 1 1193,463 V533 A100,100 0 0 1 1093,633 H1092 Q1090,674 1128,694 Q1040,690 1014,633 H763 A100,100 0 0 1 663,533 V463 A100,100 0 0 1 763,363 Z" fill="#17171C" opacity="0.13" transform="translate(9,11)"/>
-    <path d="M763,363 H1093 A100,100 0 0 1 1193,463 V533 A100,100 0 0 1 1093,633 H1092 Q1090,674 1128,694 Q1040,690 1014,633 H763 A100,100 0 0 1 663,533 V463 A100,100 0 0 1 763,363 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="5"/>
-    <path d="M752,438 H1060" stroke="#17171C" stroke-width="14" fill="none"/>
-    <path d="M752,496 H1118" stroke="#17171C" stroke-width="14" fill="none"/>
-    <path d="M752,555 H994" stroke="#DC7856" stroke-width="14" fill="none"/>
+    <!-- Reply bubble 2: Sunny Warm Cream / Yellow (Bottom right) -->
+    <path d="M763,363 H1093 A100,100 0 0 1 1193,463 V533 A100,100 0 0 1 1093,633 H1092 Q1090,674 1128,694 Q1040,690 1014,633 H763 A100,100 0 0 1 663,533 V463 A100,100 0 0 1 763,363 Z" fill="#17171C" opacity="0.08" transform="translate(8,10)"/>
+    <path d="M763,363 H1093 A100,100 0 0 1 1193,463 V533 A100,100 0 0 1 1093,633 H1092 Q1090,674 1128,694 Q1040,690 1014,633 H763 A100,100 0 0 1 663,533 V463 A100,100 0 0 1 763,363 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="4.5"/>
+    <path d="M752,438 H1060" stroke="#17171C" stroke-width="10" fill="none"/>
+    <path d="M752,496 H1118" stroke="#7A9160" stroke-width="10" fill="none"/>
+    <path d="M752,555 H960" stroke="#FFD23F" stroke-width="10" fill="none"/>
 
-    <!-- Avatar 1: top right -->
+    <!-- Avatar 1 (Top right): Smiling girl with yellow shirt -->
     <g transform="translate(1207,278)">
-      <circle r="78" fill="#E8DABB"/>
-      <g clip-path="url(#avatarClip)" stroke="#17171C" stroke-width="4">
-        <path d="M-74,82 C-70,42 -42,30 0,30 C42,30 70,42 74,82 Z" fill="#DC7856"/>
-        <rect x="-12" y="8" width="24" height="28" rx="6" fill="#E8A98B"/>
-        <path d="M-40,-8 C-46,-62 -20,-66 2,-66 C26,-66 46,-58 40,-8 L40,22 L26,22 L26,-18 C8,-26 -10,-32 -26,-28 L-26,22 L-40,22 Z" fill="#17171C"/>
-        <ellipse cx="0" cy="-8" rx="29" ry="35" fill="#E8A98B"/>
-        <path d="M-30,-22 C-18,-46 14,-52 30,-22 C14,-34 -14,-34 -30,-22 Z" fill="#17171C"/>
-        <circle cx="-11" cy="-6" r="2.5" fill="#17171C" stroke="none"/>
-        <circle cx="11" cy="-6" r="2.5" fill="#17171C" stroke="none"/>
-        <path d="M-8,10 Q0,17 8,10" fill="none" stroke-width="3.5"/>
+      <circle r="72" fill="#E8DABB" stroke="#17171C" stroke-width="4"/>
+      <g clip-path="url(#igAvatarClip)">
+        <!-- Hair -->
+        <circle cx="0" cy="-20" r="48" fill="#17171C"/>
+        <!-- Face -->
+        <circle cx="0" cy="-5" r="34" fill="#FAF8F5" stroke="#17171C" stroke-width="3"/>
+        <!-- Eyes and smile -->
+        <circle cx="-12" cy="-10" r="4" fill="#17171C"/>
+        <circle cx="12" cy="-10" r="4" fill="#17171C"/>
+        <path d="M-8,5 Q0,14 8,5" stroke="#17171C" stroke-width="3" fill="none"/>
+        <!-- Shirt in sunny yellow -->
+        <path d="M-55,75 C-50,25 50,25 55,75 Z" fill="#FFD23F" stroke="#17171C" stroke-width="3.5"/>
       </g>
-      <circle r="78" fill="none" stroke="#17171C" stroke-width="5"/>
     </g>
 
-    <!-- Avatar 2: bottom left -->
-    <g transform="translate(115,652)">
-      <circle r="78" fill="#E8DABB"/>
-      <g clip-path="url(#avatarClip)" stroke="#17171C" stroke-width="4">
-        <path d="M-74,82 C-70,42 -42,30 0,30 C42,30 70,42 74,82 Z" fill="#7A9160"/>
-        <rect x="-12" y="8" width="24" height="28" rx="6" fill="#B5714A"/>
-        <path d="M26,-30 C60,-32 66,10 46,38 C58,6 44,-8 24,-10 Z" fill="#17171C"/>
-        <ellipse cx="0" cy="-8" rx="29" ry="35" fill="#B5714A"/>
-        <path d="M-32,-8 C-40,-62 34,-66 32,-14 C20,-34 -10,-40 -22,-22 C-24,-14 -26,-8 -32,-8 Z" fill="#17171C"/>
-        <circle cx="-11" cy="-6" r="2.5" fill="#17171C" stroke="none"/>
-        <circle cx="11" cy="-6" r="2.5" fill="#17171C" stroke="none"/>
-        <path d="M-8,10 Q0,17 8,10" fill="none" stroke-width="3.5"/>
-        <polygon points="-33,0 -25,0 -29,12" fill="#4F7942" stroke-width="2.5"/>
-        <polygon points="25,0 33,0 29,12" fill="#4F7942" stroke-width="2.5"/>
+    <!-- Avatar 2 (Bottom right): Friendly boy with periwinkle shirt -->
+    <g transform="translate(850,705)">
+      <circle r="60" fill="#E8DABB" stroke="#17171C" stroke-width="4"/>
+      <g clip-path="url(#igAvatarClip)">
+        <circle cx="0" cy="-18" r="42" fill="#17171C"/>
+        <circle cx="0" cy="-3" r="30" fill="#FAF8F5" stroke="#17171C" stroke-width="3"/>
+        <circle cx="-10" cy="-8" r="3.5" fill="#17171C"/>
+        <circle cx="10" cy="-8" r="3.5" fill="#17171C"/>
+        <path d="M-6,6 Q0,13 6,6" stroke="#17171C" stroke-width="3" fill="none"/>
+        <!-- Shirt in periwinkle -->
+        <path d="M-50,65 C-45,22 45,22 50,65 Z" fill="#8B8BE0" stroke="#17171C" stroke-width="3.5"/>
       </g>
-      <circle r="78" fill="none" stroke="#17171C" stroke-width="5"/>
     </g>
 
-    <!-- Avatar 3: bottom right -->
-    <g transform="translate(1241,678)">
-      <circle r="78" fill="#DC7856"/>
-      <g clip-path="url(#avatarClip)" stroke="#17171C" stroke-width="4">
-        <path d="M-74,82 C-70,42 -42,30 0,30 C42,30 70,42 74,82 Z" fill="#8B8BE0"/>
-        <path d="M-14,32 L0,58 L14,32 Z" fill="#FAF8F5"/>
-        <path d="M-4,40 L4,40 L6,74 L0,80 L-6,74 Z" fill="#4F7942" stroke-width="3"/>
-        <rect x="-12" y="8" width="24" height="28" rx="6" fill="#F0B896"/>
-        <ellipse cx="0" cy="-8" rx="31" ry="36" fill="#F0B896"/>
-        <path d="M-33,-6 C-40,-58 -10,-62 6,-60 C30,-60 42,-44 34,-6 C30,-26 14,-36 -4,-34 C-20,-34 -30,-22 -33,-6 Z" fill="#8B3A1A"/>
-        <path d="M-31,-2 C-30,30 -14,40 0,40 C14,40 30,30 31,-2 C26,12 14,16 0,16 C-14,16 -26,12 -31,-2 Z" fill="#8B3A1A"/>
-        <circle cx="-11" cy="-8" r="2.5" fill="#17171C" stroke="none"/>
-        <circle cx="11" cy="-8" r="2.5" fill="#17171C" stroke="none"/>
-        <path d="M-7,22 Q0,26 7,22" fill="none" stroke="#F0B896" stroke-width="3.5"/>
+    <!-- Avatar 3 (Left): Landlord with sage shirt -->
+    <g transform="translate(510,585)">
+      <circle r="48" fill="#E8DABB" stroke="#17171C" stroke-width="3.5"/>
+      <g clip-path="url(#igAvatarClip)">
+        <circle cx="0" cy="-14" r="34" fill="#17171C"/>
+        <circle cx="0" cy="-2" r="24" fill="#FAF8F5" stroke="#17171C" stroke-width="2.5"/>
+        <circle cx="-8" cy="-6" r="3" fill="#17171C"/>
+        <circle cx="8" cy="-6" r="3" fill="#17171C"/>
+        <path d="M-5,5 Q0,10 5,5" stroke="#17171C" stroke-width="2.5" fill="none"/>
+        <!-- Shirt in sage -->
+        <path d="M-40,50 C-36,18 36,18 40,50 Z" fill="#7A9160" stroke="#17171C" stroke-width="3"/>
       </g>
-      <circle r="78" fill="none" stroke="#17171C" stroke-width="5"/>
     </g>
 
+    <!-- Sprouts -->
+    <use href="#igSprout" transform="translate(130, 520)"/>
+    <use href="#igSprout" transform="translate(700, 680) scale(0.85)"/>
   </g>
+  <rect width="1400" height="780" filter="url(#igGrain)" opacity="0.12"/>
 </svg>

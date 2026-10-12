@@ -27,8 +27,8 @@ ARG VITE_REVERB_SCHEME=http
 WORKDIR /app
 
 # Dependency layer first for cache between builds.
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json package-lock.json .npmrc* ./
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 RUN npm run build

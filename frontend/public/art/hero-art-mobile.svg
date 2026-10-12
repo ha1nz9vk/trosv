@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 280" width="680" height="280" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Minh họa phòng trọ sinh viên: ngôi nhà, quyển sách và cây táo">
+  <defs>
+    <!-- Analog hand-drawn line wobble filter matching house-and-tree & book-and-fern -->
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <!-- Paper grain texture -->
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="5"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.35 0"/>
+    </filter>
+
+    <!-- Starburst (from book-and-fern.svg) -->
+    <g id="burst" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M-28,0 H28"/>
+      <path d="M-28,0 H28" transform="rotate(30)"/>
+      <path d="M-28,0 H28" transform="rotate(60)"/>
+      <path d="M-28,0 H28" transform="rotate(90)"/>
+      <path d="M-28,0 H28" transform="rotate(120)"/>
+      <path d="M-28,0 H28" transform="rotate(150)"/>
+    </g>
+
+    <!-- Sprout (from house-and-tree.svg) -->
+    <g id="sprout" fill="#7A9160" stroke="#17171C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0,0 V-22 M0,-10 q-16,-3 -16,-18 q14,2 16,18 M0,-13 q16,-3 16,-18 q-14,2 -16,18"/>
+    </g>
+
+    <!-- Cloud -->
+    <g id="cloud" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round">
+      <path d="M0,24 q-20,0 -20,-16 q0,-16 20,-14 q5,-20 28,-18 q20,2 22,20 q18,1 17,17 q-1,11 -17,11 Z"/>
+    </g>
+  </defs>
+
+  <!-- Clean canvas base -->
+  <rect width="680" height="280" rx="20" fill="none"/>
+
+  <g filter="url(#rough)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- TILE 1: Cottage (Left) -->
+    <g transform="translate(18, 16)">
+      <rect width="204" height="248" rx="16" fill="#DFD0AE" stroke="#17171C" stroke-width="4"/>
+      
+      <!-- Tiny clouds & sparkles -->
+      <use href="#cloud" transform="translate(42, 42) scale(0.65)"/>
+      <use href="#burst" stroke="#DC7856" transform="translate(170, 48) scale(0.5)"/>
+      <circle cx="140" cy="35" r="5" fill="#FAF8F5"/>
+
+      <!-- Chimney + smoke -->
+      <rect x="52" y="78" width="18" height="34" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5"/>
+      <path d="M61,72 c-6,-10 6,-16 0,-26 c-5,-9 6,-15 2,-24" fill="none" stroke="#17171C" stroke-width="3"/>
+
+      <!-- Roof -->
+      <polygon points="26,134 102,68 178,134" fill="#DC7856"/>
+      <path d="M22,134 L102,64 L182,134" fill="none" stroke="#17171C" stroke-width="4.5"/>
+
+      <!-- House body -->
+      <polygon points="38,134 166,134 166,218 38,218" fill="#FAF8F5" stroke="#17171C" stroke-width="4"/>
+
+      <!-- Windows -->
+      <rect x="50" y="146" width="28" height="32" fill="#8B8BE0" stroke="#17171C" stroke-width="3"/>
+      <path d="M64,146 V178 M50,162 H78" fill="none" stroke="#17171C" stroke-width="2.5"/>
+
+      <!-- Door -->
+      <path d="M106,218 V168 a16,16 0 0 1 32,0 V218 Z" fill="#7A9160" stroke="#17171C" stroke-width="3.5"/>
+      <circle cx="130" cy="195" r="3" fill="#17171C"/>
+
+      <!-- Ground line + sprouts -->
+      <path d="M10,222 H194" fill="none" stroke="#17171C" stroke-width="4"/>
+      <use href="#sprout" transform="translate(24, 222) scale(0.7)"/>
+      <use href="#sprout" transform="translate(180, 222) scale(0.7)"/>
+    </g>
+
+    <!-- TILE 2: Book & Fern (Center) -->
+    <g transform="translate(238, 16)">
+      <rect width="204" height="248" rx="16" fill="#8B8BE0" stroke="#17171C" stroke-width="4"/>
+
+      <!-- Terracotta sun behind book -->
+      <circle cx="102" cy="100" r="56" fill="#DC7856"/>
+
+      <!-- Sparkles -->
+      <use href="#burst" stroke="#FAF8F5" transform="translate(32, 44) scale(0.55)"/>
+      <use href="#burst" stroke="#17171C" transform="translate(172, 52) scale(0.45)"/>
+      <circle cx="150" cy="30" r="4.5" fill="#FAF8F5"/>
+
+      <!-- Desk surface -->
+      <rect x="12" y="196" width="180" height="36" rx="6" fill="#D4A27F" stroke="#17171C" stroke-width="3.5"/>
+
+      <!-- Open Book -->
+      <g transform="translate(102, 188)">
+        <!-- Covers -->
+        <path d="M-66,-10 L-4,0 L-4,24 L-66,14 Z" fill="#D4A27F" stroke="#17171C" stroke-width="3.5"/>
+        <path d="M4,0 L66,-10 L66,14 L4,24 Z" fill="#D4A27F" stroke="#17171C" stroke-width="3.5"/>
+        <!-- Pages -->
+        <path d="M-62,-14 L-4,-4 L-4,20 L-62,10 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5"/>
+        <path d="M4,-4 L62,-14 L62,10 L4,20 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="3.5"/>
+        <!-- Text lines -->
+        <path d="M-52,-6 L-12,2 M-52,0 L-12,8" fill="none" stroke="#17171C" stroke-width="2"/>
+        <path d="M12,2 L52,-6 M12,8 L52,0" fill="none" stroke="#17171C" stroke-width="2"/>
+
+        <!-- Sprout growing from spine -->
+        <g transform="translate(0, -6)">
+          <path d="M0,0 V-42" fill="none" stroke="#17171C" stroke-width="3.5"/>
+          <path d="M0,-16 q-18,-4 -18,-20 q16,2 18,20" fill="#7A9160" stroke="#17171C" stroke-width="3"/>
+          <path d="M0,-24 q18,-4 18,-20 q-16,2 -18,20" fill="#7A9160" stroke="#17171C" stroke-width="3"/>
+          <path d="M0,-36 q-14,-3 -14,-16 q13,2 14,16" fill="#7A9160" stroke="#17171C" stroke-width="2.5"/>
+          <path d="M0,-40 q14,-3 14,-16 q-13,2 -14,16" fill="#7A9160" stroke="#17171C" stroke-width="2.5"/>
+        </g>
+      </g>
+
+      <!-- Little study cup -->
+      <rect x="26" y="174" width="16" height="22" rx="3" fill="#FAF8F5" stroke="#17171C" stroke-width="2.5"/>
+      <path d="M42,178 a4,4 0 0 1 0,8" fill="none" stroke="#17171C" stroke-width="2"/>
+    </g>
+
+    <!-- TILE 3: Apple Tree & Birds (Right) -->
+    <g transform="translate(458, 16)">
+      <rect width="204" height="248" rx="16" fill="#FFD23F" stroke="#17171C" stroke-width="4"/>
+
+      <!-- Flying birds -->
+      <path d="M40,42 q8,-9 16,0 q8,-9 16,0" fill="none" stroke="#17171C" stroke-width="3"/>
+      <path d="M88,62 q6,-7 12,0 q6,-7 12,0" fill="none" stroke="#17171C" stroke-width="2.5"/>
+      <use href="#burst" stroke="#FAF8F5" transform="translate(165, 42) scale(0.5)"/>
+
+      <!-- Tree Trunk -->
+      <path d="M96,218 C94,180 98,150 92,120 L112,120 C108,150 112,180 114,218 Z" fill="#D4A27F" stroke="#17171C" stroke-width="4"/>
+      <path d="M102,145 C114,134 128,130 138,112" fill="none" stroke="#17171C" stroke-width="3.5"/>
+      <path d="M100,155 C88,144 76,140 68,124" fill="none" stroke="#17171C" stroke-width="3.5"/>
+
+      <!-- Lush Canopies (Olive green) -->
+      <circle cx="82" cy="100" r="38" fill="#7A9160"/>
+      <circle cx="128" cy="74" r="36" fill="#7A9160"/>
+      <circle cx="132" cy="126" r="30" fill="#7A9160"/>
+      <circle cx="78" cy="96" r="38" fill="none" stroke="#17171C" stroke-width="3.5"/>
+      <circle cx="124" cy="70" r="36" fill="none" stroke="#17171C" stroke-width="3.5"/>
+      <circle cx="128" cy="122" r="30" fill="none" stroke="#17171C" stroke-width="3.5"/>
+
+      <!-- Red apples on tree -->
+      <circle cx="68" cy="90" r="5.5" fill="#DC7856" stroke="#17171C" stroke-width="2.5"/>
+      <circle cx="138" cy="62" r="5.5" fill="#DC7856" stroke="#17171C" stroke-width="2.5"/>
+      <circle cx="122" cy="130" r="5.5" fill="#DC7856" stroke="#17171C" stroke-width="2.5"/>
+      <circle cx="98" cy="65" r="5.5" fill="#DC7856" stroke="#17171C" stroke-width="2.5"/>
+
+      <!-- Ground line + sprouts -->
+      <path d="M10,222 H194" fill="none" stroke="#17171C" stroke-width="4"/>
+      <use href="#sprout" transform="translate(46, 222) scale(0.7)"/>
+      <use href="#sprout" transform="translate(156, 222) scale(0.7)"/>
+    </g>
+  </g>
+
+  <!-- Paper grain overlay -->
+  <rect width="680" height="280" rx="20" filter="url(#grain)" opacity="0.3"/>
+</svg>

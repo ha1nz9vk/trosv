@@ -1,5 +1,5 @@
 /* TROSV map pins: white pills, 1px ink border, small tail, tabular numbers.
-   Hover and selected turn clay. Clusters are ink circles with cream numbers. */
+   Hover and selected turn plate. Clusters are ink circles with paper numbers. */
 
 .trosv-pin-wrap {
   background: transparent !important;
@@ -40,16 +40,23 @@
 
 .trosv-pin:hover,
 .trosv-pin--selected {
-  background: var(--color-clay);
-  border-color: var(--color-clay);
+  background: var(--color-plate);
+  border-color: var(--color-plate);
+  color: #fff;
+}
+
+.trosv-pin:hover::after,
+.trosv-pin--selected::after {
+  background: var(--color-plate);
+  border-color: var(--color-plate);
 }
 
 .trosv-pin:focus-visible {
-  outline: 2px solid var(--color-clay);
+  outline: 2px solid var(--color-plate);
   outline-offset: 2px;
 }
 
-/* Cluster: ink circle with cream number */
+/* Cluster: ink circle with paper number */
 .trosv-cluster-wrap {
   background: transparent !important;
   border: 0 !important;
@@ -63,7 +70,7 @@
   justify-content: center;
   border-radius: 50%;
   background: var(--color-ink);
-  color: var(--color-cream);
+  color: var(--color-paper);
   font: 600 13px var(--font-sans);
   font-variant-numeric: tabular-nums;
   box-shadow: none;
@@ -90,3 +97,28 @@
   color: var(--color-ink) !important;
   border: 1px solid var(--color-line) !important;
 }
+
+/* Dark mode overrides for map controls & pins */
+.dark .trosv-pin {
+  background: var(--color-card);
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+}
+
+.dark .trosv-pin::after {
+  background: var(--color-card);
+  border-right-color: var(--color-line-strong);
+  border-bottom-color: var(--color-line-strong);
+}
+
+.dark .leaflet-bar a {
+  background: var(--color-card) !important;
+  color: var(--color-ink) !important;
+  border: 1px solid var(--color-line) !important;
+}
+
+.dark .leaflet-control-attribution {
+  background: rgba(19, 25, 35, 0.85);
+  color: var(--color-muted);
+}
+

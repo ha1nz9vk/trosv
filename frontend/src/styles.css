@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 @import "@fontsource-variable/inter/index.css";
 @import "@fontsource-variable/inter-tight/index.css";
 @import "leaflet/dist/leaflet.css";
@@ -6,257 +7,212 @@
 @import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 /*
-  TROSV design tokens. Palette roles (SPEC.md skeleton):
-  cream page, ivory chrome, oat blocks, ink text, clay accent.
+  TROSV design tokens.
+
+  Direction: Vietnamese street-name plates (white on deep blue) and the
+  paper flyers taped to lampposts. Blue carries navigation and the main
+  action; yellow is the single highlight and marks price or distance.
+  Everything else is quiet neutral paper and ink.
 */
+:root {
+    --color-paper: #f5f6f8;
+    --color-card: #ffffff;
+    --color-tint: #eceef2;
+    --color-sunken: #e2e5eb;
+    --color-line: #e1e4ea;
+    --color-line-strong: #b4bbc7;
+    --color-ink: #10141b;
+    --color-ink-2: #2e3440;
+    --color-muted: #566070;
+
+    --color-plate: #17479e;
+    --color-plate-hover: #113a85;
+    --color-plate-tint: #e4ebf7;
+    --color-flyer: #ffd23f;
+    --color-moss: #2e7d5b;
+    --color-moss-tint: #e1f1e9;
+    --color-danger: #c0392b;
+    --color-danger-tint: #fbe9e6;
+
+    --shadow-pop: 0 8px 24px -8px rgb(16 20 27 / 0.28), 0 0 0 1px rgb(16 20 27 / 0.04);
+}
+
+.dark {
+    --color-paper: #0b0f17;
+    --color-card: #131923;
+    --color-tint: #1a2230;
+    --color-sunken: #090c13;
+    --color-line: #222b3a;
+    --color-line-strong: #36445a;
+    --color-ink: #f0f3f8;
+    --color-ink-2: #c5cedd;
+    --color-muted: #8390a3;
+
+    --color-plate: #3b82f6;
+    --color-plate-hover: #60a5fa;
+    --color-plate-tint: #162544;
+    --color-flyer: #fbbf24;
+    --color-moss: #34d399;
+    --color-moss-tint: #064e3b;
+    --color-danger: #f87171;
+    --color-danger-tint: #450a0a;
+
+    --shadow-pop: 0 12px 32px -8px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 255 255 / 0.08);
+}
+
 @theme {
-    --color-cream: #faf9f0;
-    --color-ivory: #f0eee6;
-    --color-oat: #eae4d8;
-    --color-clay: #d97757;
-    --color-clay-hover: #cc785c;
-    --color-clay-tint: #f6e3db;
-    --color-olive: #d97757;
-    --color-line: #e8e6dc;
-    --color-line-strong: #b0aea5;
-    --color-ink: #000000;
-    --color-ink-2: #333333;
-    --color-muted: #595959;
+    --color-paper: var(--color-paper);
+    --color-card: var(--color-card);
+    --color-tint: var(--color-tint);
+    --color-sunken: var(--color-sunken);
+    --color-line: var(--color-line);
+    --color-line-strong: var(--color-line-strong);
+    --color-ink: var(--color-ink);
+    --color-ink-2: var(--color-ink-2);
+    --color-muted: var(--color-muted);
+
+    --color-plate: var(--color-plate);
+    --color-plate-hover: var(--color-plate-hover);
+    --color-plate-tint: var(--color-plate-tint);
+    --color-flyer: var(--color-flyer);
+    --color-moss: var(--color-moss);
+    --color-moss-tint: var(--color-moss-tint);
+    --color-danger: var(--color-danger);
+    --color-danger-tint: var(--color-danger-tint);
 
     --font-sans: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-display: "Inter Tight Variable", "Inter Variable", system-ui, sans-serif;
-    --font-serif: "Inter Variable", system-ui, sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 
-    --radius-s: 8px;
-    --radius-m: 12px;
-    --radius-l: 24px;
+    /* One radius scale: tags, controls, panels. Avatars and pills use full. */
+    --radius-*: initial;
+    --radius-xs: 2px;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-full: 9999px;
 
-    --text-xs: 0.75rem;
-    --text-sm: 0.875rem;
-    --text-base: 1rem;
-    --text-lg: 1.125rem;
-    --text-xl: 1.25rem;
-    --text-2xl: 1.5rem;
-    --text-3xl: 2rem;
-    --text-4xl: 3rem;
+    /* Floating surfaces only (menus, popovers). Cards stay flat. */
+    --shadow-pop: var(--shadow-pop);
 
     --nav-h: 56px;
-    --bar-h: 55px;
-    --tab-h: 56px;
-    --rail-w: 64px;
+
+    --animate-fade-in: fade-in 140ms ease-out;
+    --animate-fade-out: fade-out 100ms ease-in;
+    --animate-pop-in: pop-in 140ms ease-out;
+    --animate-pop-out: pop-out 100ms ease-in;
+    --animate-fade-up: fade-up 200ms cubic-bezier(0.16, 1, 0.3, 1);
+
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+    }
+    @keyframes fade-out {
+        to {
+            opacity: 0;
+        }
+    }
+    @keyframes pop-in {
+        from {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+    }
+    @keyframes pop-out {
+        to {
+            opacity: 0;
+            transform: scale(0.97);
+        }
+    }
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 }
 
-:root {
-    /* shadcn CSS variables mapped onto the TROSV tokens (single source of
-       truth). Dark zinc/slate defaults replaced everywhere. */
-    --background: var(--color-cream);
-    --foreground: var(--color-ink);
-    --card: #ffffff;
-    --card-foreground: var(--color-ink);
-    --popover: #ffffff;
-    --popover-foreground: var(--color-ink);
-    --primary: var(--color-ink);
-    --primary-foreground: var(--color-cream);
-    --secondary: var(--color-ivory);
-    --secondary-foreground: var(--color-ink);
-    --muted: var(--color-ivory);
-    --muted-foreground: var(--color-muted);
-    --accent: var(--color-ivory);
-    --accent-foreground: var(--color-ink);
-    --destructive: #b3261e;
-    --border: var(--color-line);
-    --input: var(--color-line-strong);
-    --ring: var(--color-clay);
-    --radius: 12px;
-}
 @media (min-width: 890px) {
     :root {
         --nav-h: 72px;
     }
 }
 
-body {
-    background: var(--color-cream);
-    color: var(--color-ink);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
+/* Base layer: utilities must be able to override these. */
+@layer base {
+    body {
+        background: var(--color-paper);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* Generous line-height keeps stacked Vietnamese diacritics clear. */
+    h1 {
+        font-family: var(--font-display);
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
+        text-wrap: balance;
+    }
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: -0.005em;
+        line-height: 1.25;
+        text-wrap: balance;
+    }
+    h4 {
+        font-weight: 600;
+        line-height: 1.3;
+        text-wrap: balance;
+    }
+    p {
+        text-wrap: pretty;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-plate);
+        outline-offset: 2px;
+    }
 }
 
-/* Headings: Zillow-style display cut (Inter Tight, tight + heavy),
-   generous line-height for Vietnamese diacritics */
-h1 {
-    font-family: var(--font-display);
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    text-wrap: balance;
-}
-h2,
-h3 {
-    font-family: var(--font-display);
-    font-weight: 800;
-    letter-spacing: -0.015em;
-    line-height: 1.2;
-    text-wrap: balance;
-}
-h4 {
-    font-family: var(--font-sans);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1.25;
-    text-wrap: balance;
-}
-p,
-.paragraph {
-    text-wrap: pretty;
+/*
+  =============================================================================
+  TROSV Motion Utilities
+  Subtle, snappy (120-200ms), easy to trace/edit/maintain.
+  =============================================================================
+*/
+@layer utilities {
+    /* Smooth card hover lift & shadow */
+    .motion-card {
+        transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms ease;
+    }
+    .motion-card:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Tactile button press feedback */
+    .motion-press {
+        transition: transform 120ms ease;
+    }
+    .motion-press:active {
+        transform: scale(0.98);
+    }
+
+    /* Subtle page/panel entrance fade-up */
+    .motion-fade-up {
+        animation: fade-up 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
 }
 
-/* Flat design: borders instead of shadows */
-input:not([type="checkbox"]):not([type="radio"]),
-textarea,
-select {
-    border: 1px solid var(--color-line-strong);
-    background: #fff;
-}
-
-/* Leaflet: warm the tiles to match the TROSV palette */
-.leaflet-tile-pane {
-    filter: sepia(0.18) saturate(0.85) contrast(0.95);
-}
-
-/* Hand-drawn rules for the chrome separators (header, rail, footer).
-   Seamless wobble tiles: path endpoints meet at midline with matching
-   tangents, so repeats never show a seam. */
-.rule-x {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='6' viewBox='0 0 120 6'%3E%3Cpath d='M0 3C20 1.5 40 4.5 60 3C80 1.5 100 4.5 120 3' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: repeat-x;
-    background-position: center;
-    background-size: 120px 6px;
-}
-
-.rule-y {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='120' viewBox='0 0 6 120'%3E%3Cpath d='M3 0C1.5 20 4.5 40 3 60C1.5 80 4.5 100 3 120' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: repeat-y;
-    background-position: center;
-    background-size: 6px 120px;
-}
-
-/* Hand-drawn wobble radii (matches the site art): asymmetric corners
-   clamp into organic shapes at any size. These plain rules beat the
-   layered Tailwind utilities by cascade order.
-   Three rotating flavors per token so repeated siblings never match:
-   base, even-sibling mirror, every-third rotation. */
-.rounded-lg {
-    border-radius: 12px 4px 10px 5px / 5px 10px 4px 12px;
-}
-
-div.rounded-lg:nth-of-type(2n),
-button.rounded-lg:nth-of-type(2n),
-a.rounded-lg:nth-of-type(2n) {
-    border-radius: 4px 12px 5px 10px / 10px 5px 12px 4px;
-}
-
-div.rounded-lg:nth-of-type(3n),
-button.rounded-lg:nth-of-type(3n),
-a.rounded-lg:nth-of-type(3n) {
-    border-radius: 10px 5px 12px 4px / 4px 12px 5px 10px;
-}
-
-.rounded-xl {
-    border-radius: 26px 5px 21px 6px / 6px 21px 5px 26px;
-}
-
-div.rounded-xl:nth-of-type(2n),
-button.rounded-xl:nth-of-type(2n),
-a.rounded-xl:nth-of-type(2n),
-input.rounded-xl:nth-of-type(2n) {
-    border-radius: 5px 26px 6px 21px / 21px 6px 26px 5px;
-}
-
-div.rounded-xl:nth-of-type(3n),
-button.rounded-xl:nth-of-type(3n),
-a.rounded-xl:nth-of-type(3n),
-input.rounded-xl:nth-of-type(3n) {
-    border-radius: 21px 6px 26px 5px / 5px 26px 6px 21px;
-}
-
-.rounded-2xl {
-    border-radius: 28px 8px 24px 10px / 10px 24px 8px 28px;
-}
-
-div.rounded-2xl:nth-of-type(2n),
-button.rounded-2xl:nth-of-type(2n),
-a.rounded-2xl:nth-of-type(2n) {
-    border-radius: 8px 28px 10px 24px / 24px 10px 28px 8px;
-}
-
-div.rounded-2xl:nth-of-type(3n),
-button.rounded-2xl:nth-of-type(3n),
-a.rounded-2xl:nth-of-type(3n) {
-    border-radius: 24px 10px 28px 8px / 8px 28px 10px 24px;
-}
-
-.rounded-3xl {
-    border-radius: 40px 12px 34px 14px / 14px 34px 12px 40px;
-}
-
-div.rounded-3xl:nth-of-type(2n),
-button.rounded-3xl:nth-of-type(2n),
-a.rounded-3xl:nth-of-type(2n) {
-    border-radius: 12px 40px 14px 34px / 34px 14px 40px 12px;
-}
-
-div.rounded-3xl:nth-of-type(3n),
-button.rounded-3xl:nth-of-type(3n),
-a.rounded-3xl:nth-of-type(3n) {
-    border-radius: 34px 14px 40px 12px / 12px 40px 14px 34px;
-}
-
-.rounded-full {
-    border-radius: 999px 840px 990px 860px / 860px 990px 840px 999px;
-}
-
-div.rounded-full:nth-of-type(2n),
-button.rounded-full:nth-of-type(2n),
-a.rounded-full:nth-of-type(2n) {
-    border-radius: 840px 999px 860px 990px / 990px 860px 999px 840px;
-}
-
-div.rounded-full:nth-of-type(3n),
-button.rounded-full:nth-of-type(3n),
-a.rounded-full:nth-of-type(3n) {
-    border-radius: 990px 860px 999px 840px / 840px 999px 860px 990px;
-}
-
-.rounded-t-2xl {
-    border-top-left-radius: 26px 22px;
-    border-top-right-radius: 10px 26px;
-}
-
-.rounded-tr-md {
-    border-top-right-radius: 12px 8px;
-}
-
-.rounded-tl-md {
-    border-top-left-radius: 12px 8px;
-}
-
-/* Explicit wobble flavors for isolated elements (stacked form inputs,
-   role pills): nth-of-type rotation can't reach them, so flavors are
-   assigned by hand. Later in the file = wins. */
-.wobble-b {
-    border-radius: 5px 26px 6px 21px / 21px 6px 26px 5px;
-}
-
-.wobble-c {
-    border-radius: 21px 6px 26px 5px / 5px 26px 6px 21px;
-}
-
-.wobble-d {
-    border-radius: 6px 21px 5px 26px / 26px 5px 21px 6px;
-}
-
-/* Reduce motion globally */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -267,3 +223,23 @@ a.rounded-full:nth-of-type(3n) {
         scroll-behavior: auto !important;
     }
 }
+
+/*
+  Dark Mode adjustments for map tiles, logo, and surfaces
+*/
+.dark .trosv-logo {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+.dark .leaflet-tile-pane {
+    filter: brightness(0.65) invert(1) contrast(2.2) hue-rotate(190deg) saturate(0.35) brightness(0.85);
+}
+
+.dark .leaflet-container {
+    background: #0b0f17 !important;
+}
+
+body, header, nav, footer {
+    transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+

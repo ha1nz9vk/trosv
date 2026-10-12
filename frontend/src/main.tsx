@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import "./styles.css";
 
+import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import type { UserRole } from "./types/api";
 import { ROUTES } from "./constants/routes";
@@ -113,13 +114,29 @@ const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
     children: [
       { path: ROUTES.ROOMS, element: <Search /> },
-      { path: "/map", element: <Navigate to={`${ROUTES.ROOMS}?view=map`} replace /> },
+      { path: "/map", element: <Navigate to={ROUTES.ROOMS} replace /> },
       /* Messages + thread render their own signed-out gate (SPEC) instead
          of a login redirect, so they stay outside ProtectedRoute. */
-      { path: ROUTES.MESSAGES, element: <Messages /> },
-      { path: ROUTES.CONVERSATION, element: <ConversationDetail /> },
-      /* Favorites renders its own gate + footer (SPEC). */
-      { path: ROUTES.FAVORITES, element: <Favorites /> },
+      {
+        path: ROUTES.MESSAGES,
+        element: <Messages />,
+        children: [
+          {
+            index: true,
+            element: (
+              <div className="hidden h-full flex-col items-center justify-center p-8 text-center text-muted md:flex">
+                <div className="max-w-xs">
+                  <p className="font-semibold text-ink">Chưa chọn cuộc trò chuyện</p>
+                  <p className="mt-1 text-sm">
+                    Chọn một người trong danh sách bên trái để xem tin nhắn.
+                  </p>
+                </div>
+              </div>
+            ),
+          },
+          { path: ":id", element: <ConversationDetail /> },
+        ],
+      },
       {
         path: ROUTES.AI_ROOMMATES,
         element: (
@@ -144,6 +161,7 @@ const router = createBrowserRouter([
     children: [
       { path: ROUTES.HOME, element: <Home /> },
       { path: ROUTES.ROOM_DETAIL, element: <RoomDetail /> },
+      { path: ROUTES.FAVORITES, element: <Favorites /> },
       {
         path: ROUTES.PROFILE,
         element: (
@@ -185,10 +203,12 @@ const router = createBrowserRouter([
 function Root() {
   return (
     <StrictMode>
-      <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+          <Toaster />
+        </AuthProvider>
+      </ThemeProvider>
     </StrictMode>
   );
 }
