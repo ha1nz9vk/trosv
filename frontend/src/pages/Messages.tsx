@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { GateScreen, MessagesGateIllustration } from "@/pages/gates";
 import { Footer } from "@/ui/shell";
@@ -18,7 +17,7 @@ export default function Messages() {
   if (loading) return null;
   if (!user) {
     return (
-      <div className="flex min-h-[calc(100svh-var(--nav-h))] flex-col bg-white">
+      <div className="flex min-h-[calc(100svh-var(--nav-h))] flex-col bg-card">
         <GateScreen
           testId="messages-gate"
           title="Trung tâm tin nhắn"
@@ -33,5 +32,3 @@ export default function Messages() {
   }
   return <MessagesList />;
 }
-
-export { Link as _LinkDeprecated };

@@ -5,7 +5,7 @@ import { getConversations } from "@/api/socialApi";
 import type { Conversation } from "@/types/api";
 import { CONV_PREVIEW_EVENT, type ConvPreviewDetail } from "@/constants/events";
 import { Avatar } from "@/ui/avatar";
-import { Badge, Skeleton } from "@/ui/badge";
+import { Skeleton } from "@/ui/badge";
 import { EmptyState } from "@/ui/empty-state";
 import { timeAgo } from "@/api/format";
 import { cn } from "@/lib/utils";
@@ -73,15 +73,23 @@ export default function MessagesList() {
     () => (
       <div
         className={cn(
-          "min-w-0 flex-1 md:max-w-[340px] md:flex-none",
-          isThreadOpen && "hidden md:block"
+          "flex min-w-0 flex-1 flex-col md:max-w-[340px] md:flex-none border-r border-line bg-card h-full max-h-full overflow-hidden",
+          isThreadOpen && "hidden md:flex"
         )}
       >
+        <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3.5 bg-paper/50">
+          <h2 className="font-semibold text-base text-ink">Tin nhắn</h2>
+          {convs.length > 0 ? (
+            <span className="rounded-full bg-tint px-2 py-0.5 text-xs font-medium text-ink-2">
+              {convs.length}
+            </span>
+          ) : null}
+        </div>
         {loading ? (
-          <div className="flex flex-col gap-2 p-2">
-            <Skeleton className="h-16" />
-            <Skeleton className="h-16" />
-            <Skeleton className="h-16" />
+          <div className="flex flex-col gap-2 p-3">
+            <Skeleton className="h-16 rounded-xl" />
+            <Skeleton className="h-16 rounded-xl" />
+            <Skeleton className="h-16 rounded-xl" />
           </div>
         ) : convs.length === 0 ? (
           <EmptyState
@@ -90,7 +98,7 @@ export default function MessagesList() {
             action={
               <Link
                 to={ROUTES.ROOMS}
-                className="rounded-xl border border-ink px-4 py-2 text-sm font-medium hover:bg-ivory"
+                className="inline-flex h-9 items-center justify-center rounded-lg bg-plate px-4 text-sm font-semibold text-white shadow-xs hover:bg-plate-hover transition-colors"
               >
                 Tìm phòng
               </Link>
@@ -98,35 +106,39 @@ export default function MessagesList() {
             className="py-10"
           />
         ) : (
-          <ul className="flex flex-col overflow-y-auto">
+          <ul className="flex flex-1 min-h-0 flex-col overflow-y-auto divide-y divide-line">
             {convs.map((c) => {
               const other = c.other_user?.name ?? "Người dùng";
+              const isActive = isThreadOpen && c.id === Number(id);
               return (
-                <li key={c.id} className="border-b border-line last:border-b-0">
+                <li key={c.id}>
                   <Link
                     to={route(ROUTES.CONVERSATION, { id: c.id })}
                     data-testid={`conversation-${c.id}`}
                     className={cn(
-                      "flex items-center gap-3 p-4 transition-colors hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-clay",
-                      (isThreadOpen && c.id === Number(id)) && "bg-ivory"
+                      "flex items-center gap-3 p-3.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-plate",
+                      isActive
+                        ? "bg-plate-tint/70 border-l-4 border-plate"
+                        : "border-l-4 border-transparent hover:bg-tint"
                     )}
                   >
                     <Avatar name={other} size={40} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-ink">{other}</p>
-                      <p className="truncate text-sm text-muted">
-                        {c.listing?.title ?? "Hội thoại trực tiếp"}
+                      <p className={cn("truncate text-sm text-ink", isActive ? "font-semibold" : "font-medium")}>
+                        {other}
                       </p>
-                      <p className="truncate text-sm text-ink-2">
+                      <p className="truncate text-xs text-muted mt-0.5">
                         {c.last_message?.body ?? ""}
                       </p>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-xs text-muted tabular-nums">
+                    <div className="flex flex-col items-end gap-1.5 shrink-0">
+                      <span className="text-[11px] text-muted tabular-nums">
                         {c.last_message?.created_at ? timeAgo(c.last_message.created_at) : ""}
                       </span>
                       {c.unread_count && c.unread_count > 0 ? (
-                        <Badge>{c.unread_count}</Badge>
+                        <span className="flex size-5 items-center justify-center rounded-full bg-plate text-[10px] font-bold text-white">
+                          {c.unread_count}
+                        </span>
                       ) : null}
                     </div>
                   </Link>
@@ -141,14 +153,18 @@ export default function MessagesList() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-var(--nav-h))] min-h-0">
+    <div
+      className={cn(
+        "flex flex-col md:flex-row min-h-0 flex-1 bg-card h-full max-h-full overflow-hidden"
+      )}
+    >
       {sidebar}
       {/* Thread pane on desktop; on mobile the /messages/:id route renders
           inside the same Outlet region when a conversation is selected. */}
       <div
         className={cn(
-          "min-w-0 flex-1 border-l border-line",
-          !isThreadOpen && "hidden md:block"
+          "min-w-0 flex-1 border-l border-line flex flex-col h-full max-h-full min-h-0 overflow-hidden",
+          !isThreadOpen && "hidden md:flex"
         )}
       >
         <Outlet />

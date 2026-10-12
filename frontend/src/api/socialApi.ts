@@ -1,14 +1,14 @@
 import api from "./axiosClient";
 import { envelope, envelopeArray, pagedEnvelope } from "./envelope";
-import type { Conversation, Favorite, Message, MessagePayload } from "../types/api";
+import type { Conversation, Listing, Message, MessagePayload } from "../types/api";
 import type { Paged } from "./listingApi";
 
 // API_CONTRACT §4 - "Yêu thích (sinh viên)"
-export const getFavorites = (page = 1): Promise<Paged<Favorite>> =>
+export const getFavorites = (page = 1): Promise<Paged<Listing>> =>
   api
     .get("/favorites", { params: { page } })
     .then((r) => {
-      const body = pagedEnvelope<Favorite>(r);
+      const body = pagedEnvelope<Listing>(r);
       return { data: body.data, meta: body.meta };
     });
 

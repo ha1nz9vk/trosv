@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ROUTES, route } from "@/constants/routes";
 import {
@@ -6,10 +6,8 @@ import {
 } from "@/hooks/useConversationData";
 import { useConversationRealtime } from "@/hooks/useConversationRealtime";
 import { useConversationMessages } from "@/hooks/useConversationMessages";
-import { useMessageMenu } from "@/hooks/useMessageMenu";
 import { useStickToBottom } from "@/hooks/useStickToBottom";
 import { CONV_PREVIEW_EVENT, type ConvPreviewDetail } from "@/constants/events";
-import type { Message } from "@/types/api";
 import { getEcho } from "@/api/echo";
 import { Avatar } from "@/ui/avatar";
 import { Button } from "@/ui/button";
@@ -21,15 +19,17 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/context/AuthContext";
 import { GateScreen, MessagesGateIllustration } from "@/pages/gates";
 import { Footer } from "@/ui/shell";
+import { MessageBubble } from "@/pages/messages/MessageBubble";
 import {
   Paperclip,
   ArrowDown,
-  MoreVertical,
   ChevronDown,
+  X,
+  FileText,
+  Send,
 } from "lucide-react";
 
 const MESSAGE_MAX = 1000;
-const EMOJIS = ["👍", "❤️", "😂", "😮", "😢", "😠"] as const;
 
 function dayKey(iso: string): string {
   return new Date(iso).toDateString();
@@ -45,6 +45,18 @@ function DaySeparator({ label }: { label: string }) {
   );
 }
 
+function TimeSeparator({ date }: { date: string }) {
+  const d = new Date(date);
+  const timeStr = d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  return (
+    <div className="flex items-center justify-center py-2 my-1" aria-hidden={false}>
+      <span className="rounded-full bg-sunken/60 px-2.5 py-0.5 text-[11px] font-medium text-muted">
+        {timeStr}
+      </span>
+    </div>
+  );
+}
+
 function formatDayLabel(iso: string): string {
   const d = new Date(iso);
   const today = new Date();
@@ -55,175 +67,12 @@ function formatDayLabel(iso: string): string {
   return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-interface BubbleProps {
-  msg: Message;
-  isMine: boolean;
-  grouped: boolean;
-  onReact: (m: Message, emoji: string) => void;
-  menu: ReturnType<typeof useMessageMenu>;
-  onUnsend: (m: Message) => void;
-  onDeleteSelf: (m: Message) => void;
-}
-
-function Bubble({
-  msg,
-  isMine,
-  grouped,
-  onReact,
-  menu,
-  onUnsend,
-  onDeleteSelf,
-}: BubbleProps) {
-  if (msg.is_unsent) {
-    return (
-      <p
-        className={cn(
-          "rounded-xl px-3 py-2 text-sm italic text-muted",
-          isMine ? "self-end bg-ivory" : "self-start bg-ivory"
-        )}
-      >
-        Tin nhắn đã được thu hồi
-      </p>
-    );
-  }
-  const reactions = Object.values(msg.reactions ?? {});
-  const menuOpen = menu.menuFor === msg.id;
-
-  return (
-    <div
-      className={cn(
-        "chat-bubble-wrap group relative flex max-w-[75%] flex-col",
-        isMine ? "self-end items-end" : "self-start items-start"
-      )}
-    >
-      {isMine && msg.attachment_url ? (
-        <a
-          href={msg.attachment_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="overflow-hidden rounded-xl border border-line"
-        >
-          {msg.attachment_name?.match(/\.(jpg|jpeg|png)$/i) ? (
-            <img src={msg.attachment_url} alt={msg.attachment_name} className="max-h-60" />
-          ) : (
-            <span className="flex items-center gap-2 bg-white px-3 py-2 text-sm">{msg.attachment_name}</span>
-          )}
-        </a>
-      ) : !isMine && msg.attachment_url ? (
-        <a
-          href={msg.attachment_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="overflow-hidden rounded-xl border border-line"
-        >
-          {msg.attachment_name?.match(/\.(jpg|jpeg|png)$/i) ? (
-            <img src={msg.attachment_url} alt={msg.attachment_name} className="max-h-60" />
-          ) : (
-            <span className="flex items-center gap-2 bg-white px-3 py-2 text-sm">{msg.attachment_name}</span>
-          )}
-        </a>
-      ) : null}
-      {msg.body ? (
-        <div
-          className={cn(
-            "rounded-2xl px-3.5 py-2 text-[15px] leading-relaxed whitespace-pre-wrap",
-            grouped && (isMine ? "rounded-tr-md" : "rounded-tl-md"),
-            isMine ? "bg-ink text-cream" : "bg-ivory text-ink"
-          )}
-        >
-          {msg.body}
-          {reactions.length > 0 ? (
-            <span
-              className={cn(
-                "absolute -bottom-2 flex gap-0.5 rounded-full border border-line bg-white px-1.5 text-xs",
-                isMine ? "right-2" : "left-2"
-              )}
-            >
-              {reactions.slice(0, 3).map((emoji, i) => (
-                <span key={i}>{emoji}</span>
-              ))}
-            </span>
-          ) : null}
-        </div>
-      ) : null}
-      {isMine && msg.seen_at ? (
-        <span className="mt-0.5 text-[11px] text-muted">Đã xem</span>
-      ) : null}
-
-      {/* Message menu trigger + floating menu (custom, keyboard operable) */}
-      <button
-        type="button"
-        aria-label="Tùy chọn tin nhắn"
-        aria-expanded={menuOpen}
-        onClick={(e) => {
-          e.stopPropagation();
-          menu.openMenuFor(msg, e.currentTarget);
-        }}
-        className="absolute -top-2 flex size-6 items-center justify-center rounded-full bg-white/90 opacity-0 text-ink-2 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay group-hover:opacity-100"
-        style={isMine ? { left: -30 } : { right: -30 }}
-      >
-        <MoreVertical className="size-3.5" aria-hidden />
-      </button>
-      {menuOpen ? (
-        <div
-          role="menu"
-          className={cn(
-            "absolute z-20 w-44 rounded-xl border border-line bg-white p-1 shadow-md",
-            menu.menuUp ? "bottom-full mb-2" : "top-full mt-2",
-            isMine ? "right-0" : "left-0"
-          )}
-        >
-          <div className="flex justify-between gap-1 px-1 py-1.5" role="group" aria-label="Reactions">
-            {EMOJIS.map((e) => (
-              <button
-                key={e}
-                type="button"
-                role="menuitem"
-                className="rounded-full p-1 text-base transition-transform hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
-                onClick={() => {
-                  onReact(msg, e);
-                  menu.setMenuFor(null);
-                }}
-              >
-                {e}
-              </button>
-            ))}
-          </div>
-          {isMine ? (
-            <button
-              type="button"
-              role="menuitem"
-              className="w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-ivory"
-              onClick={() => {
-                onUnsend(msg);
-                menu.setMenuFor(null);
-              }}
-            >
-              Thu hồi
-            </button>
-          ) : null}
-          <button
-            type="button"
-            role="menuitem"
-            className="w-full rounded-lg px-3 py-2 text-left text-sm text-ink hover:bg-ivory"
-            onClick={() => {
-              onDeleteSelf(msg);
-              menu.setMenuFor(null);
-            }}
-          >
-            Xóa chỉ ở phía mình
-          </button>
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
 interface ThreadProps {
   id: string;
 }
 
 function Thread({ id }: ThreadProps) {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const data = useConversationData(id);
   const realtime = useConversationRealtime(
@@ -246,13 +95,41 @@ function Thread({ id }: ThreadProps) {
   /* The thread element's ref is owned here (not by a hook) so attaching
      it and passing it down never touches a hook-returned ref in render. */
   const threadRef = useRef<HTMLDivElement>(null);
-  const stick = useStickToBottom(threadRef, data.messages, data.loaded);
-  const menu = useMessageMenu(threadRef);
+  const isReady = data.loaded && Boolean(data.conversation);
+  const stick = useStickToBottom(threadRef, data.messages, isReady, id);
+
+  const setThreadNode = useCallback(
+    (node: HTMLDivElement | null) => {
+      (threadRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+      if (node) {
+        stick.notifyMounted(node);
+      }
+    },
+    [stick.notifyMounted]
+  );
 
   const [draft, setDraft] = useState("");
   const [atBottom, setAtBottom] = useState(true);
   const fileRef = useRef<HTMLInputElement>(null);
   const [attachment, setAttachment] = useState<File | null>(null);
+  const [attachmentPreview, setAttachmentPreview] = useState<string | null>(null);
+
+  const removeAttachment = () => {
+    if (attachmentPreview) {
+      URL.revokeObjectURL(attachmentPreview);
+      setAttachmentPreview(null);
+    }
+    setAttachment(null);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  useEffect(() => {
+    return () => {
+      if (attachmentPreview) {
+        URL.revokeObjectURL(attachmentPreview);
+      }
+    };
+  }, [attachmentPreview]);
 
   useDocumentTitle(
     data.conversation
@@ -296,7 +173,9 @@ function Thread({ id }: ThreadProps) {
     );
   }
 
-  const other = data.conversation.other_user?.name ?? "Người dùng";
+  const otherUser = data.conversation.other_user;
+  const other = otherUser?.name ?? "Người dùng";
+  const otherRole = otherUser?.role === "student" ? "Sinh viên" : otherUser?.role === "landlord" ? "Chủ nhà" : null;
 
   async function send(): Promise<void> {
     const text = draft.trim();
@@ -308,8 +187,9 @@ function Thread({ id }: ThreadProps) {
     const msg = await actions.send(text, attachment);
     if (msg) {
       setDraft("");
-      setAttachment(null);
+      removeAttachment();
       setAtBottom(true);
+      stick.scrollToBottom();
       window.dispatchEvent(
         new CustomEvent<ConvPreviewDetail>(CONV_PREVIEW_EVENT, {
           detail: {
@@ -324,68 +204,102 @@ function Thread({ id }: ThreadProps) {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col h-full max-h-full overflow-hidden bg-card">
       {/* Listing context header */}
-      <div className="flex items-center gap-3 border-b border-line p-3">
+      <div className="shrink-0 flex items-center gap-3 border-b border-line bg-paper/70 p-3 backdrop-blur-xs">
         <button
           type="button"
           onClick={() => { void navigate(ROUTES.MESSAGES); }}
-          className="rounded-lg p-2 text-ink-2 md:hidden"
+          className="rounded-lg p-2 text-ink-2 md:hidden hover:bg-tint"
           aria-label="Về danh sách tin nhắn"
         >
           <ChevronDown className="size-4 rotate-90" aria-hidden />
         </button>
-        {data.conversation.listing?.cover_image ? (
-          <img
-            src={data.conversation.listing.cover_image}
-            alt=""
-            width={56}
-            height={37}
-            className="aspect-3/2 w-14 rounded-lg object-cover"
-          />
+        {otherUser?.role === "student" ? (
+          <Link
+            to={route(ROUTES.STUDENT_PUBLIC, { id: otherUser.id })}
+            className="flex items-center gap-2 hover:opacity-80"
+          >
+            <Avatar name={other} size={40} />
+          </Link>
         ) : (
           <Avatar name={other} size={40} />
         )}
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-ink">{other}</p>
-          {data.conversation.listing ? (
-            <Link
-              to={route(ROUTES.ROOM_DETAIL, { id: data.conversation.listing.id })}
-              className="truncate text-sm text-muted hover:underline"
-            >
-              {data.conversation.listing.title}
-            </Link>
+          <p className="truncate font-semibold text-sm text-ink">{other}</p>
+          {otherRole ? (
+            <p className="truncate text-xs text-muted">{otherRole}</p>
           ) : null}
         </div>
       </div>
 
       {/* Messages: day separators + grouped bubbles */}
       <div
-        ref={threadRef}
+        ref={setThreadNode}
         onScroll={() => { setAtBottom(stick.handleScroll()); }}
-        className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-4"
+        className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto p-4 bg-paper/30"
         data-testid="thread"
       >
         {grouped.map((m, i) => {
           const prev = grouped[i - 1];
+          const next = grouped[i + 1];
+
           const newDay = !prev || dayKey(prev.created_at) !== dayKey(m.created_at);
-          const groupedWithPrev =
+          const timeSincePrev = prev
+            ? new Date(m.created_at).getTime() - new Date(prev.created_at).getTime()
+            : 0;
+          const showTimeGapHeader = !newDay && timeSincePrev >= 20 * 60 * 1000;
+
+          const isGroupedWithPrev =
             !newDay &&
+            !showTimeGapHeader &&
             prev.is_mine === m.is_mine &&
-            // Same 3-minute window groups bubbles (Messenger style).
-            new Date(m.created_at).getTime() - new Date(prev.created_at).getTime() < 180000;
+            timeSincePrev < 180000;
+
+          const nextNewDay = next ? dayKey(next.created_at) !== dayKey(m.created_at) : false;
+          const timeToNext = next ? new Date(next.created_at).getTime() - new Date(m.created_at).getTime() : 0;
+          const nextTimeGap = timeToNext >= 20 * 60 * 1000;
+
+          const isGroupedWithNext =
+            Boolean(next) &&
+            !nextNewDay &&
+            !nextTimeGap &&
+            next?.is_mine === m.is_mine &&
+            timeToNext < 180000;
+
+          const bubbleShape: "single" | "first" | "middle" | "last" =
+            !isGroupedWithPrev && isGroupedWithNext
+              ? "first"
+              : isGroupedWithPrev && isGroupedWithNext
+              ? "middle"
+              : isGroupedWithPrev && !isGroupedWithNext
+              ? "last"
+              : "single";
+
+          const isLastInCluster = !isGroupedWithNext;
+          const prevHasReactions = Boolean(prev && prev.reactions && Object.keys(prev.reactions).length > 0);
+
           return (
-            <div key={m.id} className="flex flex-col">
+            <div key={m.id} className="flex flex-col w-full">
               {newDay ? <DaySeparator label={formatDayLabel(m.created_at)} /> : null}
-              <div className={cn("flex", groupedWithPrev ? "mt-0.5" : "mt-2")}>
-                <Bubble
+              {showTimeGapHeader ? <TimeSeparator date={m.created_at} /> : null}
+              <div
+                className={cn(
+                  "flex w-full",
+                  m.is_mine ? "justify-end" : "justify-start",
+                  prevHasReactions ? "mt-3.5" : isGroupedWithPrev ? "mt-0.5" : "mt-2"
+                )}
+              >
+                <MessageBubble
                   msg={m}
                   isMine={m.is_mine === true}
-                  grouped={groupedWithPrev}
-                                    onReact={(mm, e) => void actions.react(mm, e, m.sender_id)}
-                  menu={menu}
-                  onUnsend={(mm) => void actions.remove(mm, "unsent")}
-                  onDeleteSelf={(mm) => void actions.remove(mm, "self")}
+                  grouped={isGroupedWithPrev}
+                  shape={bubbleShape}
+                  showTimestamp={isLastInCluster}
+                  currentUserId={user?.id}
+                  onReact={(mm, e) => { void actions.react(mm, e, user?.id ?? m.sender_id); }}
+                  onUnsend={(mm) => { void actions.remove(mm, "unsent"); }}
+                  onDeleteSelf={(mm) => { void actions.remove(mm, "self"); }}
                 />
               </div>
             </div>
@@ -406,85 +320,117 @@ function Thread({ id }: ThreadProps) {
             stick.scrollToBottom();
           }}
           aria-label="Xuống tin nhắn mới nhất"
-          className="self-center rounded-full border border-line bg-white p-2 shadow-none"
+          className="self-center flex items-center gap-1.5 -mt-10 mb-2 z-10 rounded-full border border-line bg-card px-3 py-1.5 text-xs font-medium text-ink shadow-sm transition hover:bg-tint"
         >
-          <ArrowDown className="size-4" aria-hidden />
+          <ArrowDown className="size-3.5" aria-hidden />
+          <span>Mới nhất</span>
         </button>
       ) : null}
 
       {/* Composer: auto-growing textarea + attachment */}
-      <form
-        className="flex items-end gap-2 border-t border-line p-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          void send();
-        }}
-      >
-        <input
-          ref={fileRef}
-          type="file"
-          className="sr-only"
-          accept=".pdf,.jpg,.jpeg,.png,.docx"
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) {
-              if (f.size > 5 * 1024 * 1024) {
-                toast("Tệp đính kèm tối đa 5 MB.");
-                e.target.value = "";
-                return;
-              }
-              setAttachment(f);
-            }
+      <div className="shrink-0 border-t border-line bg-card/95 backdrop-blur-md p-3">
+        {attachment ? (
+          <div className="mb-2 max-w-sm flex items-center gap-2 rounded-xl border border-line bg-paper/80 p-2 shadow-xs">
+            {attachmentPreview ? (
+              <img
+                src={attachmentPreview}
+                alt={attachment.name}
+                className="size-10 rounded-lg object-cover border border-line shrink-0"
+              />
+            ) : (
+              <FileText className="size-5 text-plate shrink-0" />
+            )}
+            <div className="min-w-0 flex-1 text-xs">
+              <p className="truncate font-medium text-ink">{attachment.name}</p>
+              <p className="text-muted text-[11px]">{(attachment.size / 1024).toFixed(1)} KB</p>
+            </div>
+            <button
+              type="button"
+              className="rounded-full p-1 text-xs text-muted hover:text-danger hover:bg-danger-tint transition"
+              onClick={removeAttachment}
+              aria-label="Xóa tệp đính kèm"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+        ) : null}
+
+        <form
+          className="flex items-center gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void send();
           }}
-        />
-        <button
-          type="button"
-          aria-label="Đính kèm tệp"
-          onClick={() => fileRef.current?.click()}
-          className="flex size-10 items-center justify-center rounded-xl text-ink-2 hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
         >
-          <Paperclip className="size-4" aria-hidden />
-        </button>
-        <div className="min-w-0 flex-1">
-          {attachment ? (
-            <p className="mb-1 text-xs text-muted">
-              {attachment.name}{" "}
-              <button
-                type="button"
-                className="underline"
-                onClick={() => { setAttachment(null); }}
-              >
-                Bỏ
-              </button>
-            </p>
-          ) : null}
-          <textarea
-            value={draft}
+          <input
+            ref={fileRef}
+            type="file"
+            className="sr-only"
+            accept=".pdf,.jpg,.jpeg,.png,.docx"
             onChange={(e) => {
-              setDraft(e.target.value.slice(0, MESSAGE_MAX));
-              realtime.setOtherTyping(false);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                void send();
+              const f = e.target.files?.[0];
+              if (f) {
+                if (f.size > 5 * 1024 * 1024) {
+                  toast("Tệp đính kèm tối đa 5 MB.");
+                  e.target.value = "";
+                  return;
+                }
+                if (attachmentPreview) URL.revokeObjectURL(attachmentPreview);
+                setAttachment(f);
+                if (f.type.startsWith("image/")) {
+                  setAttachmentPreview(URL.createObjectURL(f));
+                } else {
+                  setAttachmentPreview(null);
+                }
               }
             }}
-            aria-label="Tin nhắn"
-            placeholder="Nhập tin nhắn"
-            rows={1}
-            className="max-h-40 w-full resize-none rounded-xl border border-line-strong bg-white p-3 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
           />
-        </div>
-        <Button type="submit" loading={actions.sending} className="h-10">
-          Gửi
-        </Button>
-      </form>
-      {actions.error ? (
-        <p role="alert" className="px-3 pb-2 text-xs text-destructive">
-          {actions.error}
-        </p>
-      ) : null}
+          <button
+            type="button"
+            aria-label="Đính kèm tệp"
+            onClick={() => fileRef.current?.click()}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-tint hover:text-plate transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+          >
+            <Paperclip className="size-5" aria-hidden />
+          </button>
+
+          <div className="relative flex min-h-[42px] max-h-36 flex-1 items-center rounded-2xl border border-line bg-paper/40 px-3.5 py-1 focus-within:border-plate focus-within:bg-card focus-within:ring-1 focus-within:ring-plate transition-all">
+            <textarea
+              value={draft}
+              onChange={(e) => {
+                setDraft(e.target.value.slice(0, MESSAGE_MAX));
+                realtime.setOtherTyping(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  void send();
+                }
+              }}
+              aria-label="Tin nhắn"
+              placeholder="Nhập tin nhắn..."
+              rows={1}
+              className="w-full resize-none bg-transparent py-1.5 text-sm text-ink placeholder:text-muted focus:outline-none leading-relaxed"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="primary"
+            loading={actions.sending}
+            disabled={actions.sending || (!draft.trim() && !attachment)}
+            className="size-10 shrink-0 rounded-full p-0 flex items-center justify-center shadow-xs"
+            aria-label="Gửi tin nhắn"
+          >
+            <Send className="size-4" aria-hidden />
+          </Button>
+        </form>
+        {actions.error ? (
+          <p role="alert" className="mt-2 text-xs text-danger">
+            {actions.error}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -498,7 +444,7 @@ export default function ConversationDetail() {
      redirect — the route is intentionally left outside ProtectedRoute. */
   if (!user) {
     return (
-      <div className="flex min-h-[calc(100svh-var(--nav-h))] flex-col bg-white">
+      <div className="flex min-h-[calc(100svh-var(--nav-h))] flex-col bg-card">
         <GateScreen
           testId="messages-gate"
           title="Trung tâm tin nhắn"
