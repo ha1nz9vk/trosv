@@ -13,7 +13,7 @@ docker compose exec backend php artisan key:generate
 docker compose exec backend php artisan migrate --seed
 ```
 
-Backend chạy ở http://localhost:8000. Kiểm tra: `curl http://localhost:8000/api/districts`
+Backend chạy ở http://localhost:8000. Kiểm tra: `curl http://localhost:8000/api/cities`
 
 ### Cách B: Không Docker
 
@@ -44,19 +44,21 @@ Tài khoản demo (mật khẩu `password`):
 
 | Thư mục | Nội dung |
 |---|---|
-| `app/Http/Controllers` | Auth/Profile, Reference (districts/schools/amenities), Listing (duyệt + chi tiết + đánh giá), LandlordListing (CRUD + ảnh), Favorite, Conversation (nhắn tin), Attachment (signed URL) |
-| `app/Http/Resources` | User, District, School, ListingSummary, ListingDetail, Review, Conversation, Message - shape đúng §3 hợp đồng |
-| `app/Http/Middleware` | `role:student|landlord` (EnsureRole), `throttle.api` (429 tiếng Việt) |
+| `app/Http/Controllers` | Auth/Profile, Reference (cities/wards/schools/amenities), Listing (duyệt + chi tiết + đánh giá), LandlordListing (CRUD + ảnh), Favorite, Conversation (nhắn tin), Attachment (signed URL), AiController |
+| `app/Http/Resources` | User, City, Ward, School, ListingSummary, ListingDetail, Review, Conversation, Message - shape đúng §3 hợp đồng |
+| `app/Http/Middleware` | `role:student|landlord` (EnsureRole), `throttle.api` (429 tiếng Việt theo IP/User), SecurityHeaders |
+| `app/Services` | `AiService` (chuẩn bị dữ liệu và xử lý nghiệp vụ AI), `AiClient` (HTTP client gọi FastAPI) |
 | `lang/vi` | Thông báo lỗi validate tiếng Việt |
 
 ## Ghi chú kỹ thuật
 
 - `role` **không** nằm trong `$fillable` - chỉ được đặt khi tạo qua `register`/factory (`forceCreate`). Không endpoint nào đổi vai trò được.
-- Ảnh tin đăng: public disk `storage/app/public/listings`, tối đa 5 ảnh/tin, jpg/png/webp ≤ 2MB.
-- Tệp nhắn tin: **private** disk, chỉ mở qua signed URL 60 phút (không cần token, mở thẳng trong tab).
+- Ảnh tin đăng: public disk `storage/app/public/listings`, tối đa 5 ảnh/tin, jpg/png/webp ≤ 2MB, xử lý atomic với rollback disk cleanup khi lỗi.
+- Tệp nhắn tin: **private** disk, chỉ mở qua signed URL 60 phút (không cần token, mở thẳng trong tab), tên file được khử nhiễm chống header injection.
 - `Model::preventLazyLoading(!isProduction())` - N+1 sẽ ném exception trong dev/test.
-- Login throttle 10 lần/phút/IP. Mọi request guest thiếu `Accept: application/json` vẫn nhận JSON 401 (không redirect).
+- Rate limiting: 10 req/phút cho login/register (theo IP) và các endpoint AI (theo User ID cho người dùng đăng nhập). Mọi request guest thiếu `Accept: application/json` vẫn nhận JSON 401 (không redirect).
 
-## Khi AI service chưa có
+## Dịch vụ AI (FastAPI proxy)
 
-Các endpoint `/ai/*` chưa được route - bạn của nhóm phụ trách AI tạo `ai-service/` (FastAPI, biến `FAKE_MODE=true` trong docker-compose) rồi backend sẽ gọi qua `AI_URL`. Nếu AI service chết, backend trả 503 JSON `"Dịch vụ AI tạm thời không khả dụng."` theo hợp đồng.
+Các endpoint `/ai/*` (roommates, price-advice, area-suggestions, chat, description) được định tuyến đầy đủ qua `AiController` và `AiService`, gọi tới AI service qua `config('services.ai.url')`. Khi AI service không khả dụng hoặc lỗi, backend tự động trả về 503 JSON `"Dịch vụ AI tạm thời không khả dụng."` theo hợp đồng.
+

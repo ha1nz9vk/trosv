@@ -82,7 +82,7 @@ class SecurityHeadersTest extends TestCase
         ]);
         Storage::disk('local')->put('attachments/test.pdf', 'fake-pdf');
 
-        $url = URL::temporarySignedRoute('attachments.show', now()->addMinutes(5), ['message' => $message->id]);
+        $url = URL::temporarySignedRoute('attachments.show', now()->addMinutes(5), ['message' => $message->id], false);
 
         $response = $this->get($url);
         $response->assertOk();

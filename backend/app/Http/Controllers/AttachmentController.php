@@ -24,9 +24,15 @@ class AttachmentController extends Controller
         // MessageResource đã null attachment_url cho tin đã thu hồi).
         abort_if($message->isUnsent(), 404);
 
+        // Defensive check: file missing on disk returns 404 instead of 500 error
+        abort_unless(Storage::disk('local')->exists($message->attachment_path), 404);
+
         // response() = inline disposition so PDFs/images open straight in a
         // browser tab (contract: "Mở thẳng trong tab trình duyệt").
         // download() would force a save dialog instead.
-        return Storage::disk('local')->response($message->attachment_path, $message->attachment_name);
+        $baseName = basename((string) $message->attachment_name);
+        $safeName = preg_replace('/[\r\n\x00-\x1F\x7F]/', '', $baseName) ?: 'attachment';
+
+        return Storage::disk('local')->response($message->attachment_path, $safeName);
     }
 }

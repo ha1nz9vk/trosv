@@ -28,8 +28,8 @@ use Throwable;
 class ConversationController extends Controller
 {
     /**
-     * POST /api/conversations (Student) - get-or-create. Calling twice for
-     * the same listing returns the existing conversation (contract).
+     * POST /api/conversations (Student) - get-or-create single conversation per person.
+     * Forward to existing conversation with landlord and automatically send room post link.
      */
     public function store(ConversationStoreRequest $request): JsonResponse
     {
@@ -39,30 +39,67 @@ class ConversationController extends Controller
         $student = $request->user();
         $listing = Listing::findOrFail($validated['listing_id']);
 
-        // A student cannot start a conversation about their own listing -
-        // they are both sides of the same conversation otherwise.
+        // A student cannot start a conversation about their own listing
         if ($listing->user_id === $student->id) {
             throw new AuthorizationException;
         }
 
-        $conversation = Conversation::firstOrCreate(
-            ['listing_id' => $listing->id, 'student_id' => $student->id],
-            ['landlord_id' => $listing->user_id],
-        );
+        // Only one conversation per pair of users
+        $conversation = Conversation::where(function ($q) use ($student, $listing) {
+            $q->where('student_id', $student->id)->where('landlord_id', $listing->user_id);
+        })->orWhere(function ($q) use ($student, $listing) {
+            $q->where('student_id', $listing->user_id)->where('landlord_id', $student->id);
+        })->first();
 
-        // Fresh read so the response matches the stored state.
+        $wasCreated = false;
+        if (! $conversation) {
+            $conversation = Conversation::create([
+                'student_id' => $student->id,
+                'landlord_id' => $listing->user_id,
+                'listing_id' => $listing->id,
+            ]);
+            $wasCreated = true;
+        } else {
+            // Update listing context to this latest inquired room
+            if ($conversation->listing_id !== $listing->id) {
+                $conversation->update(['listing_id' => $listing->id]);
+            }
+        }
+
+        // Automatically send a link to the room post to the landlord
+        // unless already sent recently for this listing within 15 minutes.
+        $roomPath = "/rooms/{$listing->id}";
+        $recentlySent = $conversation->messages()
+            ->where('sender_id', $student->id)
+            ->where('body', 'like', "%{$roomPath}%")
+            ->where('created_at', '>=', now()->subMinutes(15))
+            ->exists();
+
+        if (! $recentlySent) {
+            $msg1 = $conversation->messages()->create([
+                'sender_id' => $student->id,
+                'body' => 'Chào bạn, mình quan tâm đến phòng trọ này:',
+            ]);
+            $msg2 = $conversation->messages()->create([
+                'sender_id' => $student->id,
+                'body' => $roomPath,
+            ]);
+            $conversation->touch();
+            broadcast(new MessageSent($msg1->load(['sender:id', 'conversation'])));
+            broadcast(new MessageSent($msg2->load(['sender:id', 'conversation'])));
+        }
+
         return response()->json([
             'data' => (new ConversationResource(
                 $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
             ))->resolve($request),
-        ], $conversation->wasRecentlyCreated ? 201 : 200);
+        ], $wasCreated ? 201 : 200);
     }
 
     /**
      * POST /api/users/{user}/message (Student) - get-or-create a DIRECT
      * conversation (listing_id null) with another student, from their
-     * public profile. Targets that are landlords or yourself are 404
-     * (consistent with the public-profile rules).
+     * public profile. Targets that are landlords or yourself are 404.
      */
     public function storeDirect(Request $request, User $user): JsonResponse
     {
@@ -72,31 +109,27 @@ class ConversationController extends Controller
             ], 404);
         }
 
-        // firstOrCreate + a unique expression index (conversations_direct_unique)
-        // close the double-POST race: the losing insert hits a unique
-        // violation, is caught, and re-reads the winning row so the second
-        // caller still gets 200 with the SAME conversation (never 500).
-        try {
-            $conversation = Conversation::firstOrCreate(
-                [
-                    'listing_id' => null,
-                    'student_id' => $request->user()->id,
-                    'landlord_id' => $user->id,
-                ],
-            );
-        } catch (UniqueConstraintViolationException) {
-            $conversation = Conversation::where([
-                'listing_id' => null,
+        $conversation = Conversation::where(function ($q) use ($request, $user) {
+            $q->where('student_id', $request->user()->id)->where('landlord_id', $user->id);
+        })->orWhere(function ($q) use ($request, $user) {
+            $q->where('student_id', $user->id)->where('landlord_id', $request->user()->id);
+        })->first();
+
+        $wasCreated = false;
+        if (! $conversation) {
+            $conversation = Conversation::create([
                 'student_id' => $request->user()->id,
                 'landlord_id' => $user->id,
-            ])->firstOrFail();
+                'listing_id' => null,
+            ]);
+            $wasCreated = true;
         }
 
         return response()->json([
             'data' => (new ConversationResource(
                 $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
             ))->resolve($request),
-        ], $conversation->wasRecentlyCreated ? 201 : 200);
+        ], $wasCreated ? 201 : 200);
     }
 
     /**
@@ -175,7 +208,9 @@ class ConversationController extends Controller
         if ($isMultipart) {
             // Files are PRIVATE (local disk): served only through signed URLs.
             $uploaded = $request->file('file');
-            $attachmentName = $uploaded->getClientOriginalName();
+            $rawName = $uploaded->getClientOriginalName();
+            // Sanitize against path traversal and HTTP header splitting (CRLF) in Content-Disposition
+            $attachmentName = preg_replace('/[\r\n\x00-\x1F\x7F]/', '', basename($rawName)) ?: 'attachment';
             $attachmentPath = $uploaded->store("attachments/{$conversation->id}");
         }
 
@@ -203,7 +238,7 @@ class ConversationController extends Controller
         // Realtime bubble delivery over Reverb (replaces 5s client polling).
         // Message shape mirrors MessageResource/contract §3 (body/reactions
         // match MessageResource exactly; seen_at starts null).
-        broadcast(new MessageSent($message->load('sender:id')));
+        broadcast(new MessageSent($message->load(['sender:id', 'conversation'])));
 
         return response()->json([
             'data' => (new MessageResource($message->load('sender:id')))->resolve($request),

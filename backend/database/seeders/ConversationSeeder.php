@@ -33,6 +33,16 @@ class ConversationSeeder extends Seeder
             $listing = $visibleListings[$k];
             $landlordId = $listing->user_id;
 
+            $existing = Conversation::where(function ($q) use ($student, $landlordId) {
+                $q->where('student_id', $student->id)->where('landlord_id', $landlordId);
+            })->orWhere(function ($q) use ($student, $landlordId) {
+                $q->where('student_id', $landlordId)->where('landlord_id', $student->id);
+            })->first();
+
+            if ($existing) {
+                continue;
+            }
+
             $conversation = Conversation::create([
                 'listing_id' => $listing->id,
                 'student_id' => $student->id,

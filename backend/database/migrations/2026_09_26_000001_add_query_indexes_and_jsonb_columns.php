@@ -41,7 +41,9 @@ return new class extends Migration
 
         // pgsql-only app (phpunit.xml forces the pgsql connection) - plain DDL.
         DB::statement('ALTER TABLE messages ALTER COLUMN reactions TYPE jsonb USING reactions::jsonb');
-        DB::statement('ALTER TABLE messages ALTER COLUMN deleted_for_user_ids TYPE jsonb USING deleted_for_user_ids::jsonb');
+        DB::statement(
+            'ALTER TABLE messages ALTER COLUMN deleted_for_user_ids TYPE jsonb USING deleted_for_user_ids::jsonb'
+        );
     }
 
     public function down(): void
@@ -56,6 +58,8 @@ return new class extends Migration
         });
 
         DB::statement('ALTER TABLE messages ALTER COLUMN reactions TYPE json USING reactions::json');
-        DB::statement('ALTER TABLE messages ALTER COLUMN deleted_for_user_ids TYPE json USING deleted_for_user_ids::json');
+        DB::statement(
+            'ALTER TABLE messages ALTER COLUMN deleted_for_user_ids TYPE json USING deleted_for_user_ids::json'
+        );
     }
 };

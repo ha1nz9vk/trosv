@@ -13,7 +13,7 @@ class School extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'city_id', 'latitude', 'longitude'];
+    protected $fillable = ['name', 'city_id', 'ward_id', 'latitude', 'longitude'];
 
     protected function casts(): array
     {

@@ -201,8 +201,14 @@ class AiService
                 'listings_count' => $listings->count(),
                 'avg_price' => $prices->isEmpty() ? null : (int) round($prices->avg()),
                 'avg_rating' => $ratings->isEmpty() ? null : round($ratings->avg(), 1),
-                'distance_to_school_km' => $school !== null && $ward->latitude !== null
-                    ? $this->haversineKm($school->latitude, $school->longitude, $ward->latitude, $ward->longitude)
+                'distance_to_school_km' => ($school !== null && $school->latitude !== null
+                    && $school->longitude !== null && $ward->latitude !== null && $ward->longitude !== null)
+                    ? $this->haversineKm(
+                        (float) $school->latitude,
+                        (float) $school->longitude,
+                        (float) $ward->latitude,
+                        (float) $ward->longitude
+                    )
                     : null,
             ];
         })->values()->all();

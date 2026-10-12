@@ -24,11 +24,17 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             // Emails are stored lowercase (ERD §3), so uniqueness is
             // effectively case-insensitive on PostgreSQL.
-            'email' => ['required', 'string', 'email', 'max:255', function (string $attribute, mixed $value, \Closure $fail) {
-                if (User::where('email', strtolower((string) $value))->exists()) {
-                    $fail('Email đã được sử dụng.');
-                }
-            }],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                function (string $attribute, mixed $value, \Closure $fail) {
+                    if (User::where('email', strtolower((string) $value))->exists()) {
+                        $fail('Email đã được sử dụng.');
+                    }
+                },
+            ],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', Rule::in([User::ROLE_STUDENT, User::ROLE_LANDLORD])],
         ];

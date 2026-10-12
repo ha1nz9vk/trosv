@@ -16,6 +16,7 @@ Backend xây dựng, Frontend sử dụng. Nếu cần thay đổi, hãy sửa f
 | 403 | Đã đăng nhập nhưng không có quyền (sai vai trò, không phải chủ sở hữu) |
 | 404 | Không tìm thấy |
 | 422 | Dữ liệu không hợp lệ (có `errors`) |
+| 429 | Quá giới hạn tần suất yêu cầu (`ApiThrottle`, trả kèm headers `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After`) |
 | 503 | AI service không khả dụng (chỉ với `/ai/*`) |
 | 500 | Lỗi máy chủ |
 
@@ -111,16 +112,16 @@ rồi lọc phường/xã và trường theo `city_id`.
 
 | Endpoint | Quyền | Trả về |
 |---|---|---|
-| `GET /cities` | Công khai | `data: [{ id, name, type: "city\|"province", latitude, longitude }]` (xếp theo tên A-Z) |
+| `GET /cities` | Công khai | `data: [{ id, name, type: "city\|"province", latitude, longitude }]` (xếp theo tên A-Z, được cache tăng tốc) |
 | `GET /wards?city_id=` | Công khai | `data: [{ id, name, city: { id, name, type }, latitude, longitude }]` |
 | `GET /schools?city_id=` | Công khai | `data: [{ id, name, city: { id, name, type }, ward: { id, name } \| null, latitude, longitude }]` - `ward` la phuong chua truong, dung `ward.id` de goi `GET /listings?ward_id=` |
-| `GET /amenities` | Công khai | `data: [{ id, name }]` |
+| `GET /amenities` | Công khai | `data: [{ id, name }]` (được cache tăng tốc) |
 
 ### Duyệt tin đăng
 
 | Endpoint | Quyền | Query | Trả về |
 |---|---|---|---|
-| `GET /listings` | Công khai | `q` (tiêu đề hoặc địa chỉ), `price_min`, `price_max`, `city_id` (qua ward của tin), `ward_id`, `type`, `amenity_ids[]` (phải có tất cả), `school_id` + `max_km` (lọc theo khoảng cách), `sort` = `newest` (mặc định), `price_asc`, `price_desc`, `distance` (cần `school_id`), `rating`, `page`, `per_page` | `Listing (tóm tắt)` có phân trang. Chỉ tin `available` |
+| `GET /listings` | Công khai | `q` (tiêu đề hoặc địa chỉ), `price_min`, `price_max`, `city_id` (qua ward của tin), `ward_id`, `type`, `amenity_ids[]` (phải có tất cả), `school_id` + `max_km` (lọc theo khoảng cách), `sort` = `newest` (mặc định), `price_asc`, `price_desc`, `distance` (cần `school_id`), `rating`, `page`, `per_page` | `Listing (tóm tắt)` có phân trang. Chỉ tin `available`. Sắp xếp `rating` tối ưu hóa đánh giá tốt nhất lên trước, tin chưa đánh giá xuống cuối |
 | `GET /listings/{id}` | Công khai | | `data: Listing (chi tiết)`. Tin `hidden`: trả 404 trừ chủ tin |
 | `GET /listings/{id}/reviews` | Công khai | `page` | `Review` có phân trang, mới nhất trước |
 
@@ -133,8 +134,8 @@ Với bản đồ, Frontend gọi `GET /listings` với cùng bộ lọc và `pe
 | `GET /my/listings` | Landlord | `page`, `status` | `Listing (tóm tắt)` có phân trang, mọi trạng thái |
 | `POST /listings` | Landlord | `title` (5-200 ký tự), `type`, `price` (100000-100000000), `area_m2` (5-1000), `address`, `latitude`, `longitude`, `ward_id`, `description` (tùy chọn), `amenity_ids[]` (tùy chọn) | 201 `data: Listing (chi tiết)` |
 | `PUT /listings/{id}` | Owner | Các trường như trên (đều tùy chọn) và thêm `status` | `data: Listing (chi tiết)` |
-| `DELETE /listings/{id}` | Owner | | `data: null` |
-| `POST /listings/{id}/images` | Owner | `multipart`: `images[]` (jpg/png/webp, tối đa 2 MB mỗi ảnh, tối đa 5 ảnh mỗi tin tính tổng) | `data: [{ id, url }]` (toàn bộ ảnh của tin). Ảnh đầu tiên là ảnh bìa |
+| `DELETE /listings/{id}` | Owner | | `data: null`. Xóa tin kèm xóa file ảnh trên disk một cách an toàn |
+| `POST /listings/{id}/images` | Owner | `multipart`: `images[]` (jpg/png/webp, tối đa 2 MB mỗi ảnh, tối đa 5 ảnh mỗi tin tính tổng) | `data: [{ id, url }]` (toàn bộ ảnh của tin). Ảnh đầu tiên là ảnh bìa. Xử lý atomic (database transaction kèm tự động dọn dẹp file disk nếu lỗi) |
 | `DELETE /listings/{id}/images/{image_id}` | Owner | | `data: null` |
 
 ### Yêu thích (sinh viên)

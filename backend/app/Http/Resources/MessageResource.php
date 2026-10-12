@@ -27,7 +27,7 @@ class MessageResource extends JsonResource
         return [
             'id' => $message->id,
             'sender_id' => $message->sender_id,
-            'is_mine' => $message->sender_id === $viewer->id,
+            'is_mine' => $viewer ? $message->sender_id === $viewer->id : false,
             'is_unsent' => $isUnsent,
             'body' => $isUnsent ? null : $message->body,
             // Dấu đã xem: thời điểm NGƯỜI NHẬN đọc; null = chưa seen.
@@ -39,6 +39,7 @@ class MessageResource extends JsonResource
                 'attachments.show',
                 now()->addMinutes(60),
                 ['message' => $message->id],
+                false,
             ) : null,
             'created_at' => $message->created_at->toISOString(),
         ];

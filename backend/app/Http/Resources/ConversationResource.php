@@ -19,7 +19,8 @@ class ConversationResource extends JsonResource
         $conversation = $this->resource;
 
         $viewer = $request->user();
-        $other = $conversation->student_id === $viewer->id
+        $viewerId = $viewer?->id;
+        $other = ($viewerId !== null && $conversation->student_id === $viewerId)
             ? $conversation->landlord
             : $conversation->student;
 
@@ -28,11 +29,11 @@ class ConversationResource extends JsonResource
         // Sidebar preview: skip rows this viewer deleted for themselves and
         // render the tombstone text for unsent messages.
         $last = $conversation->lastMessage;
-        if ($last && $last->isHiddenFor($viewer->id)) {
+        if ($last && $viewerId !== null && $last->isHiddenFor($viewerId)) {
             $last = $conversation->messages()
                 ->where(fn ($q) => $q
                     ->whereNull('deleted_for_user_ids')
-                    ->orWhereJsonDoesntContain('deleted_for_user_ids', $viewer->id))
+                    ->orWhereJsonDoesntContain('deleted_for_user_ids', $viewerId))
                 ->orderByDesc('id')
                 ->first();
         }

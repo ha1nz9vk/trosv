@@ -12,6 +12,7 @@ use App\Models\ListingImage;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -61,8 +62,10 @@ class LandlordListingController extends Controller
             $listing->amenities()->sync($data['amenity_ids']);
         }
 
+        $listing->load(['ward', 'coverImage', 'images', 'amenities', 'landlord']);
+
         return response()->json([
-            'data' => (new ListingDetailResource($listing->load(['ward', 'coverImage', 'images', 'amenities', 'landlord'])))->resolve($request),
+            'data' => (new ListingDetailResource($listing))->resolve($request),
         ], 201);
     }
 
@@ -81,8 +84,10 @@ class LandlordListingController extends Controller
             $listing->amenities()->sync($data['amenity_ids']);
         }
 
+        $refreshed = $listing->fresh(['ward', 'coverImage', 'images', 'amenities', 'landlord']);
+
         return response()->json([
-            'data' => (new ListingDetailResource($listing->fresh(['ward', 'coverImage', 'images', 'amenities', 'landlord'])))->resolve($request),
+            'data' => (new ListingDetailResource($refreshed))->resolve($request),
         ]);
     }
 
@@ -93,12 +98,13 @@ class LandlordListingController extends Controller
     {
         $this->authorizeOwnership($request, $listing);
 
-        // Delete image files on disk before the cascading row delete.
-        Storage::disk('public')->delete(
-            $listing->images()->pluck('path')->all(),
-        );
-
+        $paths = $listing->images()->pluck('path')->all();
         $listing->delete();
+
+        // Delete image files on disk only after database deletion succeeds
+        if (! empty($paths)) {
+            Storage::disk('public')->delete($paths);
+        }
 
         return response()->json(['data' => null]);
     }
@@ -122,25 +128,36 @@ class LandlordListingController extends Controller
             ], 422);
         }
 
-        foreach ($newFiles as $file) {
-            // The stored extension is derived from the file's VALIDATED content
-            // type (sniffed from the bytes), never from the client-supplied
-            // name:getClientOriginalExtension() is attacker-controlled. A file
-            // named "shell.php" whose content sniffs as image/jpeg must not
-            // keep a server-side .php name - under `php artisan serve` the
-            // Laravel router serves existing files under public/ raw, so a
-            // stored .php would EXECUTE (unauthenticated RCE).
-            $extension = match ($file->getMimeType()) {
-                'image/jpeg' => 'jpg',
-                'image/png' => 'png',
-                'image/webp' => 'webp',
-                // Unreachable behind the mimes: rule; kept identical to the
-                // old fallback (content-sniffed, never client-supplied).
-                default => $file->extension(),
-            };
-            $path = 'listings/'.Str::uuid()->toString().'.'.$extension;
-            Storage::disk('public')->put($path, $file->getContent());
-            $listing->images()->create(['path' => $path]);
+        $createdPaths = [];
+        try {
+            DB::transaction(function () use ($listing, $newFiles, &$createdPaths) {
+                foreach ($newFiles as $file) {
+                    // The stored extension is derived from the file's VALIDATED content
+                    // type (sniffed from the bytes), never from the client-supplied
+                    // name: getClientOriginalExtension() is attacker-controlled. A file
+                    // named "shell.php" whose content sniffs as image/jpeg must not
+                    // keep a server-side .php name - under `php artisan serve` the
+                    // Laravel router serves existing files under public/ raw, so a
+                    // stored .php would EXECUTE (unauthenticated RCE).
+                    $extension = match ($file->getMimeType()) {
+                        'image/jpeg' => 'jpg',
+                        'image/png' => 'png',
+                        'image/webp' => 'webp',
+                        // Unreachable behind the mimes: rule; kept identical to the
+                        // old fallback (content-sniffed, never client-supplied).
+                        default => $file->extension(),
+                    };
+                    $path = 'listings/'.Str::uuid()->toString().'.'.$extension;
+                    Storage::disk('public')->put($path, $file->getContent());
+                    $createdPaths[] = $path;
+                    $listing->images()->create(['path' => $path]);
+                }
+            });
+        } catch (\Throwable $e) {
+            foreach ($createdPaths as $path) {
+                Storage::disk('public')->delete($path);
+            }
+            throw $e;
         }
 
         $listing->refresh()->load('images');

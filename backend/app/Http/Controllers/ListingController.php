@@ -33,7 +33,10 @@ class ListingController extends Controller
         // lives in ListingBrowseRequest.
 
         // max_km and sort=distance require school_id.
-        if ((isset($validated['max_km']) || ($validated['sort'] ?? null) === 'distance') && empty($validated['school_id'])) {
+        if (
+            (isset($validated['max_km']) || ($validated['sort'] ?? null) === 'distance')
+            && empty($validated['school_id'])
+        ) {
             return response()->json([
                 'message' => 'Cần cung cấp school_id khi dùng max_km hoặc sort=distance.',
                 'errors' => ['school_id' => ['Cần cung cấp school_id khi dùng max_km hoặc sort=distance.']],
@@ -95,7 +98,10 @@ class ListingController extends Controller
         if (! empty($validated['school_id'])) {
             $school = DB::table('schools')->find($validated['school_id']);
 
-            $query->nearby((float) $school->latitude, (float) $school->longitude, isset($validated['max_km']) ? (float) $validated['max_km'] : null);
+            if ($school && $school->latitude !== null && $school->longitude !== null) {
+                $maxKm = isset($validated['max_km']) ? (float) $validated['max_km'] : null;
+                $query->nearby((float) $school->latitude, (float) $school->longitude, $maxKm);
+            }
         }
 
         // ---------------------------------------------------------------
@@ -105,11 +111,9 @@ class ListingController extends Controller
             'price_asc' => $query->orderBy('price'),
             'price_desc' => $query->orderBy('price', 'desc'),
             'distance' => $query->orderBy('distance_km'),
-            // PostgreSQL cannot reference the SELECT alias inside an ORDER BY
-            // expression, so the aggregate is repeated as a correlated subquery.
+            // Single subquery with NULLS LAST in PostgreSQL replaces redundant double subquery scan.
             'rating' => $query->orderByRaw(
-                'CASE WHEN (SELECT AVG(listing_rating) FROM reviews WHERE reviews.listing_id = listings.id) IS NULL THEN 1 ELSE 0 END, '
-                .'(SELECT AVG(listing_rating) FROM reviews WHERE reviews.listing_id = listings.id) DESC'
+                '(SELECT AVG(listing_rating) FROM reviews WHERE reviews.listing_id = listings.id) DESC NULLS LAST'
             ),
             default => $query->orderBy('id', 'desc'), // newest
         };
@@ -122,7 +126,8 @@ class ListingController extends Controller
         // ---------------------------------------------------------------
         $page = $query->paginate($perPage);
 
-        $request->attributes->set('favorited_listing_ids', $this->favoritedListingIds($request, $page->getCollection()));
+        $favoritedIds = $this->favoritedListingIds($request, $page->getCollection());
+        $request->attributes->set('favorited_listing_ids', $favoritedIds);
 
         return response()->json([
             'data' => ListingSummaryResource::collection($page->getCollection())->resolve($request),

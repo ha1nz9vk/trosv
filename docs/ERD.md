@@ -15,8 +15,11 @@ Tài liệu này dành cho **Backend**. Dùng file này để viết migration, 
 
 ```mermaid
 erDiagram
+    CITIES ||--o{ WARDS : "có"
+    CITIES ||--o{ SCHOOLS : "thuộc tỉnh thành"
+    WARDS ||--o{ SCHOOLS : "chứa trường"
+    WARDS ||--o{ LISTINGS : "thuộc phường"
     SCHOOLS ||--o{ USERS : "học tại"
-    DISTRICTS ||--o{ LISTINGS : "thuộc khu vực"
     USERS ||--o{ LISTINGS : "đăng tin (chủ nhà)"
     LISTINGS ||--o{ LISTING_IMAGES : "có ảnh"
     LISTINGS }o--o{ AMENITIES : "có tiện ích"
@@ -29,24 +32,34 @@ erDiagram
     LISTINGS ||--o{ REVIEWS : "được đánh giá"
     USERS ||--o{ REVIEWS : "viết"
 
+    CITIES {
+        bigint id PK
+        string name
+        string type
+        decimal latitude
+        decimal longitude
+    }
+    WARDS {
+        bigint id PK
+        bigint city_id FK
+        string name
+        decimal latitude
+        decimal longitude
+    }
+    SCHOOLS {
+        bigint id PK
+        bigint city_id FK
+        bigint ward_id FK
+        string name
+        decimal latitude
+        decimal longitude
+    }
     USERS {
         bigint id PK
         string email UK
         string role
         bigint school_id FK
         boolean looking_for_roommate
-    }
-    SCHOOLS {
-        bigint id PK
-        string name
-        decimal latitude
-        decimal longitude
-    }
-    DISTRICTS {
-        bigint id PK
-        string name
-        decimal latitude
-        decimal longitude
     }
     AMENITIES {
         bigint id PK
@@ -116,14 +129,35 @@ Hai quan hệ nhiều-nhiều là hai bảng nối: `amenity_listing` (tin đăn
 
 Sửa migration `users` mặc định của Laravel để có các cột trên. Bảng `schools` phải được tạo **trước** bảng `users` (đặt tên file migration có mốc thời gian sớm hơn).
 
-### schools và wards (cùng cấu trúc)
+### cities (đơn vị hành chính cấp tỉnh)
 
-| Cột | Kiểu |
-|---|---|
-| id | bigint, PK |
-| name | string(200) |
-| latitude, longitude | decimal(10,7) |
-| ward_id (chỉ schools) | bigint, null, FK wards | Phường chứa trường; FE lọc phòng theo phường của trường. `nullOnDelete` |
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| id | bigint, PK | |
+| name | string(100) | Tên tỉnh/thành phố |
+| type | string(20) | `city` (thành phố trực thuộc TW) hoặc `province` (tỉnh) |
+| latitude, longitude | decimal(10,7), null | Tọa độ trung tâm |
+
+### wards (đơn vị hành chính cấp xã/phường)
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| id | bigint, PK | |
+| city_id | bigint, FK cities | `cascadeOnDelete` |
+| name | string(200) | Tên phường/xã |
+| latitude, longitude | decimal(10,7) | Tọa độ tâm phường/xã |
+
+### schools (trường đại học, cao đẳng)
+
+| Cột | Kiểu | Ghi chú |
+|---|---|---|
+| id | bigint, PK | |
+| city_id | bigint, FK cities | `cascadeOnDelete` |
+| ward_id | bigint, null, FK wards | Phường chứa trường (`nullOnDelete`); FE lọc phòng theo phường của trường |
+| name | string(200) | |
+| latitude, longitude | decimal(10,7) | |
+
+Index: `(ward_id)`.
 
 ### amenities
 
@@ -149,7 +183,7 @@ Sửa migration `users` mặc định của Laravel để có các cột trên. 
 | status | string(20), mặc định `available` | `available`, `rented`, `hidden` |
 | timestamps | | |
 
-Index: `(status, price)`, `(ward_id)`.
+Index: `(status, price)`, `(ward_id)`, `(user_id)`, `(ward_id, status)`.
 
 ### amenity_listing (bảng nối)
 
@@ -174,12 +208,13 @@ Tối đa 5 ảnh mỗi tin (kiểm tra trong code).
 | Cột | Kiểu | Ghi chú |
 |---|---|---|
 | id | bigint, PK | |
-| listing_id | bigint, FK listings | |
+| listing_id | bigint, null, FK listings | null = hội thoại trực tiếp giữa 2 sinh viên |
 | student_id | bigint, FK users | |
-| landlord_id | bigint, FK users | Sao chép từ `listings.user_id` lúc tạo |
+| landlord_id | bigint, FK users | Sao chép từ `listings.user_id` lúc tạo (hoặc user đích khi trực tiếp) |
 | timestamps | | |
 
-Unique `(listing_id, student_id)`: mỗi sinh viên chỉ có một hội thoại cho mỗi tin.
+Unique: `(listing_id, student_id)` (tin đăng), `conversations_direct_unique (student_id, landlord_id) WHERE listing_id IS NULL` (trực tiếp).
+Index: `(student_id)`, `(landlord_id)`.
 
 ### messages
 
@@ -192,6 +227,9 @@ Unique `(listing_id, student_id)`: mỗi sinh viên chỉ có một hội thoạ
 | attachment_path | string(500), null | Lưu ở disk riêng tư (`local`), không công khai |
 | attachment_name | string(255), null | Tên tệp gốc |
 | read_at | timestamp, null | Thời điểm người nhận đọc |
+| seen_at | timestamp, null | Thời điểm người nhận mở xem |
+| reactions | jsonb, null | Map emoji theo user ID |
+| deleted_for_user_ids | jsonb, null | Danh sách user ID ẩn tin |
 | timestamps | | |
 
 Index: `(conversation_id, id)`.
@@ -209,6 +247,7 @@ Index: `(conversation_id, id)`.
 | timestamps | | |
 
 Unique `(listing_id, student_id)`: mỗi sinh viên đánh giá một tin đúng một lần.
+Index: `(student_id)`.
 
 ## 4. Quy tắc và truy vấn cần nhớ
 

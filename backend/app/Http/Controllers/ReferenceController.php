@@ -12,6 +12,7 @@ use App\Models\Ward;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Reference data for dropdowns and the map (API_CONTRACT §4).
@@ -22,9 +23,9 @@ class ReferenceController extends Controller
     /** GET /api/cities - 34 đơn vị hành chính cấp tỉnh, xếp theo tên A-Z. */
     public function cities(): AnonymousResourceCollection
     {
-        return CityResource::collection(
-            City::orderBy('name')->get()
-        );
+        $cities = Cache::remember('reference:cities', 3600, fn () => City::orderBy('name')->get());
+
+        return CityResource::collection($cities);
     }
 
     /** GET /api/wards?city_id= - optional city filter. */
@@ -62,8 +63,14 @@ class ReferenceController extends Controller
     /** GET /api/amenities */
     public function amenities(): JsonResponse
     {
+        $amenities = Cache::remember(
+            'reference:amenities',
+            3600,
+            fn () => Amenity::orderBy('name')->get(['id', 'name'])
+        );
+
         return response()->json([
-            'data' => Amenity::orderBy('name')->get(['id', 'name']),
+            'data' => $amenities,
         ]);
     }
 }

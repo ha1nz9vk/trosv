@@ -58,9 +58,9 @@ class SeedAndRelationsTest extends TestCase
             $this->assertTrue($hcmcWardIds->contains($school->ward_id));
         }
 
-        // Shared campuses are legal: UIT, UEL and NLU all map to Phường Linh Xuân.
-        $linhXuan = Ward::where('name', 'Phường Linh Xuân')->where('city_id', $hcmc->id)->firstOrFail();
-        $this->assertSame(3, School::where('ward_id', $linhXuan->id)->count());
+        // Shared campuses are legal: HCMIU, UIT and NLU all map to Phường Linh Trung.
+        $linhTrung = Ward::where('name', 'Phường Linh Trung')->where('city_id', $hcmc->id)->firstOrFail();
+        $this->assertSame(3, School::where('ward_id', $linhTrung->id)->count());
     }
 
     public function test_listing_ward_and_amenity_relations_work(): void
@@ -124,5 +124,18 @@ class SeedAndRelationsTest extends TestCase
         })->count();
 
         $this->assertSame(0, $orphanReviews);
+    }
+
+    public function test_user_messages_and_reviews_relations_work(): void
+    {
+        $this->seed();
+
+        $sender = User::whereHas('messages')->first();
+        $this->assertNotNull($sender);
+        $this->assertGreaterThanOrEqual(1, $sender->messages()->count());
+
+        $reviewer = User::whereHas('reviews')->first();
+        $this->assertNotNull($reviewer);
+        $this->assertGreaterThanOrEqual(1, $reviewer->reviews()->count());
     }
 }

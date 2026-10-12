@@ -97,12 +97,12 @@ class User extends Authenticatable
     /** Messages sent by this user. */
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(Message::class, 'sender_id');
     }
 
     /** Reviews written by this user (student). */
     public function reviews(): HasMany
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class, 'student_id');
     }
 }
