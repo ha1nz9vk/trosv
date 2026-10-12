@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ROUTES } from "@/constants/routes";
+import { ART_ASSETS } from "@/constants/assets";
 import { errFieldErrors, errMessage } from "@/api/axiosClient";
 import { useAuthForm } from "@/hooks/useAuthForm";
 import { Button } from "@/ui/button";
@@ -57,7 +58,11 @@ export default function Register() {
   const err = (field: string): string | undefined => fieldErrors[field]?.[0];
 
   return (
-    <AuthSplit artSrc="/art/house-and-tree.svg?v=restore-0a03600" title="Tạo tài khoản" artTestId="register-art">
+    <AuthSplit
+      artSrc={ART_ASSETS.AUTH_LANDLORD}
+      title="Tạo tài khoản"
+      artTestId="register-art"
+    >
       <form onSubmit={(e) => { void form.handleSubmit(e); }} className="flex flex-col gap-4">
         {formError ? (
           <p role="alert" className="rounded-xl bg-plate-tint p-3 text-sm text-ink">

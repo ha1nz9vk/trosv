@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { ROUTES } from "@/constants/routes";
+import { ART_ASSETS } from "@/constants/assets";
 import { errMessage } from "@/api/axiosClient";
 import { useAuthForm } from "@/hooks/useAuthForm";
 import { Button } from "@/ui/button";
@@ -52,7 +53,7 @@ export default function Login() {
   });
 
   return (
-    <AuthSplit artSrc="/art/book-and-fern.svg?v=restore-0a03600" title="Đăng nhập" artTestId="login-art">
+    <AuthSplit artSrc={ART_ASSETS.AUTH_STUDENT} title="Đăng nhập" artTestId="login-art">
           <form onSubmit={(e) => { void form.handleSubmit(e); }} className="flex flex-col gap-4">
             {errors["form"] ? (
               <p role="alert" className="rounded-xl bg-plate-tint p-3 text-sm text-ink">

@@ -10,10 +10,10 @@ use App\Http\Resources\ReviewResource;
 use App\Models\Listing;
 use App\Models\Review;
 use App\Models\User;
+use App\Services\ListingFilterService;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -25,7 +25,7 @@ class ListingController extends Controller
 
     public const PER_PAGE_MAX = 50;
 
-    public function index(ListingBrowseRequest $request): JsonResponse
+    public function index(ListingBrowseRequest $request, ListingFilterService $filterService): JsonResponse
     {
         $validated = $request->validated();
 
@@ -45,85 +45,7 @@ class ListingController extends Controller
 
         $perPage = $validated['per_page'] ?? self::PER_PAGE_DEFAULT;
 
-        // ---------------------------------------------------------------
-        // Base query: only available listings
-        // ---------------------------------------------------------------
-        $query = Listing::query()
-            ->where('status', Listing::STATUS_AVAILABLE)
-            ->with(['ward.city', 'coverImage'])
-            ->withCount('reviews')
-            ->withAvg('reviews', 'listing_rating');
-
-        // ---------------------------------------------------------------
-        // Filters
-        // ---------------------------------------------------------------
-        if (! empty($validated['q'])) {
-            $q = $validated['q'];
-            // ILIKE: PostgreSQL case-insensitive search (ERD §4).
-            $query->where(function ($query) use ($q) {
-                $query->where('title', 'ilike', "%{$q}%")
-                    ->orWhere('address', 'ilike', "%{$q}%");
-            });
-        }
-
-        if (isset($validated['price_min'])) {
-            $query->where('price', '>=', $validated['price_min']);
-        }
-
-        if (isset($validated['price_max'])) {
-            $query->where('price', '<=', $validated['price_max']);
-        }
-
-        if (! empty($validated['ward_id'])) {
-            $query->where('ward_id', $validated['ward_id']);
-        }
-
-        // City filter: listing's ward belongs to the selected provincial unit.
-        if (! empty($validated['city_id'])) {
-            $query->whereHas('ward', fn ($q) => $q->where('city_id', $validated['city_id']));
-        }
-
-        if (! empty($validated['type'])) {
-            $query->where('type', $validated['type']);
-        }
-
-        // Listing must have ALL requested amenities.
-        foreach ($validated['amenity_ids'] ?? [] as $amenityId) {
-            $query->whereHas('amenities', fn ($q) => $q->where('amenities.id', $amenityId));
-        }
-
-        // ---------------------------------------------------------------
-        // Distance (only when school_id is present)
-        // ---------------------------------------------------------------
-        if (! empty($validated['school_id'])) {
-            $school = DB::table('schools')->find($validated['school_id']);
-
-            if ($school && $school->latitude !== null && $school->longitude !== null) {
-                $maxKm = isset($validated['max_km']) ? (float) $validated['max_km'] : null;
-                $query->nearby((float) $school->latitude, (float) $school->longitude, $maxKm);
-            }
-        }
-
-        // ---------------------------------------------------------------
-        // Sorting
-        // ---------------------------------------------------------------
-        match ($validated['sort'] ?? 'newest') {
-            'price_asc' => $query->orderBy('price'),
-            'price_desc' => $query->orderBy('price', 'desc'),
-            'distance' => $query->orderBy('distance_km'),
-            // Single subquery with NULLS LAST in PostgreSQL replaces redundant double subquery scan.
-            'rating' => $query->orderByRaw(
-                '(SELECT AVG(listing_rating) FROM reviews WHERE reviews.listing_id = listings.id) DESC NULLS LAST'
-            ),
-            default => $query->orderBy('id', 'desc'), // newest
-        };
-
-        // Deterministic tiebreaker for stable pagination.
-        $query->orderBy('id', 'desc');
-
-        // ---------------------------------------------------------------
-        // Pagination + single favorited-ids pre-fetch
-        // ---------------------------------------------------------------
+        $query = $filterService->buildQuery($validated);
         $page = $query->paginate($perPage);
 
         $favoritedIds = $this->favoritedListingIds($request, $page->getCollection());

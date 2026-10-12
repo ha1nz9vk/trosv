@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { ART_ASSETS } from "@/constants/assets";
 import { getListings, getCities, getSchools } from "@/api/listingApi";
 import type { Listing, City, School } from "@/types/api";
 import { Button } from "@/ui/button";
@@ -128,7 +129,7 @@ export default function Home() {
       <section className="relative flex items-center overflow-hidden bg-[#FAF8F5] dark:bg-[#0c1017] border-b border-line md:min-h-[420px]">
         {/* Desktop full-width bento artwork */}
         <img
-          src="/art/hero-art.svg?v=pure-color-2"
+          src={ART_ASSETS.HERO_DESKTOP}
           alt=""
           width={2100}
           height={623}
@@ -149,7 +150,7 @@ export default function Home() {
           {/* Mobile-dedicated hero illustration: perfectly proportioned and complete on any phone */}
           <div className="mt-1 w-full max-w-xl md:hidden">
             <img
-              src="/art/hero-art-mobile.svg?v=2"
+              src={ART_ASSETS.HERO_MOBILE}
               alt="Minh họa phòng trọ sinh viên"
               width={680}
               height={280}
@@ -229,7 +230,11 @@ export default function Home() {
                     <li key={s.id}>
                       <Link
                         to={`${ROUTES.ROOMS}?school_id=${s.id}`}
-                        className="flex items-center justify-between py-2.5 text-sm font-medium text-ink transition-colors hover:text-plate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                        className={
+                          "flex items-center justify-between py-2.5 text-sm font-medium text-ink " +
+                          "transition-colors hover:text-plate focus-visible:outline-none " +
+                          "focus-visible:ring-2 focus-visible:ring-plate"
+                        }
                       >
                         <span>{s.name}</span>
                         <span className="text-xs text-muted">&rarr;</span>
@@ -251,7 +256,11 @@ export default function Home() {
                     <li key={c.id}>
                       <Link
                         to={`${ROUTES.ROOMS}?city_id=${c.id}`}
-                        className="flex items-center justify-between py-2.5 text-sm font-medium text-ink transition-colors hover:text-plate focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                        className={
+                          "flex items-center justify-between py-2.5 text-sm font-medium text-ink " +
+                          "transition-colors hover:text-plate focus-visible:outline-none " +
+                          "focus-visible:ring-2 focus-visible:ring-plate"
+                        }
                       >
                         <span>{c.name}</span>
                         <span className="text-xs text-muted">&rarr;</span>

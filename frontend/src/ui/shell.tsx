@@ -39,10 +39,15 @@ function Header() {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const navigate = useNavigate();
 
-  /* TODO: keyboard/aria wiring stays handled by Radix for both menus. */
+  /* Note: keyboard/aria wiring stays handled by Radix for both menus. */
 
   return (
-    <header className="sticky top-0 z-30 grid h-14 grid-cols-2 items-center gap-4 border-b border-line bg-card px-5 min-[890px]:h-[72px] lg:grid-cols-[1fr_auto_1fr]">
+    <header
+      className={cn(
+        "sticky top-0 z-30 grid h-14 grid-cols-2 items-center gap-4 border-b border-line bg-card px-5",
+        "min-[890px]:h-[72px] lg:grid-cols-[1fr_auto_1fr]"
+      )}
+    >
       {/* Left: product nav (desktop, like Zillow's left group). */}
       <div className="hidden items-center gap-1 justify-self-start lg:flex">
         <NavLink

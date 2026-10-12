@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
+import { ART_ASSETS } from "@/constants/assets";
 import { ROUTES } from "@/constants/routes";
 import { Button } from "@/ui/button";
 
@@ -15,7 +16,7 @@ import { Button } from "@/ui/button";
 export function FavoritesGateIllustration() {
   return (
     <img
-      src="/art/favorites-gate.svg?v=pure-color-1"
+      src={ART_ASSETS.FAVORITES_GATE}
       alt=""
       aria-hidden
       loading="lazy"
@@ -29,7 +30,7 @@ export function FavoritesGateIllustration() {
 export function MessagesGateIllustration() {
   return (
     <img
-      src="/art/inbox-gate.svg?v=pure-color-1"
+      src={ART_ASSETS.INBOX_GATE}
       alt=""
       aria-hidden
       loading="lazy"
@@ -51,7 +52,10 @@ export function GateScreen({
   testId: string;
 }) {
   return (
-    <section className="bg-card min-h-[60vh] flex-1 flex flex-col justify-center" data-testid={testId}>
+    <section
+      className="bg-card min-h-[60vh] flex-1 flex flex-col justify-center"
+      data-testid={testId}
+    >
       <div className="mx-auto grid w-full max-w-5xl grid-cols-1 items-center gap-6 px-4 py-10 md:px-6 lg:grid-cols-12 lg:gap-12 lg:px-8">
         <div className="order-2 flex flex-col justify-center text-center lg:order-1 lg:col-span-5 lg:text-left">
           <h1 className="text-2xl font-black">{title}</h1>

@@ -26,6 +26,7 @@ app = FastAPI(title="TROSV AI service", version="0.1.0")
 
 @app.get("/health")
 def health() -> dict[str, str]:
+    """Health check endpoint confirming AI service availability."""
     return {"status": "ok"}
 
 

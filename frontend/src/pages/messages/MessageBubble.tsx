@@ -133,7 +133,8 @@ export function MessageBubble(props: MessageBubbleProps) {
       })
     : "";
   const fullTimeStr = dateObj
-    ? `${dateObj.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}, ${dateObj.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}`
+    ? `${dateObj.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })}, ` +
+      `${dateObj.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}`
     : "";
 
   // Extract room link if present
@@ -162,7 +163,8 @@ export function MessageBubble(props: MessageBubbleProps) {
           type="button"
           aria-label="Tùy chọn tin nhắn"
           className={cn(
-            "flex size-7 shrink-0 items-center justify-center rounded-full border border-line bg-card/95 text-muted shadow-xs transition-all hover:bg-tint hover:text-ink focus-visible:opacity-100",
+            "flex size-7 shrink-0 items-center justify-center rounded-full border border-line",
+            "bg-card/95 text-muted shadow-xs transition-all hover:bg-tint hover:text-ink focus-visible:opacity-100",
             open
               ? "opacity-100 bg-tint text-ink border-plate/30 ring-2 ring-plate/20"
               : "opacity-0 group-hover/msg:opacity-100"
@@ -189,7 +191,8 @@ export function MessageBubble(props: MessageBubbleProps) {
               key={e}
               type="button"
               className={cn(
-                "flex size-7 shrink-0 items-center justify-center rounded-full text-base transition-transform hover:scale-125 hover:bg-tint active:scale-110 focus-visible:outline-none",
+                "flex size-7 shrink-0 items-center justify-center rounded-full text-base",
+                "transition-transform hover:scale-125 hover:bg-tint active:scale-110 focus-visible:outline-none",
                 myReaction === e ? "bg-plate/15 ring-2 ring-plate/40" : ""
               )}
               onClick={() => {
@@ -208,7 +211,10 @@ export function MessageBubble(props: MessageBubbleProps) {
           {msg.body ? (
             <button
               type="button"
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium text-ink hover:bg-tint transition-colors"
+              className={
+                "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium " +
+                "text-ink hover:bg-tint transition-colors"
+              }
               onClick={() => {
                 void navigator.clipboard.writeText(msg.body ?? "");
                 toast("Đã sao chép tin nhắn");
@@ -223,7 +229,10 @@ export function MessageBubble(props: MessageBubbleProps) {
           {isMine ? (
             <button
               type="button"
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium text-danger hover:bg-danger-tint transition-colors"
+              className={
+                "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium " +
+                "text-danger hover:bg-danger-tint transition-colors"
+              }
               onClick={() => {
                 onUnsend(msg);
                 setOpen(false);
@@ -236,7 +245,10 @@ export function MessageBubble(props: MessageBubbleProps) {
 
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium text-ink hover:bg-tint transition-colors"
+            className={
+              "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-medium " +
+              "text-ink hover:bg-tint transition-colors"
+            }
             onClick={() => {
               onDeleteSelf(msg);
               setOpen(false);
@@ -288,7 +300,10 @@ export function MessageBubble(props: MessageBubbleProps) {
                 href={resolvedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mb-1 block overflow-hidden rounded-xl border border-line bg-card shadow-xs transition hover:opacity-90 max-w-full"
+                className={
+                  "mb-1 block overflow-hidden rounded-xl border border-line bg-card " +
+                  "shadow-xs transition hover:opacity-90 max-w-full"
+                }
               >
                 {isImage && !imgFailed ? (
                   <img
@@ -324,7 +339,8 @@ export function MessageBubble(props: MessageBubbleProps) {
           {cleanText ? (
             <div
               className={cn(
-                "relative px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap break-words text-left shadow-xs transition-all",
+                "relative px-4 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap break-words",
+                "text-left shadow-xs transition-all",
                 getBubbleRadius(),
                 badgeTarget === "text" && reactions.length > 0 ? "mb-2.5" : "",
                 isMine
@@ -371,7 +387,8 @@ export function MessageBubble(props: MessageBubbleProps) {
       {isTimeVisible ? (
         <div
           className={cn(
-            "mt-1 flex items-center gap-1.5 px-1 text-[11px] text-muted transition-opacity duration-150 animate-fade-in",
+            "mt-1 flex items-center gap-1.5 px-1 text-[11px] text-muted",
+            "transition-opacity duration-150 animate-fade-in",
             reactions.length > 0 ? "mt-2 pt-0.5" : "",
             isMine ? "justify-end" : "justify-start"
           )}
