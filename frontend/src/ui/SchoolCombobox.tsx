@@ -90,7 +90,12 @@ export function SchoolCombobox({
     <div ref={containerRef} className={cn("relative w-full", className)}>
       {/* Selected Card View (when closed and school is picked) */}
       {selectedSchool && !open ? (
-        <div className="flex items-center justify-between rounded-xl border border-line bg-card p-3.5 shadow-xs transition hover:border-line-strong">
+        <div
+          className={
+            "flex items-center justify-between rounded-xl border border-line bg-card " +
+            "p-3.5 shadow-xs transition hover:border-line-strong"
+          }
+        >
           <div className="flex items-center gap-3 min-w-0 pr-2">
             <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-plate-tint text-plate">
               <GraduationCap className="size-5" aria-hidden />
@@ -110,7 +115,10 @@ export function SchoolCombobox({
                 setOpen(true);
                 setTimeout(() => inputRef.current?.focus(), 50);
               }}
-              className="rounded-lg border border-line bg-paper px-2.5 py-1.5 text-xs font-medium text-ink-2 hover:bg-tint hover:text-ink transition-colors"
+              className={
+                "rounded-lg border border-line bg-paper px-2.5 py-1.5 text-xs font-medium " +
+                "text-ink-2 hover:bg-tint hover:text-ink transition-colors"
+              }
             >
               Đổi trường
             </button>
@@ -132,7 +140,8 @@ export function SchoolCombobox({
             setTimeout(() => inputRef.current?.focus(), 50);
           }}
           className={cn(
-            "flex h-11 w-full items-center justify-between rounded-lg border bg-card px-3 text-sm transition text-left cursor-pointer",
+            "flex h-11 w-full items-center justify-between rounded-lg border bg-card px-3 text-sm transition",
+            "text-left cursor-pointer",
             error ? "border-danger ring-1 ring-danger" : "border-line-strong hover:border-plate"
           )}
         >
@@ -147,7 +156,8 @@ export function SchoolCombobox({
       ) : (
         <div
           className={cn(
-            "flex h-11 w-full items-center justify-between rounded-lg border bg-card px-3 text-sm transition border-plate ring-2 ring-plate/20"
+            "flex h-11 w-full items-center justify-between rounded-lg border bg-card px-3 text-sm transition",
+            "border-plate ring-2 ring-plate/20"
           )}
         >
           <div className="flex items-center gap-2 text-ink-2 min-w-0 flex-1">
@@ -181,7 +191,12 @@ export function SchoolCombobox({
 
       {/* Floating Dropdown Picker */}
       {open ? (
-        <div className="absolute left-0 right-0 top-full z-30 mt-1.5 rounded-xl border border-line bg-card shadow-pop overflow-hidden animate-pop-in">
+        <div
+          className={
+            "absolute left-0 right-0 top-full z-30 mt-1.5 rounded-xl border border-line " +
+            "bg-card shadow-pop overflow-hidden animate-pop-in"
+          }
+        >
           {/* City filter tabs */}
           {cities.length > 0 ? (
             <div className="flex items-center gap-1 border-b border-line bg-paper/60 p-2 overflow-x-auto">
@@ -229,7 +244,8 @@ export function SchoolCombobox({
                     type="button"
                     onClick={() => { handleSelect(s.id); }}
                     className={cn(
-                      "flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-sm transition-colors",
+                      "flex w-full items-center justify-between rounded-lg px-3 py-2.5",
+                      "text-left text-sm transition-colors",
                       isSelected
                         ? "bg-plate-tint/70 text-plate font-semibold"
                         : "text-ink hover:bg-tint"
@@ -256,7 +272,10 @@ export function SchoolCombobox({
                       setQuery("");
                       setSelectedCity("all");
                     }}
-                    className="inline-flex items-center gap-1 rounded-md border border-line bg-paper px-2.5 py-1 text-xs font-medium text-ink hover:bg-tint"
+                    className={
+                      "inline-flex items-center gap-1 rounded-md border border-line bg-paper " +
+                      "px-2.5 py-1 text-xs font-medium text-ink hover:bg-tint"
+                    }
                   >
                     <RotateCcw className="size-3" aria-hidden />
                     <span>Xem tất cả các trường</span>
@@ -267,7 +286,12 @@ export function SchoolCombobox({
           </div>
 
           {/* Footer note */}
-          <div className="border-t border-line bg-paper/30 px-3 py-2 text-[11px] text-muted flex items-center justify-between">
+          <div
+            className={
+              "border-t border-line bg-paper/30 px-3 py-2 text-[11px] text-muted " +
+              "flex items-center justify-between"
+            }
+          >
             <span>Hiển thị {filteredSchools.length} trường</span>
             <button
               type="button"

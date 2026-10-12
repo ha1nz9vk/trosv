@@ -39,7 +39,8 @@ export function FilterPill({
           type="button"
           aria-label={label}
           className={cn(
-            "h-10 flex-none rounded-lg border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
+            "h-10 flex-none rounded-lg border px-3.5 text-sm font-medium transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
             active
               ? "border-plate bg-plate-tint text-plate font-semibold"
               : "border-line-strong bg-card text-ink hover:bg-tint"
@@ -61,6 +62,73 @@ export function FilterPill({
         ) : null}
       </PopoverContent>
     </Popover>
+  );
+}
+
+const SELECT_FIELD_CLASS =
+  "h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink " +
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate disabled:opacity-50";
+
+interface LocationSelectsProps {
+  idPrefix: string;
+  search: ReturnType<typeof useListingSearch>;
+  cityAllLabel?: string;
+}
+
+function LocationSelects({
+  idPrefix,
+  search,
+  cityAllLabel = "Tất cả",
+}: LocationSelectsProps) {
+  return (
+    <>
+      <div>
+        <label htmlFor={`${idPrefix}-city`} className="flex flex-col gap-1 text-xs font-medium text-ink-2">
+          Tỉnh / Thành phố
+          <select
+            id={`${idPrefix}-city`}
+            value={search.filters.city_id}
+            onChange={(e) => { search.setCity(e.target.value); }}
+            className={SELECT_FIELD_CLASS}
+          >
+            <option value="">{cityAllLabel}</option>
+            {search.cities.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div>
+        <label htmlFor={`${idPrefix}-ward`} className="flex flex-col gap-1 text-xs font-medium text-ink-2">
+          Phường / Xã
+          <select
+            id={`${idPrefix}-ward`}
+            value={search.filters.ward_id}
+            onChange={(e) => { search.setWard(e.target.value); }}
+            disabled={search.filters.city_id === ""}
+            className={SELECT_FIELD_CLASS}
+          >
+            <option value="">
+              {search.filters.city_id === "" ? "Chọn Tỉnh/TP trước" : "Tất cả phường"}
+            </option>
+            {search.wards
+              .filter(
+                (w) =>
+                  search.filters.city_id === "" ||
+                  String(w.city?.id ?? w.city_id ?? "") === search.filters.city_id
+              )
+              .map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name}
+                </option>
+              ))}
+          </select>
+        </label>
+      </div>
+    </>
   );
 }
 
@@ -93,52 +161,7 @@ export function SearchFilterBar({
         onClear={() => { search.setCity(""); }}
       >
         <div className="flex flex-col gap-3 min-w-[240px]">
-          <div>
-            <label htmlFor="filter-city" className="flex flex-col gap-1 text-xs font-medium text-ink-2">
-              Tỉnh / Thành phố
-              <select
-                id="filter-city"
-                value={search.filters.city_id}
-                onChange={(e) => { search.setCity(e.target.value); }}
-                className="h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
-              >
-                <option value="">Tất cả</option>
-                {search.cities.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div>
-            <label htmlFor="filter-ward" className="flex flex-col gap-1 text-xs font-medium text-ink-2">
-              Phường / Xã
-              <select
-                id="filter-ward"
-                value={search.filters.ward_id}
-                onChange={(e) => { search.setWard(e.target.value); }}
-                disabled={search.filters.city_id === ""}
-                className="h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate disabled:opacity-50"
-              >
-                <option value="">
-                  {search.filters.city_id === "" ? "Chọn Tỉnh/TP trước" : "Tất cả phường"}
-                </option>
-                {search.wards
-                  .filter(
-                    (w) =>
-                      search.filters.city_id === "" ||
-                      String(w.city?.id ?? w.city_id ?? "") === search.filters.city_id
-                  )
-                  .map((w) => (
-                    <option key={w.id} value={w.id}>
-                      {w.name}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          </div>
+          <LocationSelects idPrefix="filter" search={search} cityAllLabel="Tất cả" />
 
           <button
             type="button"
@@ -159,52 +182,7 @@ export function SearchFilterBar({
         }}
       >
         <div className="flex flex-col gap-3 min-w-[250px]">
-          <div>
-            <label htmlFor="near-school-city" className="flex flex-col gap-1 text-xs font-medium text-ink-2">
-              Tỉnh / Thành phố
-              <select
-                id="near-school-city"
-                value={search.filters.city_id}
-                onChange={(e) => { search.setCity(e.target.value); }}
-                className="h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
-              >
-                <option value="">Tất cả tỉnh thành</option>
-                {search.cities.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div>
-            <label htmlFor="near-school-ward" className="flex flex-col gap-1 text-xs font-medium text-ink-2">
-              Phường / Xã
-              <select
-                id="near-school-ward"
-                value={search.filters.ward_id}
-                onChange={(e) => { search.setWard(e.target.value); }}
-                disabled={search.filters.city_id === ""}
-                className="h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate disabled:opacity-50"
-              >
-                <option value="">
-                  {search.filters.city_id === "" ? "Chọn Tỉnh/TP trước" : "Tất cả phường"}
-                </option>
-                {search.wards
-                  .filter(
-                    (w) =>
-                      search.filters.city_id === "" ||
-                      String(w.city?.id ?? w.city_id ?? "") === search.filters.city_id
-                  )
-                  .map((w) => (
-                    <option key={w.id} value={w.id}>
-                      {w.name}
-                    </option>
-                  ))}
-              </select>
-            </label>
-          </div>
+          <LocationSelects idPrefix="near-school" search={search} cityAllLabel="Tất cả tỉnh thành" />
 
           <div>
             <label htmlFor="filter-school" className="flex flex-col gap-1 text-xs font-medium text-ink-2">
@@ -214,7 +192,7 @@ export function SearchFilterBar({
                 value={search.filters.school_id}
                 onChange={(e) => { search.setFilter("school_id", e.target.value); }}
                 disabled={search.filters.ward_id === ""}
-                className="h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate disabled:opacity-50"
+                className={SELECT_FIELD_CLASS}
               >
                 <option value="">
                   {search.filters.city_id === ""
@@ -246,7 +224,7 @@ export function SearchFilterBar({
                 id="filter-radius"
                 value={search.filters.max_km}
                 onChange={(e) => { search.setFilter("max_km", e.target.value); }}
-                className="h-10 rounded-lg border border-line-strong bg-card px-3 text-sm text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                className={SELECT_FIELD_CLASS}
               >
                 <option value="">Mọi khoảng cách</option>
                 {RADIUS_OPTIONS.map((r) => (
@@ -309,7 +287,8 @@ export function SearchFilterBar({
               onClick={() => { search.setFilter("type", o.value); }}
               aria-pressed={search.filters.type === o.value}
               className={cn(
-                "rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
+                "rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-tint",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
                 search.filters.type === o.value && "bg-tint font-semibold text-plate"
               )}
             >
@@ -343,7 +322,11 @@ export function SearchFilterBar({
       <button
         type="button"
         onClick={onSaveSearch}
-        className="ml-auto h-9 flex-none rounded-lg px-3 text-sm font-medium text-ink-2 transition-colors hover:bg-tint hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+        className={
+          "ml-auto h-9 flex-none rounded-lg px-3 text-sm font-medium text-ink-2 " +
+          "transition-colors hover:bg-tint hover:text-ink focus-visible:outline-none " +
+          "focus-visible:ring-2 focus-visible:ring-plate"
+        }
       >
         Lưu tìm kiếm
       </button>
@@ -351,7 +334,10 @@ export function SearchFilterBar({
       <button
         type="button"
         onClick={onToggleMap}
-        className="flex h-9 flex-none items-center gap-1.5 rounded-lg border border-plate bg-plate px-3 text-sm font-semibold text-white lg:hidden"
+        className={
+          "flex h-9 flex-none items-center gap-1.5 rounded-lg border border-plate " +
+          "bg-plate px-3 text-sm font-semibold text-white lg:hidden"
+        }
         aria-pressed={showMap}
       >
         {showMap ? (

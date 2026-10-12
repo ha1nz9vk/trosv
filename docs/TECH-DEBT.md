@@ -1,12 +1,12 @@
 # Sổ theo dõi nợ kỹ thuật (Tech Debt Register)
 
 Sinh bằng skill `tech-debt-tracker` (scan → filter → prioritize → dashboard).
-Snapshot mới nhất 2026-10-12: **1,872 item** sau lọc, mật độ **9.31%**
-(so với 1,901 @ 10.22% ngày 09-28: dù bổ sung Dark Mode toàn diện, phản hồi
-cảm xúc phòng/tin nhắn, tối ưu cuộn chat, chuyển đổi SVG art và audit bảo mật,
-mật độ nợ kỹ thuật liên tục giảm qua các đợt refactor module hóa `Profile.tsx`,
-tách `ListingFilterService` và `illustrations.tsx`, xóa toàn bộ `large_file` và
-chuẩn hóa định dạng dòng dài ở cả backend và frontend).
+Snapshot mới nhất 2026-10-12: **1,711 item** sau lọc, mật độ **8.55%**
+(so với 1,872 @ 9.31% trước đợt dọn nợ: giảm ngoạn mục **161 item debt** nhờ
+dọn sạch `welcome.blade.php`, DRY `ConversationController` và `SearchFilterBar`,
+đồng thời bẻ gọn toàn bộ dòng dài > 120 ký tự ở các component chính;
+mật độ nợ kỹ thuật rơi thẳng từ 9.31% xuống 8.55%, số block trùng giảm 112,
+số dòng dài giảm 48).
 Bước lọc app-only dùng `scripts/filter-debt-app-only.py` giữ `backend/` +
 `frontend/` + `ai-service/`, loại tests và noise regex.
 
@@ -53,6 +53,10 @@ python3 .agents/skills/tech-debt-tracker/scripts/debt_dashboard.py \
 | 13 | Controller bloat ở `ListingController::index` | ~85 dòng query builder | Khó bảo trì, vi phạm SRP, khó unit test query | ✅ **Xong** (2026-10-12): Tách `ListingFilterService` chuyên trách search ILIKE, lọc giá, khu vực, khoảng cách Haversine và dynamic sort; `ListingController::index` rút gọn còn ~20 dòng | done |
 | 14 | Tệp icon chứa minh họa lớn `icons.tsx` (530 dòng) | 1 `large_file` item | Pha trộn icon glyph và SVG minh họa cảnh lớn | ✅ **Xong** (2026-10-12): Tách 6 minh họa cảnh vào `illustrations.tsx` (454 dòng), `icons.tsx` còn 85 dòng re-export; `large_file` toàn app về **chính xác 0** | done |
 | 15 | Smells đơn lẻ & hardcoded art assets | 1 missing docstring, 1 todo, hardcoded `/art/...` | Code smell, magic string rải rác | ✅ **Xong** (2026-10-12): Thêm docstring `health()` trong `ai-service`, ghi chú Radix trong `shell.tsx`, gom ảnh về `constants/assets.ts`, wrap dòng dài; `missing_docstring` về **0**, `long_line` 230 → 218 | done |
+| 16 | Blade view bloat & inlined CSS (`welcome.blade.php`) | 57 item debt (31 dòng dài, 19 duplicate blocks, 7 path smells) | Inlined CSS 18k ký tự, nhiều smell lặp lại | ✅ **Xong** (2026-10-12): Viết lại card semantic 55 dòng, giữ nguyên logo và bunny.net font cho CSP `SecurityHeaders` middleware | done |
+| 17 | DRY hội thoại `ConversationController` (`store` ≈ `storeDirect`) | 12 block trùng assembly query | Lặp logic tìm kiếm/tạo mới cuộc hội thoại | ✅ **Xong** (2026-10-12): Tách helper `findOrCreateConversation` và `respondWithConversation`, thống nhất luồng phản hồi | done |
+| 18 | DRY bộ lọc thành phố / phường trong `SearchFilterBar.tsx` | ~35 block trùng giữa 2 popover | Lặp code select city/ward và classes | ✅ **Xong** (2026-10-12): Tách subcomponent `LocationSelects` và hằng số `SELECT_FIELD_CLASS`, giữ nguyên DOM ID cho E2E test | done |
+| 19 | Wrap dòng dài còn lại ở frontend (`SchoolCombobox`, `ConversationDetail`, `Search`, `LandlordForm`) | 26 dòng dài > 120 ký tự | Khó đọc và review code | ✅ **Xong** (2026-10-12): Bẻ dòng gọn gàng, giảm 48 long line toàn hệ thống | done |
 
 **Không phải debt (giữ nguyên):** test file dài (`ConversationTest` 564 dòng - test feature dài là bình thường),
 boilerplate FormRequest/config/migration (khung framework), `docker-compose*.yml` (override cố ý, có comment giải thích),
@@ -60,7 +64,7 @@ boilerplate FormRequest/config/migration (khung framework), `docker-compose*.yml
 
 ## Cảnh báo về con số tự động
 
-`debt_prioritizer.py` ước tính tổng effort **25,741 giờ / 1,734 sprint** - đây là
+`debt_prioritizer.py` ước tính tổng effort **23,122 giờ / 1,558 sprint** - đây là
 heuristic gán mặc định cho từng item thô (phần lớn là boilerplate), **không dùng để
 lập kế hoạch**. Con số đáng tin là bảng tinh chỉnh ở trên (~2.75 ngày công).
 
@@ -75,6 +79,7 @@ lập kế hoạch**. Con số đáng tin là bảng tinh chỉnh ở trên (~2.
 | 2026-10-12 | 1,903 (+2) | Thêm Dark mode, reactions badge + preview card reactions, autoscroll, SVG art tối ưu, sửa lỗi bảo mật backend, indexes. Tổng dòng app tăng lên 20.2k dòng, **density giảm mạnh 10.22% → 9.42%**, Health Score 60/100, Technical Risk Score cải thiện (−25.15/period) |
 | 2026-10-12 (post-refactor) | 1,898 (−5) | Sau refactor #12 Profile.tsx: `large_file` logic = 0, density giảm tiếp 9.42% → 9.39% |
 | 2026-10-12 (format-cleanup) | 1,877 (−21) | Chuẩn hóa toàn diện các dòng dài > 120 ký tự ở backend (controllers, resources, services, queries) và frontend (UI components, modals, preview cards); density giảm còn 9.35% |
-| 2026-10-12 (arch-refactor) | **1,872 (−5)** | Tách `ListingFilterService`, module hóa `illustrations.tsx` (`large_file` = 0), thêm docstring `ai-service` (`missing_docstring` = 0), chuẩn hóa `constants/assets.ts` và wrap dòng dài; **density giảm kỷ lục còn 9.31%**, toàn bộ 13/13 E2E test pass |
+| 2026-10-12 (arch-refactor) | 1,872 (−5) | Tách `ListingFilterService`, module hóa `illustrations.tsx` (`large_file` = 0), thêm docstring `ai-service` (`missing_docstring` = 0), chuẩn hóa `constants/assets.ts` và wrap dòng dài; density 9.31% |
+| 2026-10-12 (debt-reduction-sprint) | **1,711 (−161)** | Dọn sạch `welcome.blade.php` (57 items), DRY `ConversationController` & `SearchFilterBar` (LocationSelects), bẻ dòng dài ở 4 component frontend. Mật độ nợ kỹ thuật giảm kỷ lục từ **9.31% → 8.55%** (giảm 161 debt item), 13/13 E2E test pass |
 
 **Kết quả 5 mục targeted (baseline → final):** #1 FormRequests 44→0 block rules thật (10 còn lại là boilerplate `}`/docblock khớp chéo) · #2 auth 45→30 (30 = coincidental line-match sau khi tách hết hook/layout) · #3 Fv↔ML 34→6 (6 = khung import/div) · #4 large_file CSS 2→0 · #5 hardcode 13→0. Mọi refactor giữ hành vi: 209 test backend + e2e + CI xanh xuyên suốt |

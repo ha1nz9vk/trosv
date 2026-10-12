@@ -320,7 +320,10 @@ function Thread({ id }: ThreadProps) {
             stick.scrollToBottom();
           }}
           aria-label="Xuống tin nhắn mới nhất"
-          className="self-center flex items-center gap-1.5 -mt-10 mb-2 z-10 rounded-full border border-line bg-card px-3 py-1.5 text-xs font-medium text-ink shadow-sm transition hover:bg-tint"
+          className={
+            "self-center flex items-center gap-1.5 -mt-10 mb-2 z-10 rounded-full " +
+            "border border-line bg-card px-3 py-1.5 text-xs font-medium text-ink shadow-sm transition hover:bg-tint"
+          }
         >
           <ArrowDown className="size-3.5" aria-hidden />
           <span>Mới nhất</span>
@@ -330,7 +333,9 @@ function Thread({ id }: ThreadProps) {
       {/* Composer: auto-growing textarea + attachment */}
       <div className="shrink-0 border-t border-line bg-card/95 backdrop-blur-md p-3">
         {attachment ? (
-          <div className="mb-2 max-w-sm flex items-center gap-2 rounded-xl border border-line bg-paper/80 p-2 shadow-xs">
+          <div
+            className="mb-2 max-w-sm flex items-center gap-2 rounded-xl border border-line bg-paper/80 p-2 shadow-xs"
+          >
             {attachmentPreview ? (
               <img
                 src={attachmentPreview}
@@ -389,12 +394,22 @@ function Thread({ id }: ThreadProps) {
             type="button"
             aria-label="Đính kèm tệp"
             onClick={() => fileRef.current?.click()}
-            className="flex size-10 shrink-0 items-center justify-center rounded-full text-ink-2 hover:bg-tint hover:text-plate transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+            className={
+              "flex size-10 shrink-0 items-center justify-center rounded-full text-ink-2 " +
+              "hover:bg-tint hover:text-plate transition-colors focus-visible:outline-none " +
+              "focus-visible:ring-2 focus-visible:ring-plate"
+            }
           >
             <Paperclip className="size-5" aria-hidden />
           </button>
 
-          <div className="relative flex min-h-[42px] max-h-36 flex-1 items-center rounded-2xl border border-line bg-paper/40 px-3.5 py-1 focus-within:border-plate focus-within:bg-card focus-within:ring-1 focus-within:ring-plate transition-all">
+          <div
+            className={
+              "relative flex min-h-[42px] max-h-36 flex-1 items-center rounded-2xl border " +
+              "border-line bg-paper/40 px-3.5 py-1 focus-within:border-plate focus-within:bg-card " +
+              "focus-within:ring-1 focus-within:ring-plate transition-all"
+            }
+          >
             <textarea
               value={draft}
               onChange={(e) => {
@@ -410,7 +425,10 @@ function Thread({ id }: ThreadProps) {
               aria-label="Tin nhắn"
               placeholder="Nhập tin nhắn..."
               rows={1}
-              className="w-full resize-none bg-transparent py-1.5 text-sm text-ink placeholder:text-muted focus:outline-none leading-relaxed"
+              className={
+                "w-full resize-none bg-transparent py-1.5 text-sm text-ink " +
+                "placeholder:text-muted focus:outline-none leading-relaxed"
+              }
             />
           </div>
 
@@ -448,7 +466,10 @@ export default function ConversationDetail() {
         <GateScreen
           testId="messages-gate"
           title="Trung tâm tin nhắn"
-          description="Mọi cuộc trò chuyện với chủ nhà và sinh viên đều ở đây để bạn không bỏ lỡ tin nào. Đăng nhập để bắt đầu nhắn tin."
+          description={
+            "Mọi cuộc trò chuyện với chủ nhà và sinh viên đều ở đây " +
+            "để bạn không bỏ lỡ tin nào. Đăng nhập để bắt đầu nhắn tin."
+          }
           illustration={<MessagesGateIllustration />}
         />
         <div className="mt-auto">

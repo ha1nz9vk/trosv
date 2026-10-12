@@ -67,7 +67,10 @@ export default function LandlordForm() {
       <div className="mb-6 flex flex-col gap-2">
         <Link
           to={ROUTES.LANDLORD}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink transition-colors w-fit"
+          className={
+            "inline-flex items-center gap-1.5 text-sm font-medium text-muted " +
+            "hover:text-ink transition-colors w-fit"
+          }
         >
           <ArrowLeft className="size-4" aria-hidden />
           <span>Quay lại Quản lý tin đăng</span>
@@ -262,7 +265,8 @@ export default function LandlordForm() {
                   onClick={() => { form7.toggleAmenity(a.id); }}
                   aria-pressed={form7.form.amenity_ids.includes(a.id)}
                   className={cn(
-                    "cursor-pointer whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    "cursor-pointer whitespace-nowrap rounded-full border px-3 py-1.5",
+                    "text-xs font-medium transition-colors",
                     form7.form.amenity_ids.includes(a.id)
                       ? "border-plate bg-plate font-semibold text-white shadow-xs"
                       : "border-line-strong bg-card text-ink hover:bg-tint"
@@ -309,7 +313,11 @@ export default function LandlordForm() {
                       type="button"
                       onClick={() => void form7.handleDeleteImage(img.id)}
                       aria-label={`Xóa ảnh ${i + 1}`}
-                      className="absolute right-1 top-1 flex size-7 items-center justify-center rounded-full bg-card/90 text-ink opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                      className={
+                        "absolute right-1 top-1 flex size-7 items-center justify-center " +
+                        "rounded-full bg-card/90 text-ink opacity-0 transition-opacity " +
+                        "group-hover:opacity-100 focus-visible:opacity-100"
+                      }
                     >
                       <Trash2 className="size-4" aria-hidden />
                     </button>
@@ -338,7 +346,8 @@ export default function LandlordForm() {
               acceptFiles(files);
             }}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-8 text-center transition-colors",
+              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl",
+              "border-2 border-dashed p-8 text-center transition-colors",
               dragOver ? "border-plate bg-plate-tint/50" : "border-line-strong bg-tint"
             )}
             onClick={() => fileInput.current?.click()}
@@ -371,7 +380,12 @@ export default function LandlordForm() {
           <Button
             type="button"
             variant="ghost"
-            onClick={() => { void navigate(form7.isEdit ? route(ROUTES.LANDLORD_EDIT, { id: numericId ?? 0 }) : ROUTES.LANDLORD); }}
+            onClick={() => {
+              const target = form7.isEdit
+                ? route(ROUTES.LANDLORD_EDIT, { id: numericId ?? 0 })
+                : ROUTES.LANDLORD;
+              void navigate(target);
+            }}
           >
             Hủy
           </Button>
@@ -389,7 +403,12 @@ function CoordinatePicker({ lat, lng, onPick }: CoordinatePickerProps) {
   return (
     <div className="relative h-full w-full" data-testid="coordinate-picker">
       <ListingMapBridge onPick={onPick} />
-      <p className="absolute left-2 top-2 rounded-lg bg-card/90 px-2 py-1 text-xs tabular-nums text-ink border border-line">
+      <p
+        className={
+          "absolute left-2 top-2 rounded-lg bg-card/90 px-2 py-1 text-xs " +
+          "tabular-nums text-ink border border-line"
+        }
+      >
         {lat || "—"}, {lng || "—"}
       </p>
     </div>

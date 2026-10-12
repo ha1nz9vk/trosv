@@ -179,7 +179,11 @@ export default function Search() {
               <PopoverTrigger asChild>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 rounded-md border border-line bg-card px-2.5 py-1 text-xs font-semibold text-ink shadow-2xs hover:bg-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                  className={
+                    "inline-flex items-center gap-1 rounded-md border border-line bg-card " +
+                    "px-2.5 py-1 text-xs font-semibold text-ink shadow-2xs hover:bg-tint " +
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
+                  }
                 >
                   <span>{currentSortLabel}</span>
                   <ChevronDown className="size-3.5 text-muted" aria-hidden />
@@ -213,14 +217,20 @@ export default function Search() {
             {activeChips.map((c) => (
               <span
                 key={c.key}
-                className="inline-flex items-center gap-1 rounded-full border border-plate/30 bg-card px-2.5 py-0.5 text-xs font-medium text-plate shadow-2xs"
+                className={
+                  "inline-flex items-center gap-1 rounded-full border border-plate/30 " +
+                  "bg-card px-2.5 py-0.5 text-xs font-medium text-plate shadow-2xs"
+                }
               >
                 <span>{c.label}</span>
                 <button
                   type="button"
                   onClick={c.onRemove}
                   aria-label={`Bỏ lọc ${c.label}`}
-                  className="flex size-4 items-center justify-center rounded-full text-muted hover:text-ink hover:bg-line"
+                  className={
+                    "flex size-4 items-center justify-center rounded-full text-muted " +
+                    "hover:text-ink hover:bg-line"
+                  }
                 >
                   <X className="size-3" aria-hidden />
                 </button>
@@ -288,7 +298,8 @@ export default function Search() {
                     onClick={() => { search.setPage(p); }}
                     aria-current={p === search.page ? "page" : undefined}
                     className={cn(
-                      "size-9 rounded-lg text-sm font-semibold tabular-nums transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
+                      "size-9 rounded-lg text-sm font-semibold tabular-nums transition-colors",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
                       p === search.page
                         ? "bg-plate text-white"
                         : "border border-line-strong bg-card text-ink hover:bg-tint"
@@ -308,7 +319,12 @@ export default function Search() {
             mobileTab === "map" ? "block h-[calc(100dvh-var(--nav-h)-115px)] w-full" : "hidden lg:block"
           )}
         >
-          <div className="h-full w-full lg:sticky lg:top-[calc(var(--nav-h)+55px)] lg:h-[calc(100vh-var(--nav-h)-55px)]">
+          <div
+            className={
+              "h-full w-full lg:sticky lg:top-[calc(var(--nav-h)+55px)] " +
+              "lg:h-[calc(100vh-var(--nav-h)-55px)]"
+            }
+          >
             <ListingMap
               listings={search.mapListings.length > 0 ? search.mapListings : search.listings}
               selectedId={hoveredListing}
@@ -328,7 +344,10 @@ export default function Search() {
         <button
           type="button"
           onClick={() => { setMobileTab((tab) => (tab === "list" ? "map" : "list")); }}
-          className="flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-xs font-semibold text-white shadow-pop transition hover:scale-105 active:scale-95"
+          className={
+            "flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-xs font-semibold " +
+            "text-white shadow-pop transition hover:scale-105 active:scale-95"
+          }
         >
           {mobileTab === "list" ? (
             <>

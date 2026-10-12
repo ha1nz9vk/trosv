@@ -44,27 +44,11 @@ class ConversationController extends Controller
             throw new AuthorizationException;
         }
 
-        // Only one conversation per pair of users
-        $conversation = Conversation::where(function ($q) use ($student, $listing) {
-            $q->where('student_id', $student->id)->where('landlord_id', $listing->user_id);
-        })->orWhere(function ($q) use ($student, $listing) {
-            $q->where('student_id', $listing->user_id)->where('landlord_id', $student->id);
-        })->first();
-
-        $wasCreated = false;
-        if (! $conversation) {
-            $conversation = Conversation::create([
-                'student_id' => $student->id,
-                'landlord_id' => $listing->user_id,
-                'listing_id' => $listing->id,
-            ]);
-            $wasCreated = true;
-        } else {
-            // Update listing context to this latest inquired room
-            if ($conversation->listing_id !== $listing->id) {
-                $conversation->update(['listing_id' => $listing->id]);
-            }
-        }
+        [$conversation, $wasCreated] = $this->findOrCreateConversation(
+            $student->id,
+            $listing->user_id,
+            $listing->id
+        );
 
         // Automatically send a link to the room post to the landlord
         // unless already sent recently for this listing within 15 minutes.
@@ -89,11 +73,7 @@ class ConversationController extends Controller
             broadcast(new MessageSent($msg2->load(['sender:id', 'conversation'])));
         }
 
-        return response()->json([
-            'data' => (new ConversationResource(
-                $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
-            ))->resolve($request),
-        ], $wasCreated ? 201 : 200);
+        return $this->respondWithConversation($request, $conversation, $wasCreated);
     }
 
     /**
@@ -109,27 +89,13 @@ class ConversationController extends Controller
             ], 404);
         }
 
-        $conversation = Conversation::where(function ($q) use ($request, $user) {
-            $q->where('student_id', $request->user()->id)->where('landlord_id', $user->id);
-        })->orWhere(function ($q) use ($request, $user) {
-            $q->where('student_id', $user->id)->where('landlord_id', $request->user()->id);
-        })->first();
+        [$conversation, $wasCreated] = $this->findOrCreateConversation(
+            $request->user()->id,
+            $user->id,
+            null
+        );
 
-        $wasCreated = false;
-        if (! $conversation) {
-            $conversation = Conversation::create([
-                'student_id' => $request->user()->id,
-                'landlord_id' => $user->id,
-                'listing_id' => null,
-            ]);
-            $wasCreated = true;
-        }
-
-        return response()->json([
-            'data' => (new ConversationResource(
-                $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
-            ))->resolve($request),
-        ], $wasCreated ? 201 : 200);
+        return $this->respondWithConversation($request, $conversation, $wasCreated);
     }
 
     /**
@@ -280,5 +246,50 @@ class ConversationController extends Controller
         if (! $request->user()->can('participate', $conversation)) {
             abort(404);
         }
+    }
+
+    /**
+     * Get or create a 1-on-1 conversation between two users.
+     *
+     * @return array{0: Conversation, 1: bool}
+     */
+    private function findOrCreateConversation(int $userAId, int $userBId, ?int $listingId = null): array
+    {
+        $conversation = Conversation::where(function ($q) use ($userAId, $userBId) {
+            $q->where('student_id', $userAId)->where('landlord_id', $userBId);
+        })->orWhere(function ($q) use ($userAId, $userBId) {
+            $q->where('student_id', $userBId)->where('landlord_id', $userAId);
+        })->first();
+
+        if (! $conversation) {
+            $conversation = Conversation::create([
+                'student_id' => $userAId,
+                'landlord_id' => $userBId,
+                'listing_id' => $listingId,
+            ]);
+
+            return [$conversation, true];
+        }
+
+        if ($listingId !== null && $conversation->listing_id !== $listingId) {
+            $conversation->update(['listing_id' => $listingId]);
+        }
+
+        return [$conversation, false];
+    }
+
+    /**
+     * Formats conversation with fresh relationships according to the API contract.
+     */
+    private function respondWithConversation(
+        Request $request,
+        Conversation $conversation,
+        bool $wasCreated = false
+    ): JsonResponse {
+        return response()->json([
+            'data' => (new ConversationResource(
+                $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
+            ))->resolve($request),
+        ], $wasCreated ? 201 : 200);
     }
 }
