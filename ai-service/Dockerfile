@@ -9,7 +9,7 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py knowledge.md* ./
+COPY *.py knowledge.md* ./
 
 EXPOSE 8001
 
