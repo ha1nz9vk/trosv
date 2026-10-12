@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test('reaction badge and preview card in dark mode and recipient view', async ({ page }) => {
   console.log('Step 1: logging in');
-  await page.goto('http://localhost:5174/login');
+  await page.goto('/login');
   await page.fill('input[type="email"]', 'landlord1@example.com');
   await page.fill('input[type="password"]', 'password');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL('http://localhost:5174/');
+  await page.waitForURL(/\/($|\?)/);
   console.log('Step 2: logged in, navigating to messages/1');
 
-  await page.goto('http://localhost:5174/messages/1');
+  await page.goto('/messages/1');
   await page.waitForSelector('[data-testid="thread"]');
   await page.waitForTimeout(1000);
   console.log('Step 3: thread visible');
@@ -40,5 +40,7 @@ test('reaction badge and preview card in dark mode and recipient view', async ({
   await page.waitForTimeout(500);
 
   // Take screenshot in dark mode
-  await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/chat-dark-mode-reactions.png', fullPage: true });
+  if (!process.env.CI) {
+    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/chat-dark-mode-reactions.png', fullPage: true });
+  }
 });

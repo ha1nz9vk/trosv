@@ -2,12 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test('user dropdown panel only contains profile and logout', async ({ page }) => {
   // Login as student
-  await page.goto('http://localhost:5174/login');
+  await page.goto('/login');
   await page.fill('input[type="email"]', 'student1@example.com');
   await page.fill('input[type="password"]', 'password');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL('http://localhost:5174/');
+  await page.waitForURL(/\/($|\?)/);
 
   // Click profile picture / account menu trigger
   const menuTrigger = page.getByRole('button', { name: 'Menu tài khoản' });
@@ -28,7 +28,9 @@ test('user dropdown panel only contains profile and logout', async ({ page }) =>
   await expect(menu.getByText('Quản lý tin đăng')).toHaveCount(0);
 
   // Take screenshot in light mode
-  await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/user-dropdown-light.png' });
+  if (!process.env.CI) {
+    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/user-dropdown-light.png' });
+  }
 
   // Toggle dark mode via the header ThemeToggle
   await page.keyboard.press('Escape'); // close menu
@@ -41,7 +43,9 @@ test('user dropdown panel only contains profile and logout', async ({ page }) =>
   await expect(menu).toBeVisible();
 
   // Take screenshot in dark mode
-  await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/user-dropdown-dark.png' });
+  if (!process.env.CI) {
+    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/user-dropdown-dark.png' });
+  }
 
   // Verify only 2 menu items exist in the menu
   const items = menu.locator('[role="menuitem"]');

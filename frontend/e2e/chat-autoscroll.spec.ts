@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test('chat panel automatically opens at the latest message', async ({ page }) => {
   // 1. Log in
-  await page.goto('http://localhost:5174/login');
+  await page.goto('/login');
   await page.fill('input[type="email"]', 'student1@example.com');
   await page.fill('input[type="password"]', 'password');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL('http://localhost:5174/');
+  await page.waitForURL(/\/($|\?)/);
 
   // 2. Open conversation 1 directly
-  await page.goto('http://localhost:5174/messages/1');
+  await page.goto('/messages/1');
   const thread = page.locator('[data-testid="thread"]');
   await expect(thread).toBeVisible();
 
@@ -39,5 +39,7 @@ test('chat panel automatically opens at the latest message', async ({ page }) =>
   await expect(latestBtn).toHaveCount(0);
 
   // Take screenshot proving chat opens directly at the latest message
-  await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/chat-landing-bottom-verified.png' });
+  if (!process.env.CI) {
+    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/chat-landing-bottom-verified.png' });
+  }
 });

@@ -2,15 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test('reaction badge and preview card reaction', async ({ page }) => {
   // 1. Go to login
-  await page.goto('http://localhost:5174/login');
+  await page.goto('/login');
   await page.fill('input[type="email"]', 'student1@example.com');
   await page.fill('input[type="password"]', 'password');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL('http://localhost:5174/');
+  await page.waitForURL(/\/($|\?)/);
 
   // 2. Go to conversation 1
-  await page.goto('http://localhost:5174/messages/1');
+  await page.goto('/messages/1');
   await page.waitForSelector('[data-testid="thread"]');
   await page.waitForTimeout(1000);
 
