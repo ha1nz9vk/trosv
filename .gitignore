@@ -68,3 +68,7 @@ frontend/src/styles/.css-baseline/
 
 # Backups (backup.sh ghi vao ./backups hoac BACKUP_DIR bat ky)
 backups/
+
+# Test artifacts
+test-results/
+playwright-report/

@@ -14,7 +14,6 @@ use App\Models\Listing;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -28,8 +27,8 @@ use Throwable;
 class ConversationController extends Controller
 {
     /**
-     * POST /api/conversations (Student) - get-or-create. Calling twice for
-     * the same listing returns the existing conversation (contract).
+     * POST /api/conversations (Student) - get-or-create single conversation per person.
+     * Forward to existing conversation with landlord and automatically send room post link.
      */
     public function store(ConversationStoreRequest $request): JsonResponse
     {
@@ -39,30 +38,47 @@ class ConversationController extends Controller
         $student = $request->user();
         $listing = Listing::findOrFail($validated['listing_id']);
 
-        // A student cannot start a conversation about their own listing -
-        // they are both sides of the same conversation otherwise.
+        // A student cannot start a conversation about their own listing
         if ($listing->user_id === $student->id) {
             throw new AuthorizationException;
         }
 
-        $conversation = Conversation::firstOrCreate(
-            ['listing_id' => $listing->id, 'student_id' => $student->id],
-            ['landlord_id' => $listing->user_id],
+        [$conversation, $wasCreated] = $this->findOrCreateConversation(
+            $student->id,
+            $listing->user_id,
+            $listing->id
         );
 
-        // Fresh read so the response matches the stored state.
-        return response()->json([
-            'data' => (new ConversationResource(
-                $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
-            ))->resolve($request),
-        ], $conversation->wasRecentlyCreated ? 201 : 200);
+        // Automatically send a link to the room post to the landlord
+        // unless already sent recently for this listing within 15 minutes.
+        $roomPath = "/rooms/{$listing->id}";
+        $recentlySent = $conversation->messages()
+            ->where('sender_id', $student->id)
+            ->where('body', 'like', "%{$roomPath}%")
+            ->where('created_at', '>=', now()->subMinutes(15))
+            ->exists();
+
+        if (! $recentlySent) {
+            $msg1 = $conversation->messages()->create([
+                'sender_id' => $student->id,
+                'body' => 'Chào bạn, mình quan tâm đến phòng trọ này:',
+            ]);
+            $msg2 = $conversation->messages()->create([
+                'sender_id' => $student->id,
+                'body' => $roomPath,
+            ]);
+            $conversation->touch();
+            rescue(fn () => broadcast(new MessageSent($msg1->load(['sender:id', 'conversation']))), report: false);
+            rescue(fn () => broadcast(new MessageSent($msg2->load(['sender:id', 'conversation']))), report: false);
+        }
+
+        return $this->respondWithConversation($request, $conversation, $wasCreated);
     }
 
     /**
      * POST /api/users/{user}/message (Student) - get-or-create a DIRECT
      * conversation (listing_id null) with another student, from their
-     * public profile. Targets that are landlords or yourself are 404
-     * (consistent with the public-profile rules).
+     * public profile. Targets that are landlords or yourself are 404.
      */
     public function storeDirect(Request $request, User $user): JsonResponse
     {
@@ -72,31 +88,13 @@ class ConversationController extends Controller
             ], 404);
         }
 
-        // firstOrCreate + a unique expression index (conversations_direct_unique)
-        // close the double-POST race: the losing insert hits a unique
-        // violation, is caught, and re-reads the winning row so the second
-        // caller still gets 200 with the SAME conversation (never 500).
-        try {
-            $conversation = Conversation::firstOrCreate(
-                [
-                    'listing_id' => null,
-                    'student_id' => $request->user()->id,
-                    'landlord_id' => $user->id,
-                ],
-            );
-        } catch (UniqueConstraintViolationException) {
-            $conversation = Conversation::where([
-                'listing_id' => null,
-                'student_id' => $request->user()->id,
-                'landlord_id' => $user->id,
-            ])->firstOrFail();
-        }
+        [$conversation, $wasCreated] = $this->findOrCreateConversation(
+            $request->user()->id,
+            $user->id,
+            null
+        );
 
-        return response()->json([
-            'data' => (new ConversationResource(
-                $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
-            ))->resolve($request),
-        ], $conversation->wasRecentlyCreated ? 201 : 200);
+        return $this->respondWithConversation($request, $conversation, $wasCreated);
     }
 
     /**
@@ -175,7 +173,9 @@ class ConversationController extends Controller
         if ($isMultipart) {
             // Files are PRIVATE (local disk): served only through signed URLs.
             $uploaded = $request->file('file');
-            $attachmentName = $uploaded->getClientOriginalName();
+            $rawName = $uploaded->getClientOriginalName();
+            // Sanitize against path traversal and HTTP header splitting (CRLF) in Content-Disposition
+            $attachmentName = preg_replace('/[\r\n\x00-\x1F\x7F]/', '', basename($rawName)) ?: 'attachment';
             $attachmentPath = $uploaded->store("attachments/{$conversation->id}");
         }
 
@@ -203,7 +203,7 @@ class ConversationController extends Controller
         // Realtime bubble delivery over Reverb (replaces 5s client polling).
         // Message shape mirrors MessageResource/contract §3 (body/reactions
         // match MessageResource exactly; seen_at starts null).
-        broadcast(new MessageSent($message->load('sender:id')));
+        rescue(fn () => broadcast(new MessageSent($message->load(['sender:id', 'conversation']))), report: false);
 
         return response()->json([
             'data' => (new MessageResource($message->load('sender:id')))->resolve($request),
@@ -230,7 +230,10 @@ class ConversationController extends Controller
             ]);
 
         // Sender hiển thị "Đã xem" ngay khi receiver mở thread.
-        broadcast(new MessageSeen($conversation, $request->user(), $now->toISOString()));
+        rescue(
+            fn () => broadcast(new MessageSeen($conversation, $request->user(), $now->toISOString())),
+            report: false
+        );
 
         return response()->json(['data' => null]);
     }
@@ -245,5 +248,50 @@ class ConversationController extends Controller
         if (! $request->user()->can('participate', $conversation)) {
             abort(404);
         }
+    }
+
+    /**
+     * Get or create a 1-on-1 conversation between two users.
+     *
+     * @return array{0: Conversation, 1: bool}
+     */
+    private function findOrCreateConversation(int $userAId, int $userBId, ?int $listingId = null): array
+    {
+        $conversation = Conversation::where(function ($q) use ($userAId, $userBId) {
+            $q->where('student_id', $userAId)->where('landlord_id', $userBId);
+        })->orWhere(function ($q) use ($userAId, $userBId) {
+            $q->where('student_id', $userBId)->where('landlord_id', $userAId);
+        })->first();
+
+        if (! $conversation) {
+            $conversation = Conversation::create([
+                'student_id' => $userAId,
+                'landlord_id' => $userBId,
+                'listing_id' => $listingId,
+            ]);
+
+            return [$conversation, true];
+        }
+
+        if ($listingId !== null && $conversation->listing_id !== $listingId) {
+            $conversation->update(['listing_id' => $listingId]);
+        }
+
+        return [$conversation, false];
+    }
+
+    /**
+     * Formats conversation with fresh relationships according to the API contract.
+     */
+    private function respondWithConversation(
+        Request $request,
+        Conversation $conversation,
+        bool $wasCreated = false
+    ): JsonResponse {
+        return response()->json([
+            'data' => (new ConversationResource(
+                $conversation->fresh(['listing.coverImage', 'student', 'landlord', 'lastMessage'])
+            ))->resolve($request),
+        ], $wasCreated ? 201 : 200);
     }
 }

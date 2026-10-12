@@ -24,6 +24,12 @@ FAKE_MODE = os.getenv("FAKE_MODE", "true").lower() != "false"
 app = FastAPI(title="TROSV AI service", version="0.1.0")
 
 
+@app.get("/health")
+def health() -> dict[str, str]:
+    """Health check endpoint confirming AI service availability."""
+    return {"status": "ok"}
+
+
 class BaseReq(BaseModel):
     """Request base: bo qua truong khong khai bao (contract cho phep)."""
 

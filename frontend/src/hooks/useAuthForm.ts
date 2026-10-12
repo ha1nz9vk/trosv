@@ -31,9 +31,9 @@ export function useAuthForm({ submit, onError, afterSuccess }: UseAuthFormConfig
       if (afterSuccess) {
         afterSuccess();
       } else {
-        navigate(ROUTES.HOME, { replace: true });
+        void navigate(ROUTES.HOME, { replace: true });
       }
-    } catch (err) {
+    } catch (err: unknown) {
       onError?.(err);
     } finally {
       setBusy(false);

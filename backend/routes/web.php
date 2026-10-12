@@ -10,4 +10,4 @@ Route::get('/', function () {
 // Private chat attachments, opened straight in a browser tab via the
 // temporary signed URL from MessageResource (60 minutes, no token).
 Route::get('/attachments/{message}', [AttachmentController::class, 'show'])
-    ->name('attachments.show')->middleware('signed');
+    ->name('attachments.show')->middleware('signed:relative');

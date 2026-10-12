@@ -10,10 +10,10 @@ use App\Http\Resources\ReviewResource;
 use App\Models\Listing;
 use App\Models\Review;
 use App\Models\User;
+use App\Services\ListingFilterService;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -25,7 +25,7 @@ class ListingController extends Controller
 
     public const PER_PAGE_MAX = 50;
 
-    public function index(ListingBrowseRequest $request): JsonResponse
+    public function index(ListingBrowseRequest $request, ListingFilterService $filterService): JsonResponse
     {
         $validated = $request->validated();
 
@@ -33,7 +33,10 @@ class ListingController extends Controller
         // lives in ListingBrowseRequest.
 
         // max_km and sort=distance require school_id.
-        if ((isset($validated['max_km']) || ($validated['sort'] ?? null) === 'distance') && empty($validated['school_id'])) {
+        if (
+            (isset($validated['max_km']) || ($validated['sort'] ?? null) === 'distance')
+            && empty($validated['school_id'])
+        ) {
             return response()->json([
                 'message' => 'Cần cung cấp school_id khi dùng max_km hoặc sort=distance.',
                 'errors' => ['school_id' => ['Cần cung cấp school_id khi dùng max_km hoặc sort=distance.']],
@@ -42,87 +45,11 @@ class ListingController extends Controller
 
         $perPage = $validated['per_page'] ?? self::PER_PAGE_DEFAULT;
 
-        // ---------------------------------------------------------------
-        // Base query: only available listings
-        // ---------------------------------------------------------------
-        $query = Listing::query()
-            ->where('status', Listing::STATUS_AVAILABLE)
-            ->with(['ward.city', 'coverImage'])
-            ->withCount('reviews')
-            ->withAvg('reviews', 'listing_rating');
-
-        // ---------------------------------------------------------------
-        // Filters
-        // ---------------------------------------------------------------
-        if (! empty($validated['q'])) {
-            $q = $validated['q'];
-            // ILIKE: PostgreSQL case-insensitive search (ERD §4).
-            $query->where(function ($query) use ($q) {
-                $query->where('title', 'ilike', "%{$q}%")
-                    ->orWhere('address', 'ilike', "%{$q}%");
-            });
-        }
-
-        if (isset($validated['price_min'])) {
-            $query->where('price', '>=', $validated['price_min']);
-        }
-
-        if (isset($validated['price_max'])) {
-            $query->where('price', '<=', $validated['price_max']);
-        }
-
-        if (! empty($validated['ward_id'])) {
-            $query->where('ward_id', $validated['ward_id']);
-        }
-
-        // City filter: listing's ward belongs to the selected provincial unit.
-        if (! empty($validated['city_id'])) {
-            $query->whereHas('ward', fn ($q) => $q->where('city_id', $validated['city_id']));
-        }
-
-        if (! empty($validated['type'])) {
-            $query->where('type', $validated['type']);
-        }
-
-        // Listing must have ALL requested amenities.
-        foreach ($validated['amenity_ids'] ?? [] as $amenityId) {
-            $query->whereHas('amenities', fn ($q) => $q->where('amenities.id', $amenityId));
-        }
-
-        // ---------------------------------------------------------------
-        // Distance (only when school_id is present)
-        // ---------------------------------------------------------------
-        if (! empty($validated['school_id'])) {
-            $school = DB::table('schools')->find($validated['school_id']);
-
-            $query->nearby((float) $school->latitude, (float) $school->longitude, isset($validated['max_km']) ? (float) $validated['max_km'] : null);
-        }
-
-        // ---------------------------------------------------------------
-        // Sorting
-        // ---------------------------------------------------------------
-        match ($validated['sort'] ?? 'newest') {
-            'price_asc' => $query->orderBy('price'),
-            'price_desc' => $query->orderBy('price', 'desc'),
-            'distance' => $query->orderBy('distance_km'),
-            // PostgreSQL cannot reference the SELECT alias inside an ORDER BY
-            // expression, so the aggregate is repeated as a correlated subquery.
-            'rating' => $query->orderByRaw(
-                'CASE WHEN (SELECT AVG(listing_rating) FROM reviews WHERE reviews.listing_id = listings.id) IS NULL THEN 1 ELSE 0 END, '
-                .'(SELECT AVG(listing_rating) FROM reviews WHERE reviews.listing_id = listings.id) DESC'
-            ),
-            default => $query->orderBy('id', 'desc'), // newest
-        };
-
-        // Deterministic tiebreaker for stable pagination.
-        $query->orderBy('id', 'desc');
-
-        // ---------------------------------------------------------------
-        // Pagination + single favorited-ids pre-fetch
-        // ---------------------------------------------------------------
+        $query = $filterService->buildQuery($validated);
         $page = $query->paginate($perPage);
 
-        $request->attributes->set('favorited_listing_ids', $this->favoritedListingIds($request, $page->getCollection()));
+        $favoritedIds = $this->favoritedListingIds($request, $page->getCollection());
+        $request->attributes->set('favorited_listing_ids', $favoritedIds);
 
         return response()->json([
             'data' => ListingSummaryResource::collection($page->getCollection())->resolve($request),

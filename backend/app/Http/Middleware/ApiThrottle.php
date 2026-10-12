@@ -23,7 +23,9 @@ class ApiThrottle
 
     public function handle(Request $request, Closure $next, int $maxAttempts = 60, int $decaySeconds = 60): Response
     {
-        $key = 'api-throttle:'.$request->ip().':'.sha1($request->method().'|'.$request->getPathInfo());
+        $user = $request->user();
+        $identifier = $user ? 'u:'.$user->id : 'ip:'.$request->ip();
+        $key = 'api-throttle:'.$identifier.':'.sha1($request->method().'|'.$request->getPathInfo());
 
         if ($this->limiter->tooManyAttempts($key, $maxAttempts)) {
             throw new ThrottleRequestsException(

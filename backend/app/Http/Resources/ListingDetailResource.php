@@ -42,8 +42,8 @@ class ListingDetailResource extends JsonResource
                 'phone' => $request->user('sanctum') ? $listing->landlord->phone : null,
             ] : null,
             'ratings' => $this->ratings($listing),
-            'my_conversation_id' => $this->myConversationId($listing, $request),
-            'can_review' => $this->canReview($listing, $request),
+            'my_conversation_id' => $myConversationId = $this->myConversationId($listing, $request),
+            'can_review' => $this->canReview($listing, $request, $myConversationId),
         ]);
     }
 
@@ -55,15 +55,21 @@ class ListingDetailResource extends JsonResource
      */
     private function ratings(Listing $listing): array
     {
-        $listingAvg = $listing->reviews()->avg('listing_rating');
+        $listingAvg = isset($listing->reviews_avg_listing_rating) && $listing->reviews_avg_listing_rating !== null
+            ? (float) $listing->reviews_avg_listing_rating
+            : $listing->reviews()->avg('listing_rating');
 
-        $landlordAvg = Review::query()
-            ->whereIn('listing_id', $listing->landlord->listings()->select('id'))
-            ->avg('listing_rating');
+        $landlordAvg = $listing->user_id
+            ? Review::query()
+                ->whereIn('listing_id', Listing::where('user_id', $listing->user_id)->select('id'))
+                ->avg('listing_rating')
+            : null;
 
-        $areaAvg = Review::query()
-            ->whereIn('listing_id', $listing->ward->listings()->select('id'))
-            ->avg('listing_rating');
+        $areaAvg = $listing->ward_id
+            ? Review::query()
+                ->whereIn('listing_id', Listing::where('ward_id', $listing->ward_id)->select('id'))
+                ->avg('listing_rating')
+            : null;
 
         return [
             'listing_avg' => $listingAvg !== null ? round((float) $listingAvg, 1) : null,
@@ -90,23 +96,19 @@ class ListingDetailResource extends JsonResource
      * can_review: viewer is a student, has a conversation about this
      * listing, and has not reviewed it yet (ERD §4).
      */
-    private function canReview(Listing $listing, Request $request): bool
+    private function canReview(Listing $listing, Request $request, ?int $myConversationId): bool
     {
         $user = $request->user('sanctum');
 
-        if (! $user || $user->role !== User::ROLE_STUDENT) {
+        if (! $user || $user->role !== User::ROLE_STUDENT || $myConversationId === null) {
             return false;
         }
-
-        $hasConversation = $listing->conversations()
-            ->where('student_id', $user->id)
-            ->exists();
 
         $hasReviewed = Review::query()
             ->where('listing_id', $listing->id)
             ->where('student_id', $user->id)
             ->exists();
 
-        return $hasConversation && ! $hasReviewed;
+        return ! $hasReviewed;
     }
 }

@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 950" width="1200" height="950" preserveAspectRatio="xMidYMid slice" role="img" aria-label="An open book on a desk with a fern growing out of it">
+  <defs>
+    <filter id="rough" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.016" numOctaves="2" seed="11" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.45 0"/>
+    </filter>
+
+    <!-- fern leaflet -->
+    <path id="lf" d="M0,0 Q18,-11 40,0 Q18,11 0,0 Z" fill="#7A9160" stroke="#17171C" stroke-width="4" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>
+
+    <!-- starburst: 12 rays -->
+    <g id="burst" stroke-width="5" stroke-linecap="round" fill="none">
+      <path d="M-42,0 H42"/>
+      <path d="M-42,0 H42" transform="rotate(30)"/>
+      <path d="M-42,0 H42" transform="rotate(60)"/>
+      <path d="M-42,0 H42" transform="rotate(90)"/>
+      <path d="M-42,0 H42" transform="rotate(120)"/>
+      <path d="M-42,0 H42" transform="rotate(150)"/>
+    </g>
+
+    <!-- sprout: base at 0,0 -->
+    <g id="sprout" fill="#7A9160" stroke="#17171C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0,0 V-30 M0,-14 q-22,-4 -22,-26 q20,2 22,26 M0,-18 q22,-4 22,-26 q-20,2 -22,26"/>
+    </g>
+  </defs>
+
+  <rect width="1200" height="950" fill="#8B8BE0"/>
+
+  <g filter="url(#rough)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- sparkles -->
+    <use href="#burst" stroke="#FAF8F5" transform="translate(210,210)"/>
+    <use href="#burst" stroke="#17171C" transform="translate(990,230) scale(0.6)"/>
+    <use href="#burst" stroke="#FAF8F5" transform="translate(1030,500) scale(0.5)"/>
+    <use href="#burst" stroke="#17171C" transform="translate(150,470) scale(0.4)"/>
+    <circle cx="330" cy="330" r="9" fill="#FAF8F5"/>
+    <circle cx="880" cy="170" r="7" fill="#17171C"/>
+    <circle cx="1090" cy="360" r="8" fill="#FAF8F5"/>
+
+    <!-- desk -->
+    <rect x="-20" y="762" width="1240" height="200" fill="#D4A27F"/>
+
+    <!-- book + fern scene -->
+    <g transform="translate(280,226) scale(0.8)">
+      <!-- terracotta sun behind the fern -->
+      <circle cx="400" cy="255" r="150" fill="#DC7856"/>
+
+      <!-- covers -->
+      <path d="M134,452 L392,484 L392,668 L134,628 Z" fill="#D4A27F" stroke="#17171C" stroke-width="5"/>
+      <path d="M408,484 L666,452 L666,628 L408,668 Z" fill="#D4A27F" stroke="#17171C" stroke-width="5"/>
+
+      <!-- pages -->
+      <path d="M152,442 L392,472 L392,652 L152,612 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="5"/>
+      <path d="M408,472 L648,442 L648,612 L408,652 Z" fill="#FAF8F5" stroke="#17171C" stroke-width="5"/>
+
+      <!-- text lines -->
+      <g fill="none" stroke="#17171C" stroke-width="4">
+        <path d="M182,494 L358,516"/>
+        <path d="M182,524 L358,546"/>
+        <path d="M182,554 L318,572"/>
+        <path d="M442,516 L618,494"/>
+        <path d="M442,546 L618,524"/>
+        <path d="M442,576 L586,560"/>
+      </g>
+
+      <!-- fern -->
+      <g transform="translate(400,474) rotate(-4)">
+        <path d="M0,0 L0,-300" fill="none" stroke="#17171C" stroke-width="5"/>
+        <use href="#lf" transform="translate(0,-30) rotate(-42) scale(1.90)"/>
+        <use href="#lf" transform="translate(0,-30) scale(-1,1) rotate(-42) scale(1.90)"/>
+        <use href="#lf" transform="translate(0,-56) rotate(-42) scale(1.76)"/>
+        <use href="#lf" transform="translate(0,-56) scale(-1,1) rotate(-42) scale(1.76)"/>
+        <use href="#lf" transform="translate(0,-82) rotate(-42) scale(1.62)"/>
+        <use href="#lf" transform="translate(0,-82) scale(-1,1) rotate(-42) scale(1.62)"/>
+        <use href="#lf" transform="translate(0,-108) rotate(-42) scale(1.48)"/>
+        <use href="#lf" transform="translate(0,-108) scale(-1,1) rotate(-42) scale(1.48)"/>
+        <use href="#lf" transform="translate(0,-134) rotate(-42) scale(1.34)"/>
+        <use href="#lf" transform="translate(0,-134) scale(-1,1) rotate(-42) scale(1.34)"/>
+        <use href="#lf" transform="translate(0,-160) rotate(-42) scale(1.20)"/>
+        <use href="#lf" transform="translate(0,-160) scale(-1,1) rotate(-42) scale(1.20)"/>
+        <use href="#lf" transform="translate(0,-186) rotate(-42) scale(1.06)"/>
+        <use href="#lf" transform="translate(0,-186) scale(-1,1) rotate(-42) scale(1.06)"/>
+        <use href="#lf" transform="translate(0,-212) rotate(-42) scale(0.92)"/>
+        <use href="#lf" transform="translate(0,-212) scale(-1,1) rotate(-42) scale(0.92)"/>
+        <use href="#lf" transform="translate(0,-238) rotate(-42) scale(0.78)"/>
+        <use href="#lf" transform="translate(0,-238) scale(-1,1) rotate(-42) scale(0.78)"/>
+        <use href="#lf" transform="translate(0,-264) rotate(-42) scale(0.64)"/>
+        <use href="#lf" transform="translate(0,-264) scale(-1,1) rotate(-42) scale(0.64)"/>
+        <use href="#lf" transform="translate(0,-296) rotate(-90) scale(0.7)"/>
+      </g>
+    </g>
+
+    <!-- stack of books (left) -->
+    <g stroke="#17171C" stroke-width="4.5">
+      <rect x="110" y="716" width="190" height="46" fill="#DC7856"/>
+      <rect x="126" y="672" width="160" height="44" fill="#FAF8F5"/>
+      <rect x="118" y="632" width="174" height="40" fill="#7A9160"/>
+    </g>
+    <g fill="none" stroke="#17171C" stroke-width="3.5">
+      <path d="M130,732 H170 M130,744 H156"/>
+      <path d="M142,688 H178"/>
+      <path d="M132,648 H168"/>
+    </g>
+
+    <!-- potted sprout (right) -->
+    <path d="M900,762 L912,704 H988 L1000,762 Z" fill="#DC7856" stroke="#17171C" stroke-width="4.5"/>
+    <rect x="904" y="692" width="92" height="16" fill="#DC7856" stroke="#17171C" stroke-width="4.5"/>
+    <use href="#sprout" transform="translate(950,692) scale(1.7)"/>
+
+    <!-- desk edge line -->
+    <path d="M-20,764 C200,754 420,770 620,762 S1000,756 1220,764" fill="none" stroke="#17171C" stroke-width="5"/>
+  </g>
+
+  <!-- paper grain -->
+  <rect width="1200" height="950" filter="url(#grain)" opacity="0.3"/>
+</svg>

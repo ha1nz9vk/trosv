@@ -1,76 +1,54 @@
 import js from "@eslint/js";
-import tseslint from "typescript-eslint";
+import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import globals from "globals";
+import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 
-// Flat config (ESLint 9). Prettier config comes last so it disables
-// stylistic core rules that would fight the formatter.
 export default tseslint.config(
-    { ignores: ["dist", "node_modules", "test-results", "playwright-report", ".browser-check"] },
-    {
-        // Node context for tooling configs (process.env in playwright.config.js).
-        files: ["*.config.js", "e2e/**"],
-        languageOptions: { globals: { ...globals.node } },
+  { ignores: ["dist", "node_modules", "e2e", "playwright.config.ts", "playwright.config.js"] },
+  {
+    files: ["**/*.{ts,tsx}"],
+    extends: [
+      js.configs.recommended,
+      ...tseslint.configs.strictTypeChecked,
+      jsxA11y.flatConfigs.recommended,
+    ],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.browser,
+      parserOptions: {
+        project: "./tsconfig.json",
+        tsconfigRootDir: import.meta.dirname,
+        ecmaFeatures: { jsx: true },
+      },
     },
-    {
-        // "e2e/**" o day de spec .ts dung TS parser: block type-aware ben
-        // duoi chi gan parser cho src/**, khong keo theo project cho e2e.
-        files: ["**/*.{js,jsx,ts,tsx}", "e2e/**"],
-        languageOptions: {
-            ecmaVersion: 2022,
-            globals: globals.browser,
-            parser: tseslint.parser,
-        },
-        plugins: {
-            "@typescript-eslint": tseslint.plugin,
-            "react-hooks": reactHooks,
-            "react-refresh": reactRefresh,
-        },
-        rules: {
-            ...js.configs.recommended.rules,
-            ...prettier.rules,
-            ...reactHooks.configs.recommended.rules,
-            // Compiler-style signals, all blocking: render stays pure and
-            // refs stay out of render. set-state-in-effect call sites now
-            // reset via the render-phase prev-comparison idiom or move the
-            // reset into the fetch handler.
-            "react-hooks/set-state-in-effect": "error",
-            "react-hooks/purity": "error",
-            "react-hooks/refs": "error",
-            "react-refresh/only-export-components": [
-                "warn",
-                {
-                    // Standard context/singleton pattern: Provider is a
-                    // component, the paired hook is a function export.
-                    allowExportNames: ["useToast", "useAuth"],
-                },
-            ],
-            "no-unused-vars": "off",
-            // TS compiler bat noUnusedLocals/Parameters - eslint chi de
-            // convention args bat dau bang _ la duoc.
-            "@typescript-eslint/no-unused-vars": [
-                "error",
-                { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
-            ],
-            "no-console": "warn",
-            "prefer-const": "error",
-            eqeqeq: ["error", "smart"],
-        },
+    plugins: {
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
     },
-    // Type-checked rules cho TS: bat ky gia tri any ro rang (explicit any)
-    // trong code app - implicit any da bi compiler chan.
-    ...tseslint.configs.recommended.map((c) => ({
-        ...c,
-        files: ["src/**/*.{ts,tsx}"],
-        rules: {
-            ...c.rules,
-            "@typescript-eslint/no-explicit-any": "error",
-            "@typescript-eslint/no-unused-vars": [
-                "error",
-                { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
-            ],
-        },
-    }))
+    rules: {
+      ...reactHooks.configs["recommended-latest"].rules,
+      "react-refresh/only-export-components": "off",
+      /* Fatal for the banned patterns: any, ts-ignore, non-null assert. */
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-non-null-assertion": "error",
+      "@typescript-eslint/ban-ts-comment": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
+      "@typescript-eslint/no-unsafe-member-access": "error",
+      "@typescript-eslint/no-unsafe-call": "error",
+      "@typescript-eslint/no-unsafe-argument": "error",
+      "@typescript-eslint/no-unsafe-return": "error",
+      /* Numbers in template literals are intentional (prices, ids). */
+      "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowBoolean: true }],
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "no-console": ["error", { allow: ["warn", "error"] }],
+    },
+  },
+  {
+    ignores: ["eslint.config.js", "vite.config.ts"],
+  },
+  prettier
 );

@@ -33,6 +33,16 @@ class ConversationSeeder extends Seeder
             $listing = $visibleListings[$k];
             $landlordId = $listing->user_id;
 
+            $existing = Conversation::where(function ($q) use ($student, $landlordId) {
+                $q->where('student_id', $student->id)->where('landlord_id', $landlordId);
+            })->orWhere(function ($q) use ($student, $landlordId) {
+                $q->where('student_id', $landlordId)->where('landlord_id', $student->id);
+            })->first();
+
+            if ($existing) {
+                continue;
+            }
+
             $conversation = Conversation::create([
                 'listing_id' => $listing->id,
                 'student_id' => $student->id,
@@ -44,9 +54,17 @@ class ConversationSeeder extends Seeder
             Message::create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $student->id,
+                'body' => "/rooms/{$listing->id}",
+                'read_at' => $base->copy()->addMinutes(15),
+                'created_at' => $base,
+            ]);
+
+            Message::create([
+                'conversation_id' => $conversation->id,
+                'sender_id' => $student->id,
                 'body' => $openers[$k % count($openers)],
                 'read_at' => $base->copy()->addMinutes(30), // landlord read it
-                'created_at' => $base,
+                'created_at' => $base->copy()->addMinutes(5),
             ]);
             Message::create([
                 'conversation_id' => $conversation->id,

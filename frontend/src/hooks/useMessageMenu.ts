@@ -41,7 +41,7 @@ export function useMessageMenu(threadRef: RefObject<HTMLDivElement>): {
   // Đóng menu khi bấm ra ngoài; Esc đóng cả menu lẫn hộp thoại thu hồi.
   useEffect(() => {
     if (menuFor == null && !confirmUnsend) return undefined;
-    const close = () => setMenuFor(null);
+    const close = () => { setMenuFor(null); };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setMenuFor(null);

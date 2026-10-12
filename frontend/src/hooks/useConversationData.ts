@@ -52,26 +52,27 @@ export function useConversationData(id: string | number): {
   }, [id]);
 
   // Initial load (polls replaced by the Reverb WebSocket subscription).
-  // The effect awaits getMessages before any setState, so no state is
-  // set synchronously inside the effect body. lastIdRef resets here too:
-  // the previous thread's realtime subscription is torn down in cleanup
-  // before this runs, so no new id can read a stale last id.
+  // Render-phase reset above already cleared lastIdRef for the new id; the
+  // previous thread's realtime subscription is torn down in cleanup before
+  // this runs, so no new id can read a stale last id.
   useEffect(() => {
     let active = true;
     lastIdRef.current = 0;
-    (async () => {
-      try {
-        const rows = await getMessages(id);
+    getMessages(id)
+      .then((rows) => {
         if (!active) return;
-        lastIdRef.current = rows.length ? rows[rows.length - 1].id : 0;
+        lastIdRef.current = rows.length > 0 ? (rows[rows.length - 1] as { id: number }).id : 0;
         setMessages(rows);
-        markRead(id).catch(() => {});
-      } catch {
+        markRead(id).catch(() => {
+          /* silent */
+        });
+      })
+      .catch(() => {
         // transient - the realtime subscriber is not affected
-      } finally {
+      })
+      .finally(() => {
         if (active) setLoaded(true);
-      }
-    })();
+      });
     return () => {
       active = false;
     };
