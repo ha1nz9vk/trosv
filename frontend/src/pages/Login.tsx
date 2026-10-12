@@ -52,10 +52,10 @@ export default function Login() {
   });
 
   return (
-    <AuthSplit artSrc="/art/book-and-fern.svg" title="Đăng nhập" artTestId="login-art">
+    <AuthSplit artSrc="/art/book-and-fern.svg?v=restore-0a03600" title="Đăng nhập" artTestId="login-art">
           <form onSubmit={(e) => { void form.handleSubmit(e); }} className="flex flex-col gap-4">
             {errors["form"] ? (
-              <p role="alert" className="rounded-xl bg-clay-tint p-3 text-sm text-ink">
+              <p role="alert" className="rounded-xl bg-plate-tint p-3 text-sm text-ink">
                 {errors["form"]}
               </p>
             ) : null}
@@ -72,14 +72,13 @@ export default function Login() {
             <Field id="login-password" label="Mật khẩu" error={errors["password"]} required>
               <PasswordInput
                 id="login-password"
-                className="wobble-b"
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); }}
                 invalid={!!errors["password"]}
               />
             </Field>
-            <Button type="submit" loading={form.busy} className="mt-2 w-full" variant="clay">
+            <Button type="submit" loading={form.busy} className="mt-2 w-full" variant="primary">
               Đăng nhập
             </Button>
             <p className="text-center text-sm text-muted">
@@ -90,7 +89,7 @@ export default function Login() {
             </p>
           </form>
 
-      <p className="mt-6 rounded-2xl border border-line bg-ivory p-3 text-center text-xs text-muted">
+      <p className="mt-6 rounded-xl border border-line bg-tint p-3 text-center text-xs text-muted">
         Tài khoản dùng thử: student1@example.com hoặc landlord1@example.com, mật khẩu password
       </p>
     </AuthSplit>

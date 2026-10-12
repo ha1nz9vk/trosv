@@ -15,7 +15,7 @@ export default function NotFound() {
         description="Đường dẫn không tồn tại hoặc đã bị dời. Bạn về trang chủ hoặc xem danh sách phòng nhé."
         action={
           <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild variant="clay">
+            <Button asChild variant="primary">
               <Link to={ROUTES.HOME}>Về trang chủ</Link>
             </Button>
             <Button asChild variant="outline">

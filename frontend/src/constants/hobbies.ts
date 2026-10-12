@@ -1,41 +1,74 @@
-// Sở thích định sẵn - dùng chung cho Hồ sơ (chip chọn) và Tìm bạn cùng phòng
-// (chip hiển thị). Giá trị lưu trong DB là string CSV của key, ví dụ
-// "music,gym". Key mới phải thêm vào cả backend/database/seeders/UserSeeder.php.
-export const HOBBIES: string[] = [
-  "music",
-  "gym",
-  "reading",
-  "gaming",
-  "cooking",
-  "photography",
-  "football",
-  "studying",
-  "movies",
-  "travel",
-  "badminton",
-  "cafés",
+export interface HobbyItem {
+  key: string;
+  label: string;
+  icon?: string;
+}
+
+export const HOBBY_LIST: HobbyItem[] = [
+  { key: "music", label: "Âm nhạc" },
+  { key: "gym", label: "Gym & Thể thao" },
+  { key: "reading", label: "Đọc sách" },
+  { key: "gaming", label: "Chơi game" },
+  { key: "cooking", label: "Nấu ăn" },
+  { key: "photography", label: "Chụp ảnh" },
+  { key: "football", label: "Bóng đá" },
+  { key: "studying", label: "Học tập" },
+  { key: "movies", label: "Xem phim" },
+  { key: "travel", label: "Du lịch" },
+  { key: "badminton", label: "Cầu lông" },
+  { key: "cafés", label: "Cà phê" },
+  { key: "coding", label: "Lập trình" },
+  { key: "art", label: "Hội họa" },
+  { key: "pets", label: "Thú cưng" },
 ];
 
-export const HOBBY_LABELS: Record<string, string> = {
-  music: "Âm nhạc",
-  gym: "Gym",
-  reading: "Đọc sách",
-  gaming: "Chơi game",
-  cooking: "Nấu ăn",
-  photography: "Chụp ảnh",
-  football: "Bóng đá",
-  studying: "Học tập",
-  movies: "Xem phim",
-  travel: "Du lịch",
-  badminton: "Cầu lông",
-  cafés: "Cà phê",
-};
+export const HOBBIES: string[] = HOBBY_LIST.map((h) => h.key);
 
-/** "music,gym" -> ["Âm nhạc", "Gym"] (key lạ giữ nguyên). */
-export function hobbyLabels(interestsCsv: string | null | undefined): string[] {
-  return (interestsCsv || "")
-    .split(",")
+export const HOBBY_MAP: Record<string, HobbyItem> = Object.fromEntries(
+  HOBBY_LIST.map((h) => [h.key, h])
+);
+
+export const HOBBY_LABELS: Record<string, string> = Object.fromEntries(
+  HOBBY_LIST.map((h) => [h.key, h.label])
+);
+
+/**
+ * Format một key sở thích thành object { key, label, icon }.
+ * Hỗ trợ cả key định sẵn và custom tags do người dùng tự nhập.
+ */
+export function formatHobby(key: string): HobbyItem {
+  const normalized = key.trim().toLowerCase();
+  if (HOBBY_MAP[normalized]) {
+    return HOBBY_MAP[normalized];
+  }
+  const capitalized = key.trim().charAt(0).toUpperCase() + key.trim().slice(1);
+  return {
+    key: key.trim(),
+    label: capitalized,
+    icon: "",
+  };
+}
+
+/**
+ * Phân tích chuỗi CSV hoặc mảng thành mảng HobbyItem { key, label, icon }
+ */
+export function parseHobbies(
+  interests: string | string[] | null | undefined
+): HobbyItem[] {
+  if (!interests) return [];
+  const rawList = Array.isArray(interests)
+    ? interests
+    : interests.split(",").map((s) => s.trim());
+
+  return rawList
     .map((s) => s.trim())
     .filter(Boolean)
-    .map((key) => HOBBY_LABELS[key] || key);
+    .map(formatHobby);
+}
+
+/**
+ * "music,gym" -> ["Âm nhạc", "Gym & Thể thao"] (tương thích ngược)
+ */
+export function hobbyLabels(interestsCsv: string | null | undefined): string[] {
+  return parseHobbies(interestsCsv).map((h) => h.label);
 }

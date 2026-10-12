@@ -8,9 +8,18 @@ import { Chip, Skeleton, Rating } from "@/ui/badge";
 import { EmptyState, ErrorState } from "@/ui/empty-state";
 import { HousePlaceholder } from "@/ui/icons";
 import { toast } from "@/ui/toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/ui/dialog";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { formatVnd } from "@/api/format";
+import { cn } from "@/lib/utils";
+import { MapPin, ExternalLink, Edit3, Trash2 } from "lucide-react";
 
 const STATUS_FILTERS = [
   { value: "", label: "Tất cả" },
@@ -18,7 +27,6 @@ const STATUS_FILTERS = [
   { value: "rented", label: "Đã thuê" },
   { value: "hidden", label: "Ẩn" },
 ] as const;
-
 
 const STATUS_LABEL: Record<string, string> = {
   available: "Còn trống",
@@ -36,8 +44,7 @@ export default function LandlordDashboard() {
   const [confirmDelete, setConfirmDelete] = useState<Listing | null>(null);
   const [busyDelete, setBusyDelete] = useState(false);
 
-  // Render-phase reset (see useConversationData): refetch on status
-  // change without a synchronous setState inside the effect body.
+  // Render-phase reset: refetch on status change
   const [prevStatus, setPrevStatus] = useState(status);
   if (prevStatus !== status) {
     setPrevStatus(status);
@@ -77,35 +84,47 @@ export default function LandlordDashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-5 pb-16">
+    <div className="mx-auto w-full max-w-5xl p-5 pb-16">
+      {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl">Quản lý tin đăng</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink">
+            Quản lý tin đăng
+          </h1>
           <p aria-live="polite" className="mt-1 text-sm text-muted tabular-nums">
             {rows.length} tin
           </p>
         </div>
-        <Button asChild variant="clay">
+        <Button asChild variant="primary">
           <Link to={ROUTES.LANDLORD_NEW}>Đăng tin mới</Link>
         </Button>
       </div>
 
+      {/* Filter Chips */}
       <div className="mt-4 flex flex-wrap gap-2">
         {STATUS_FILTERS.map((s) => (
-          <Chip key={s.value} on={status === s.value} onClick={() => { setStatus(s.value); }}>
+          <Chip
+            key={s.value}
+            on={status === s.value}
+            onClick={() => {
+              setStatus(s.value);
+            }}
+          >
             {s.label}
           </Chip>
         ))}
       </div>
 
+      {/* Content Area */}
       {loading ? (
-        <div className="mt-6 flex flex-col gap-3">
-          <Skeleton className="h-24" />
-          <Skeleton className="h-24" />
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Skeleton className="h-44 rounded-xl" />
+          <Skeleton className="h-44 rounded-xl" />
         </div>
       ) : error ? (
-        <ErrorState message="Không tải được tin đăng." />
+        <ErrorState message="Không tải được tin đăng." className="mt-6" />
       ) : rows.length === 0 ? (
+        /* Default Empty State */
         <EmptyState
           title="Chưa có tin đăng nào"
           description="Đăng tin đầu tiên để sinh viên tìm thấy phòng của bạn."
@@ -117,62 +136,134 @@ export default function LandlordDashboard() {
           className="pt-10"
         />
       ) : (
-        /* Rows: oat card with hairline-separated label/value rows. */
-        <div className="mt-6 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-oat">
+        /* Grid of listings: items naturally align left (1 listing sits on the left column) */
+        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
           {rows.map((l) => (
-            <div key={l.id} className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
-              <div className="relative aspect-3/2 w-full overflow-hidden rounded-xl bg-oat sm:w-40">
+            <div
+              key={l.id}
+              data-testid="listing-row"
+              className="group flex flex-col sm:flex-row overflow-hidden rounded-xl border border-line bg-card shadow-xs transition-all hover:border-line-strong hover:shadow-sm"
+            >
+              {/* Image thumbnail */}
+              <div className="relative aspect-3/2 w-full sm:w-48 sm:shrink-0 overflow-hidden bg-tint">
                 {l.cover_image ? (
-                  <img src={l.cover_image} alt="" width={320} height={213} loading="lazy" className="h-full w-full object-cover" />
+                  <img
+                    src={l.cover_image}
+                    alt={l.title}
+                    width={320}
+                    height={213}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
                 ) : (
                   <HousePlaceholder />
                 )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="flex items-center gap-2 font-semibold text-ink">
+                <div className="absolute top-2 left-2">
                   <span
-                    className={cnDot(l.status)}
-                    aria-label={l.status ? STATUS_LABEL[l.status] ?? l.status : undefined}
-                  />
-                  <span className="truncate">{l.title}</span>
-                </p>
-                <p className="mt-0.5 tabular-nums text-ink">
-                  {formatVnd(l.price)}/tháng
-                  {l.area_m2 != null ? ` · ${l.area_m2} m²` : ""}
-                </p>
-                <p className="text-sm text-muted">{l.address}</p>
-                <Rating value={l.avg_rating} count={l.reviews_count} className="mt-1" />
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold shadow-xs backdrop-blur-xs",
+                      l.status === "available" && "bg-moss/90 text-white",
+                      l.status === "rented" && "bg-ink/80 text-white",
+                      l.status === "hidden" && "bg-muted/90 text-white"
+                    )}
+                  >
+                    <span className={cnDot(l.status)} aria-hidden />
+                    {l.status ? STATUS_LABEL[l.status] ?? l.status : "Mới"}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-none gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => { void navigate(route(ROUTES.LANDLORD_EDIT, { id: l.id })); }}
-                >
-                  Sửa
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => { setConfirmDelete(l); }}>
-                  Xóa
-                </Button>
+
+              {/* Card Details */}
+              <div className="flex flex-1 flex-col justify-between p-4 min-w-0">
+                <div>
+                  <Link
+                    to={route(ROUTES.ROOM_DETAIL, { id: l.id })}
+                    className="line-clamp-2 min-h-[2.75rem] font-semibold text-ink text-base hover:text-plate hover:underline transition-colors leading-snug"
+                    title={l.title}
+                  >
+                    {l.title}
+                  </Link>
+                  <div className="mt-1.5 flex items-baseline gap-2">
+                    <span className="font-bold text-ink tabular-nums text-base">
+                      {formatVnd(l.price)}
+                      <span className="text-xs font-normal text-muted">/tháng</span>
+                    </span>
+                    {l.area_m2 != null ? (
+                      <span className="text-xs font-medium text-muted">· {l.area_m2} m²</span>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 line-clamp-1 text-xs text-muted flex items-center gap-1">
+                    <MapPin className="size-3 shrink-0" aria-hidden />
+                    <span>{l.address}</span>
+                  </p>
+                  <Rating value={l.avg_rating} count={l.reviews_count} className="mt-2 text-xs" />
+                </div>
+
+                {/* Card Actions toolbar */}
+                <div className="mt-4 pt-3 border-t border-line flex items-center justify-between gap-2">
+                  <Link
+                    to={route(ROUTES.ROOM_DETAIL, { id: l.id })}
+                    className="text-xs font-medium text-plate hover:underline flex items-center gap-1"
+                  >
+                    <ExternalLink className="size-3.5" aria-hidden />
+                    <span>Xem tin</span>
+                  </Link>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        void navigate(route(ROUTES.LANDLORD_EDIT, { id: l.id }));
+                      }}
+                      className="h-8 px-2.5 text-xs flex items-center gap-1"
+                    >
+                      <Edit3 className="size-3.5" aria-hidden />
+                      <span>Sửa</span>
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      data-testid="delete-listing"
+                      className="h-8 px-2.5 text-xs text-danger hover:bg-danger/10 flex items-center gap-1"
+                      onClick={() => {
+                        setConfirmDelete(l);
+                      }}
+                    >
+                      <Trash2 className="size-3.5" aria-hidden />
+                      <span>Xóa</span>
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      <Dialog open={confirmDelete != null} onOpenChange={(o) => { if (!o) setConfirmDelete(null); }}>
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={confirmDelete != null}
+        onOpenChange={(o) => {
+          if (!o) setConfirmDelete(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Xóa tin đăng?</DialogTitle>
             <DialogDescription>
-              Tin "{confirmDelete?.title}" sẽ bị xóa vĩnh viễn. Không thể hoàn tác.
+              Tin "{confirmDelete?.title}" sẽ bị xóa vĩnh viễn khỏi hệ thống. Thao tác này không thể hoàn tác.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => { setConfirmDelete(null); }}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setConfirmDelete(null);
+              }}
+            >
               Giữ lại
             </Button>
-            <Button variant="ink" loading={busyDelete} onClick={() => { void doDelete(); }}>
+            <Button variant="danger" loading={busyDelete} onClick={() => { void doDelete(); }}>
               Xóa tin
             </Button>
           </DialogFooter>
@@ -183,8 +274,8 @@ export default function LandlordDashboard() {
 }
 
 function cnDot(status: string | undefined): string {
-  if (status === "available") return "inline-block size-2 rounded-full bg-olive";
-  if (status === "rented") return "inline-block size-2 rounded-full bg-line-strong";
-  if (status === "hidden") return "inline-block size-2 rounded-full bg-muted";
-  return "inline-block size-2 rounded-full bg-line";
+  if (status === "available") return "inline-block size-1.5 rounded-full bg-white";
+  if (status === "rented") return "inline-block size-1.5 rounded-full bg-white/70";
+  if (status === "hidden") return "inline-block size-1.5 rounded-full bg-white/50";
+  return "inline-block size-1.5 rounded-full bg-white";
 }

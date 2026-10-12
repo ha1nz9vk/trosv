@@ -55,13 +55,45 @@ export function useListingSearch() {
     ...EMPTY_FILTERS,
     q: searchParams.get("q") || "",
     type: searchParams.get("type") || "",
+    city_id: searchParams.get("city_id") || "",
+    ward_id: searchParams.get("ward_id") || "",
+    school_id: searchParams.get("school_id") || "",
+    max_km: searchParams.get("max_km") || "",
+    price_min: searchParams.get("price_min") || "",
+    price_max: searchParams.get("price_max") || "",
+    sort: searchParams.get("sort") || "newest",
+    amenity_ids: searchParams.getAll("amenity_ids").map(Number).filter(Boolean),
   }));
   const [page, setPage] = useState(1);
   const [listings, setListings] = useState<Listing[]>([]);
+  const [mapListings, setMapListings] = useState<Listing[]>([]);
   const [meta, setMeta] = useState<PaginationMeta | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const firstRender = useRef(true);
+  const prevParamsStringRef = useRef(searchParams.toString());
+
+  // Sync state if searchParams change externally (e.g. navigation / back / direct link)
+  const currentParamsString = searchParams.toString();
+  useEffect(() => {
+    if (currentParamsString !== prevParamsStringRef.current) {
+      prevParamsStringRef.current = currentParamsString;
+      setFilters({
+        ...EMPTY_FILTERS,
+        q: searchParams.get("q") || "",
+        type: searchParams.get("type") || "",
+        city_id: searchParams.get("city_id") || "",
+        ward_id: searchParams.get("ward_id") || "",
+        school_id: searchParams.get("school_id") || "",
+        max_km: searchParams.get("max_km") || "",
+        price_min: searchParams.get("price_min") || "",
+        price_max: searchParams.get("price_max") || "",
+        sort: searchParams.get("sort") || "newest",
+        amenity_ids: searchParams.getAll("amenity_ids").map(Number).filter(Boolean),
+      });
+      setPage(1);
+    }
+  }, [currentParamsString, searchParams]);
 
   useEffect(() => {
     getCities().then(setCities).catch(() => {});
@@ -91,12 +123,18 @@ export function useListingSearch() {
       if (filters.amenity_ids.length) params["amenity_ids[]"] = filters.amenity_ids;
 
       try {
-        const { data, meta: m } = await getListings(params);
-        setListings(data);
-        setMeta(m);
+        const mapParams = { ...params, page: 1, per_page: 50 };
+        const [pagedRes, mapRes] = await Promise.all([
+          getListings(params),
+          getListings(mapParams),
+        ]);
+        setListings(pagedRes.data);
+        setMeta(pagedRes.meta);
+        setMapListings(mapRes.data);
       } catch (err) {
         setError(errMessage(err));
         setListings([]);
+        setMapListings([]);
       } finally {
         setLoading(false);
       }
@@ -112,6 +150,14 @@ export function useListingSearch() {
         const next: Record<string, string> = {};
         if (filters.q) next.q = filters.q;
         if (filters.type) next.type = filters.type;
+        if (filters.city_id) next.city_id = filters.city_id;
+        if (filters.ward_id) next.ward_id = filters.ward_id;
+        if (filters.school_id) next.school_id = filters.school_id;
+        if (filters.max_km) next.max_km = filters.max_km;
+        if (filters.price_min) next.price_min = filters.price_min;
+        if (filters.price_max) next.price_max = filters.price_max;
+        if (filters.sort && filters.sort !== "newest") next.sort = filters.sort;
+        prevParamsStringRef.current = new URLSearchParams(next).toString();
         setSearchParams(next, { replace: true });
       }
       firstRender.current = false;
@@ -179,6 +225,7 @@ export function useListingSearch() {
     resetFilters,
     // results
     listings,
+    mapListings,
     setListings,
     meta,
     loading,

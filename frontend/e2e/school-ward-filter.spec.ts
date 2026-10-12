@@ -24,16 +24,16 @@ test.describe("rooms ward -> school cascade", () => {
         await citySelect.selectOption({ label: "TP.HCM" });
         await expect(wardSelect).toBeEnabled();
 
-        // Pick a ward with MULTIPLE schools: Phường Linh Xuân hosts
-        // UIT, UEL and NLU (3 schools share the campus ward).
-        await wardSelect.selectOption({ label: "Phường Linh Xuân" });
+        // Pick a ward with MULTIPLE schools: Phường Linh Trung hosts
+        // HCMIU, UIT and NLU (3 schools share the campus ward).
+        await wardSelect.selectOption({ label: "Phường Linh Trung" });
         await page.keyboard.press("Escape");
 
         // The "Gần trường" pill narrows schools to exactly that ward.
         await page.getByRole("button", { name: "Gần trường", exact: true }).click();
         const schoolSelect = page.locator("#filter-school");
         await expect(schoolSelect.locator("option")).toHaveCount(4); // placeholder + 3
-        for (const name of ["UIT", "UEL", "NLU"]) {
+        for (const name of ["HCMIU", "UIT", "NLU"]) {
             await expect(schoolSelect.locator(`option:has-text("${name}")`)).toHaveCount(1);
         }
         await expect(
@@ -51,7 +51,8 @@ test.describe("rooms ward -> school cascade", () => {
         const listingsWithWard = page.waitForResponse((r) =>
             r.url().includes("/listings") && r.url().includes("school_id="),
         );
-        await schoolSelect.selectOption({ label: "UIT" });
+        const uitVal = await schoolSelect.locator('option:has-text("UIT")').getAttribute("value");
+        await schoolSelect.selectOption(uitVal!);
         const res = await listingsWithWard;
         const url = new URL(res.url());
         expect(url.searchParams.get("school_id")).toBeTruthy();

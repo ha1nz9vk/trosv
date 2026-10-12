@@ -57,41 +57,50 @@ export default function Register() {
   const err = (field: string): string | undefined => fieldErrors[field]?.[0];
 
   return (
-    <AuthSplit artSrc="/art/house-and-tree.svg" title="Tạo tài khoản" artTestId="register-art">
+    <AuthSplit artSrc="/art/house-and-tree.svg?v=restore-0a03600" title="Tạo tài khoản" artTestId="register-art">
       <form onSubmit={(e) => { void form.handleSubmit(e); }} className="flex flex-col gap-4">
         {formError ? (
-          <p role="alert" className="rounded-xl bg-clay-tint p-3 text-sm text-ink">
+          <p role="alert" className="rounded-xl bg-plate-tint p-3 text-sm text-ink">
             {formError}
           </p>
         ) : null}
-        <fieldset className="flex gap-2" aria-label="Chọn vai trò">
+        <fieldset className="grid grid-cols-2 gap-2.5" aria-label="Chọn vai trò">
           {(
             [
               { value: "student", label: "Tôi tìm phòng" },
               { value: "landlord", label: "Tôi cho thuê" },
             ] as const
-          ).map((r, i) => (
-            <label
-              key={r.value}
-              className={cn(
-                "flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border p-3 text-sm font-medium transition-colors focus-within:ring-2 focus-within:ring-clay",
-                i === 0 ? "wobble-b" : "wobble-c",
-                pickedRole === r.value
-                  ? "border-ink bg-ink font-bold text-white"
-                  : "border-line-strong bg-white text-ink hover:bg-ivory"
-              )}
-            >
-              <input
-                type="radio"
-                name="role"
-                value={r.value}
-                checked={pickedRole === r.value}
-                onChange={() => { setPickedRole(r.value); }}
-                className="sr-only"
-              />
-              {r.label}
-            </label>
-          ))}
+          ).map((r) => {
+            const isSelected = pickedRole === r.value;
+            return (
+              <label
+                key={r.value}
+                className={cn(
+                  "flex cursor-pointer items-center justify-center gap-2 rounded-xl border p-3 text-sm transition-all text-center select-none focus-within:ring-2 focus-within:ring-plate",
+                  isSelected
+                    ? "border-plate bg-plate font-bold text-white shadow-xs"
+                    : "border-line-strong bg-card text-ink hover:border-plate hover:bg-tint font-medium"
+                )}
+              >
+                <input
+                  type="radio"
+                  name="role"
+                  value={r.value}
+                  checked={isSelected}
+                  onChange={() => { setPickedRole(r.value); }}
+                  className="sr-only"
+                />
+                <span
+                  className={cn(
+                    "size-2 rounded-full transition-colors",
+                    isSelected ? "bg-white" : "bg-muted/40"
+                  )}
+                  aria-hidden
+                />
+                {r.label}
+              </label>
+            );
+          })}
         </fieldset>
         <Field id="name" label="Tên" error={err("name")} required>
           <Input
@@ -105,7 +114,6 @@ export default function Register() {
         <Field id="email" label="Email" error={err("email")} required>
           <Input
             id="email"
-            className="wobble-b"
             type="email"
             autoComplete="email"
             value={email}
@@ -121,7 +129,6 @@ export default function Register() {
         >
           <PasswordInput
             id="password"
-            className="wobble-c"
             autoComplete="new-password"
             value={password}
             onChange={(e) => { setPassword(e.target.value); }}
@@ -132,14 +139,13 @@ export default function Register() {
         <Field id="password_confirmation" label="Nhập lại mật khẩu" error={err("password_confirmation")} required>
           <PasswordInput
             id="password_confirmation"
-            className="wobble-d"
             autoComplete="new-password"
             value={passwordConfirmation}
             onChange={(e) => { setPasswordConfirmation(e.target.value); }}
             invalid={!!err("password_confirmation")}
           />
         </Field>
-        <Button type="submit" variant="clay" loading={form.busy} className="mt-2 w-full">
+        <Button type="submit" variant="primary" loading={form.busy} className="mt-2 w-full">
           Tạo tài khoản
         </Button>
         <p className="text-center text-sm text-muted">
@@ -182,7 +188,7 @@ function PasswordChecklist({
           <span
             className={cn(
               "flex size-4 items-center justify-center rounded-full border",
-              c.ok ? "border-olive bg-olive text-black" : "border-line-strong text-transparent"
+              c.ok ? "border-moss bg-moss text-white" : "border-line-strong text-transparent"
             )}
             aria-hidden
           >

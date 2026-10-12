@@ -1,108 +1,91 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import api from "@/api/axiosClient";
-import { errFieldErrors, errMessage } from "@/api/axiosClient";
+import api, { errFieldErrors, errMessage } from "@/api/axiosClient";
 import { getSchools } from "@/api/listingApi";
 import type { School } from "@/types/api";
 import { Button } from "@/ui/button";
-import { Field } from "@/ui/field";
-import { Input, Textarea } from "@/ui/input";
 import { Avatar } from "@/ui/avatar";
 import { toast } from "@/ui/toast";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { useEffect } from "react";
-
-const SLEEP_OPTIONS = [
-  { value: "early", label: "Ngủ sớm" },
-  { value: "normal", label: "Bình thường" },
-  { value: "late", label: "Ngủ muộn" },
-] as const;
-
-const PERSONALITY_OPTIONS = [
-  { value: "introvert", label: "Hướng nội" },
-  { value: "ambivert", label: "Trung tính" },
-  { value: "extrovert", label: "Hướng ngoại" },
-] as const;
-
-interface ProfileFormState {
-  name: string;
-  phone: string;
-  bio: string;
-  school_id: string;
-  budget_min: string;
-  budget_max: string;
-  sleep_schedule: string;
-  cleanliness: string;
-  smoking: boolean;
-  personality: string;
-  interests: string;
-}
+import { ROUTES, route } from "@/constants/routes";
+import { cn } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
+import {
+  formatVndPreview,
+  getInitialForm,
+  isFormDirty,
+  type ProfileFormState,
+} from "./profile/profileTypes";
+import { ProfileBasicInfoCard } from "./profile/ProfileBasicInfoCard";
+import { ProfileAcademicCard } from "./profile/ProfileAcademicCard";
+import { ProfileHabitsCard } from "./profile/ProfileHabitsCard";
 
 export default function Profile() {
   useDocumentTitle("Hồ sơ · TROSV");
   const { user, refreshUser } = useAuth();
+  const isStudent = user?.role === "student";
+  const initialForm = useMemo(() => (user ? getInitialForm(user) : null), [user]);
   const [form, setForm] = useState<ProfileFormState | null>(null);
   const [schools, setSchools] = useState<School[]>([]);
   const [busy, setBusy] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [formError, setFormError] = useState("");
 
-  // Render-phase reset (same idiom as useConversationData): seed the
-  // form when the user first loads or switches account, without a
-  // synchronous setState inside an effect. Edits are kept while the id
-  // matches, so saving (refreshUser) never wipes a dirty form.
   const [lastUserId, setLastUserId] = useState<number | null>(null);
   if (user && (form === null || lastUserId !== user.id)) {
     setLastUserId(user.id);
-    setForm({
-      name: user.name,
-      phone: user.phone ?? "",
-      bio: user.bio ?? "",
-      school_id: user.school_id != null ? String(user.school_id) : "",
-      budget_min: user.budget_min != null ? String(user.budget_min) : "",
-      budget_max: user.budget_max != null ? String(user.budget_max) : "",
-      sleep_schedule: user.sleep_schedule ?? "",
-      cleanliness: user.cleanliness != null ? String(user.cleanliness) : "",
-      smoking: user.smoking === true,
-      personality: user.personality ?? "",
-      interests: user.interests ?? "",
-    });
+    setForm(getInitialForm(user));
   }
+
+  const isDirty = useMemo(
+    () => isFormDirty(form, initialForm, isStudent),
+    [form, initialForm, isStudent]
+  );
 
   useEffect(() => {
     getSchools().then(setSchools).catch(() => {});
   }, []);
 
-  if (!user || !form) return null;
-  const isStudent = user.role === "student";
-  /* The null check above has narrowed `form` for all code that follows,
-     but TS loses it inside callbacks; capture a non-null alias. */
   const formValue = form;
 
   function set<K extends keyof ProfileFormState>(key: K, value: ProfileFormState[K]): void {
     setForm((f) => (f ? { ...f, [key]: value } : f));
   }
 
+  function resetForm(): void {
+    if (!initialForm) return;
+    setForm({ ...initialForm });
+    setFieldErrors({});
+    setFormError("");
+    toast("Đã khôi phục thông tin ban đầu.");
+  }
+
   async function save(e: React.FormEvent): Promise<void> {
     e.preventDefault();
+    if (!formValue || !isDirty || busy) return;
     setBusy(true);
     setFieldErrors({});
     setFormError("");
+
     const payload: Record<string, unknown> = {
       name: formValue.name.trim(),
-      phone: formValue.phone.trim() || undefined,
-      bio: formValue.bio.trim() || undefined,
+      phone: formValue.phone.trim() || null,
+      bio: formValue.bio.trim() || null,
     };
+
     if (isStudent) {
       if (formValue.school_id) payload["school_id"] = Number(formValue.school_id);
-      if (formValue.budget_min) payload["budget_min"] = Number(formValue.budget_min);
-      if (formValue.budget_max) payload["budget_max"] = Number(formValue.budget_max);
-      if (formValue.sleep_schedule) payload["sleep_schedule"] = formValue.sleep_schedule;
-      if (formValue.cleanliness) payload["cleanliness"] = Number(formValue.cleanliness);
+      payload["budget_min"] = formValue.budget_min ? Number(formValue.budget_min) : null;
+      payload["budget_max"] = formValue.budget_max ? Number(formValue.budget_max) : null;
+      payload["sleep_schedule"] = formValue.sleep_schedule || null;
+      payload["cleanliness"] = formValue.cleanliness ? Number(formValue.cleanliness) : null;
       payload["smoking"] = formValue.smoking;
-      if (formValue.personality) payload["personality"] = formValue.personality;
-      if (formValue.interests.trim()) payload["interests"] = formValue.interests.trim();
+      payload["personality"] = formValue.personality || null;
+      payload["interests"] = formValue.interests.trim() || null;
+      payload["looking_for_roommate"] = formValue.looking_for_roommate;
     }
+
     try {
       await api.put("/profile", payload);
       await refreshUser();
@@ -115,172 +98,139 @@ export default function Profile() {
     }
   }
 
+  if (!user || !formValue) return null;
+
+  const minText = formValue.budget_min ? formatVndPreview(formValue.budget_min) : "";
+  const maxText = formValue.budget_max ? formatVndPreview(formValue.budget_max) : "";
+  const budgetHint =
+    minText && maxText
+      ? `${minText} – ${maxText} / tháng`
+      : minText
+      ? `Từ ${minText} / tháng`
+      : maxText
+      ? `Đến ${maxText} / tháng`
+      : "";
+
   const err = (field: string): string | undefined => fieldErrors[field]?.[0];
 
   return (
-    <div className="mx-auto max-w-2xl p-5 pb-16">
-      <div className="mb-6 flex items-center gap-4">
-        <Avatar name={user.name} size={56} />
-        <div>
-          <h1 className="text-3xl">{isStudent ? "Hồ sơ của bạn" : "Hồ sơ chủ nhà"}</h1>
-          <p className="text-sm text-muted">{user.email}</p>
+    <div className={cn("mx-auto px-4 py-8 sm:px-6 lg:px-8", isStudent ? "max-w-6xl" : "max-w-2xl")}>
+      {/* Header */}
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-6">
+        <div className="flex items-center gap-4">
+          <Avatar name={user.name} size={64} />
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl font-bold tracking-tight text-ink font-display">
+                {user.name}
+              </h1>
+              <span className="rounded-full bg-plate-tint px-2.5 py-0.5 text-xs font-semibold text-plate">
+                {isStudent ? "Sinh viên" : "Chủ nhà"}
+              </span>
+            </div>
+            <p className="text-sm text-muted">{user.email}</p>
+          </div>
         </div>
+
+        {isStudent ? (
+          <Button asChild variant="outline" size="sm" className="self-start sm:self-auto gap-1.5">
+            <Link to={route(ROUTES.STUDENT_PUBLIC, { id: user.id })}>
+              <span>Xem trang cá nhân công khai</span>
+              <ExternalLink className="size-3.5" aria-hidden />
+            </Link>
+          </Button>
+        ) : null}
       </div>
 
-      <form onSubmit={(e) => { void save(e); }} className="flex flex-col gap-4">
+      <form onSubmit={(e) => { void save(e); }} className="space-y-6">
         {formError ? (
-          <p role="alert" className="rounded-xl bg-clay-tint p-3 text-sm text-ink">
+          <p role="alert" className="rounded-xl border border-danger/20 bg-danger-tint p-3 text-sm text-danger">
             {formError}
           </p>
         ) : null}
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="p-name" label="Tên" error={err("name")}>
-            <Input id="p-name" value={formValue.name} onChange={(e) => { set("name", e.target.value); }} />
-          </Field>
-          <Field id="p-phone" label="Số điện thoại" error={err("phone")}>
-            <Input
-              id="p-phone"
-              type="tel"
-              value={formValue.phone}
-              onChange={(e) => { set("phone", e.target.value); }}
-              placeholder="0901234567"
-            />
-          </Field>
-        </div>
-        <Field id="p-bio" label="Giới thiệu" hint="Một vài dòng để người khác hiểu về bạn" error={err("bio")}>
-          <Textarea
-            id="p-bio"
-            value={formValue.bio}
-            onChange={(e) => { set("bio", e.target.value); }}
-            rows={4}
-          />
-        </Field>
 
         {isStudent ? (
-          <div className="flex flex-col gap-4 rounded-3xl border border-line bg-ivory p-6">
-            <h2 className="text-xl font-semibold">Sinh hoạt</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field id="p-school" label="Trường" error={err("school_id")}>
-                <select
-                  id="p-school"
-                  value={formValue.school_id}
-                  onChange={(e) => { set("school_id", e.target.value); }}
-                  className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
-                >
-                  <option value="">Chưa chọn</option>
-                  {schools.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field id="p-personality" label="Tính cách" error={err("personality")}>
-                <select
-                  id="p-personality"
-                  value={formValue.personality}
-                  onChange={(e) => { set("personality", e.target.value); }}
-                  className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
-                >
-                  <option value="">Chưa chọn</option>
-                  {PERSONALITY_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field id="p-budget-min" label="Ngân sách tối thiểu" error={err("budget_min")}>
-                <Input
-                  id="p-budget-min"
-                  type="number"
-                  min={0}
-                  value={formValue.budget_min}
-                  onChange={(e) => { set("budget_min", e.target.value); }}
-                  placeholder="1.500.000"
-                />
-              </Field>
-              <Field id="p-budget-max" label="Ngân sách tối đa" error={err("budget_max")}>
-                <Input
-                  id="p-budget-max"
-                  type="number"
-                  min={0}
-                  value={formValue.budget_max}
-                  onChange={(e) => { set("budget_max", e.target.value); }}
-                  placeholder="3.000.000"
-                />
-              </Field>
-              <Field id="p-sleep" label="Giờ ngủ" error={err("sleep_schedule")}>
-                <select
-                  id="p-sleep"
-                  value={formValue.sleep_schedule}
-                  onChange={(e) => { set("sleep_schedule", e.target.value); }}
-                  className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
-                >
-                  <option value="">Chưa chọn</option>
-                  {SLEEP_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field
-                id="p-cleanliness"
-                label="Độ sạch sẽ (1–5)"
-                error={err("cleanliness")}
-              >
-                <Input
-                  id="p-cleanliness"
-                  type="number"
-                  min={1}
-                  max={5}
-                  value={formValue.cleanliness}
-                  onChange={(e) => { set("cleanliness", e.target.value); }}
-                />
-              </Field>
-            </div>
-            <label className="flex items-center gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={formValue.smoking}
-                onChange={(e) => { set("smoking", e.target.checked); }}
-                className="size-4 rounded"
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8 items-start">
+            {/* Cột trái: Thông tin cơ bản + Học tập & Ngân sách */}
+            <div className="space-y-6 lg:col-span-5">
+              <ProfileBasicInfoCard
+                name={formValue.name}
+                phone={formValue.phone}
+                bio={formValue.bio}
+                onChange={set}
+                errors={{ name: err("name"), phone: err("phone"), bio: err("bio") }}
+                bioPlaceholder="Ví dụ: Sinh viên năm 2, hòa đồng, thích giữ phòng sạch sẽ..."
+                bioRows={4}
               />
-              Tôi hút thuốc
-            </label>
-            <Field
-              id="p-interests"
-              label="Sở thích"
-              hint="Ngăn cách bằng dấu phẩy, ví dụ: music,gym"
-              error={err("interests")}
-            >
-              <Input
-                id="p-interests"
-                value={formValue.interests}
-                onChange={(e) => { set("interests", e.target.value); }}
-                placeholder="music, gym, đọc sách"
-              />
-            </Field>
-            <label className="flex items-center gap-3 text-sm">
-              <input
-                type="checkbox"
-                checked={user.looking_for_roommate === true}
-                onChange={() => {
-                  /* looking_for_roommate toggles via same /profile PUT */
-                  toast("Dùng mục Sở thích và hồ sơ để bật/tắt tìm bạn cùng phòng.");
-                }}
-                className="size-4"
-                disabled
-              />
-              Tìm bạn cùng phòng (bật qua trợ lý AI)
-            </label>
-          </div>
-        ) : null}
 
-        <Button type="submit" variant="clay" loading={busy} className="mt-2 w-full sm:w-auto">
-          Lưu thay đổi
-        </Button>
+              <ProfileAcademicCard
+                schools={schools}
+                schoolId={formValue.school_id}
+                budgetMin={formValue.budget_min}
+                budgetMax={formValue.budget_max}
+                budgetHint={budgetHint}
+                onChange={set}
+                errors={{
+                  school_id: err("school_id"),
+                  budget_min: err("budget_min"),
+                  budget_max: err("budget_max"),
+                }}
+              />
+            </div>
+
+            {/* Cột phải: Thói quen sinh hoạt & Ghép phòng */}
+            <div className="space-y-6 lg:col-span-7">
+              <ProfileHabitsCard
+                lookingForRoommate={formValue.looking_for_roommate}
+                sleepSchedule={formValue.sleep_schedule}
+                personality={formValue.personality}
+                cleanliness={formValue.cleanliness}
+                smoking={formValue.smoking}
+                interests={formValue.interests}
+                onChange={set}
+                errors={{ interests: err("interests") }}
+              />
+            </div>
+          </div>
+        ) : (
+          /* Landlord view */
+          <div className="mx-auto max-w-2xl">
+            <ProfileBasicInfoCard
+              name={formValue.name}
+              phone={formValue.phone}
+              bio={formValue.bio}
+              onChange={set}
+              errors={{ name: err("name"), phone: err("phone"), bio: err("bio") }}
+              bioPlaceholder="Ví dụ: Chủ nhà thân thiện, phòng trọ an ninh, giờ giấc tự do..."
+              bioRows={3}
+            />
+          </div>
+        )}
+
+        {/* Actions bar */}
+        <div className="flex items-center justify-between pt-4 border-t border-line">
+          {isDirty ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={resetForm}
+              disabled={busy}
+            >
+              Khôi phục
+            </Button>
+          ) : <div />}
+
+          <Button
+            id="profile-submit-btn"
+            type="submit"
+            variant="primary"
+            loading={busy}
+            disabled={!isDirty || busy}
+          >
+            Lưu thay đổi
+          </Button>
+        </div>
       </form>
     </div>
   );

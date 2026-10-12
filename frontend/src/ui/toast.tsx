@@ -1,24 +1,26 @@
 import { Toaster as Sonner } from "sonner";
 
 /*
-  Toast: bottom-centre, ink on cream, 4s, aria-live handled by Sonner.
-  Appears above the mobile tab bar.
+  Toast: bottom-centre, ink on white text, 4s. Sonner handles aria-live.
+  Sits above the mobile tab bar.
 */
 
+import { useTheme } from "@/hooks/useTheme";
+
 export function Toaster() {
+  const { resolvedTheme } = useTheme();
+
   return (
     <Sonner
+      theme={resolvedTheme}
       position="bottom-center"
       duration={4000}
-      style={{
-        fontFamily: "var(--font-sans)",
-      }}
+      style={{ fontFamily: "var(--font-sans)" }}
       toastOptions={{
         classNames: {
-          toast:
-            "!bg-ink !text-cream !border-ink !rounded-xl !shadow-none !text-sm",
-          description: "!text-cream/80",
-          actionButton: "!bg-cream !text-ink !rounded-lg !font-medium",
+          toast: "!bg-card !text-ink !border-line-strong !rounded-lg !shadow-pop !text-sm",
+          description: "!text-muted",
+          actionButton: "!bg-plate !text-white !rounded-md !font-semibold",
         },
       }}
     />

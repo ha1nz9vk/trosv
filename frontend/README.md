@@ -1,6 +1,6 @@
 # Frontend
 
-React 18 + TypeScript strict + Vite + Bootstrap 5 (Node 22 theo `.nvmrc`).
+React 18 + TypeScript strict + Vite 6 + Tailwind CSS v4 + Radix UI + Lucide React (Node 22 theo `.nvmrc`).
 Build luôn chạy `tsc --noEmit` trước - TypeScript lỗi thì không build được.
 Gọi toàn bộ API qua Backend theo [docs/API_CONTRACT.md](../docs/API_CONTRACT.md).
 
@@ -24,13 +24,13 @@ http://localhost:5174 và API same-origin `/api`.
 
 | Đường dẫn | Chức năng |
 |---|---|
-| `/` | Trang chủ: tin mới nhất, loại tin, tính năng AI |
+| `/` | Trang chủ: hero responsive (SVG artwork), tin mới nhất, loại tin, tính năng AI |
 | `/rooms` | Duyệt + lọc tin (từ khóa, loại, tỉnh/TP → phường, trường, giá, tiện ích), phân trang |
-| `/rooms/:id` | Chi tiết: ảnh, tiện ích, đánh giá, yêu thích, nhắn tin, tư vấn giá AI |
+| `/rooms/:id` | Chi tiết: lightbox ảnh, tiện ích, đánh giá, yêu thích, nhắn tin, tư vấn giá AI |
 | `/map` | Bản đồ Leaflet: điểm tin đăng + trường, lọc bán kính km |
 | `/login`, `/register` | Đăng nhập / đăng ký theo vai trò |
 | `/favorites` | Phòng yêu thích (sinh viên) |
-| `/messages`, `/messages/:id` | Hộp thư, chat realtime có tệp đính kèm |
+| `/messages`, `/messages/:id` | Hộp thư, chat realtime (WebSocket Reverb), gửi tệp đính kèm |
 | `/profile` | Hồ sơ cá nhân (`PUT /profile`) |
 | `/students/:id` | Hồ sơ công khai của sinh viên |
 | `/ai/roommates` | AI gợi ý bạn cùng phòng (sinh viên) |
@@ -43,8 +43,8 @@ http://localhost:5174 và API same-origin `/api`.
 
 | Lệnh | Phạm vi |
 |---|---|
-| `npm run lint` | ESLint (TypeScript parser, gồm cả spec e2e) |
-| `npm run build` | check:css → tsc strict → vite build |
+| `npm run lint` | ESLint (TypeScript parser, quy tắc a11y và hooks) |
+| `npm run build` | `tsc --noEmit && vite build` - biên dịch TypeScript và đóng gói Vite |
 | `npx playwright test` | 11+ spec E2E trình duyệt thật; cần API :8000 đã seed + web :4173 (`E2E_BASE_URL`) |
 | `bash e2e-smoke.sh` | Smoke mọi API theo luồng người dùng, AI tắt vẫn xanh |
 | `npm run test:e2e` | Hành trình người dùng đầy đủ (Python + Chromium hệ thống) |
@@ -59,9 +59,10 @@ E2E_BASE_URL=http://localhost:5174 npx playwright test
 - Token lưu `localStorage` (`token`, `user`); nhận 401 "mất phiên" thì xóa
   cả hai và chuyển `/login` (xem `src/api/axiosClient.ts` - 401 từ form
   login sai mật khẩu không gây redirect).
-- Style tách theo lớp trong `src/styles/`: theme → layout → chrome → auth
-  → messages → chat → widgets → components. Thứ tự import là
-  **load-bearing**; sau mọi sửa style chạy `npm run check:css` (guard so
-  manifest `scripts/css-selectors.json`).
+- Style hệ thống sử dụng **Tailwind CSS v4** với design tokens tập trung tại
+  `src/styles.css` (bảng màu ấm sinh viên, font Inter & Inter Tight Variable,
+  bóng đổ warm-depth, bo góc card 16px) kết hợp các headless primitives
+  từ **Radix UI** (`@radix-ui/react-*`), icons từ **Lucide React**, và
+  thông báo qua **Sonner**.
 - Bundle bake `VITE_*` lúc build - đổi `.env` xong phải build lại, restart
   không đủ.

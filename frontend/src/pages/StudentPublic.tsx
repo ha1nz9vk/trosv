@@ -5,7 +5,6 @@ import api, { errStatus } from "@/api/axiosClient";
 import type { User } from "@/types/api";
 import { Button } from "@/ui/button";
 import { Avatar } from "@/ui/avatar";
-import { Tag } from "@/ui/badge";
 import { EmptyState } from "@/ui/empty-state";
 import { Skeleton } from "@/ui/badge";
 import { NotFoundIllustration } from "@/ui/icons";
@@ -13,15 +12,7 @@ import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { startDirectConversation } from "@/api/socialApi";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "@/ui/toast";
-
-const INTEREST_LABELS: Record<string, string> = {
-  music: "Âm nhạc",
-  gym: "Gym",
-  reading: "Đọc sách",
-  gaming: "Game",
-  cooking: "Nấu ăn",
-  travel: "Du lịch",
-};
+import { parseHobbies } from "@/constants/hobbies";
 
 export default function StudentPublic() {
   const { id } = useParams();
@@ -81,11 +72,7 @@ export default function StudentPublic() {
   /* Capture the non-null value for closures below. */
   const profileData = profile;
 
-  const interests = Array.isArray(profile.hobby)
-    ? profile.hobby
-    : typeof profile.interests === "string" && profile.interests.length > 0
-      ? profile.interests.split(",")
-      : [];
+  const hobbies = parseHobbies(profile.interests ?? profile.hobby);
 
   async function sendMessage(): Promise<void> {
     if (!user) {
@@ -102,24 +89,27 @@ export default function StudentPublic() {
 
   return (
     <div className="mx-auto max-w-lg p-5 pb-16">
-      <div className="flex flex-col items-center gap-4 rounded-3xl border border-line bg-white p-8 text-center">
+      <div className="flex flex-col items-center gap-4 rounded-xl border border-line bg-card p-8 text-center">
         <Avatar name={profile.name} size={96} />
-        <h1 className="text-3xl">{profile.name}</h1>
-        <p className="text-sm text-muted">{profile.school ?? "Chưa rõ trường"}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-ink">{profile.name}</h1>
+        <p className="text-sm font-medium text-muted">{profile.school ?? "Chưa rõ trường"}</p>
         {profile.bio ? (
-          <p className="font-serif text-lg text-ink-2 paragraph">{profile.bio}</p>
+          <p className="text-base text-ink-2 leading-relaxed">{profile.bio}</p>
         ) : null}
-        {interests.length > 0 ? (
-          <div className="mt-2 flex flex-wrap justify-center gap-2">
-            {interests.map((x) => (
-              <Tag key={x} variant="oat">
-                {INTEREST_LABELS[x] ?? x}
-              </Tag>
+        {hobbies.length > 0 ? (
+          <div className="mt-2 flex flex-wrap justify-center gap-1.5">
+            {hobbies.map((h) => (
+              <span
+                key={h.key}
+                className="inline-flex items-center rounded-full border border-line bg-tint/40 px-3 py-1 text-xs font-medium text-ink"
+              >
+                <span>{h.label}</span>
+              </span>
             ))}
           </div>
         ) : null}
         {user && user.id !== profile.id ? (
-          <Button variant="clay" className="mt-4" onClick={() => void sendMessage()}>
+          <Button variant="primary" className="mt-4" onClick={() => void sendMessage()}>
             Nhắn tin
           </Button>
         ) : null}

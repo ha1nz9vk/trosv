@@ -3,18 +3,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/* Tag: neutral cream pill on top of a photo placeholder. */
+/* Tag: small square label, e.g. listing type over a photo. */
 const tagVariants = cva(
-  "inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium",
+  "inline-flex items-center whitespace-nowrap rounded-sm px-2 py-0.5 text-xs font-semibold",
   {
     variants: {
       variant: {
-        cream: "bg-cream text-ink",
-        oat: "bg-oat text-ink",
+        paper: "bg-paper text-ink",
+        sunken: "bg-sunken text-ink",
         outline: "border border-line-strong bg-transparent text-ink",
       },
     },
-    defaultVariants: { variant: "cream" },
+    defaultVariants: { variant: "paper" },
   }
 );
 
@@ -26,7 +26,7 @@ export function Tag({ className, variant, ...props }: TagProps) {
   return <span className={cn(tagVariants({ variant }), className)} {...props} />;
 }
 
-/* Chip: interactive filter pill; `on` = selected state (ink fill). */
+/* Chip: interactive filter pill; `on` = selected state (plate fill). */
 export interface ChipProps extends React.ComponentProps<"button"> {
   on?: boolean;
 }
@@ -36,10 +36,11 @@ export function Chip({ className, on, ...props }: ChipProps) {
     <button
       type="button"
       className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2",
+        "inline-flex h-10 items-center gap-2 rounded-full border px-4",
+        "text-sm font-medium transition-colors duration-150 ease-out",
         on
-          ? "border-ink bg-ink text-white hover:bg-ink-2"
-          : "border-line-strong bg-transparent text-ink hover:bg-ivory",
+          ? "border-plate bg-plate text-white hover:bg-plate-hover"
+          : "border-line-strong bg-card text-ink hover:bg-tint",
         "disabled:opacity-50",
         className
       )}
@@ -49,7 +50,7 @@ export function Chip({ className, on, ...props }: ChipProps) {
   );
 }
 
-/* Unread-count badge: clay fill, cream text. */
+/* Unread-count badge: plate fill, white text. */
 export function Badge({
   className,
   children,
@@ -58,7 +59,8 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex min-w-5 items-center justify-center rounded-full bg-clay px-1.5 font-sans text-xs font-bold leading-5 text-black",
+        "inline-flex min-w-5 items-center justify-center rounded-full",
+        "bg-plate px-1.5 text-xs font-bold leading-5 text-white",
         className
       )}
       {...props}
@@ -76,7 +78,7 @@ export function Skeleton({
   return (
     <div
       className={cn(
-        "animate-pulse rounded-xl bg-oat",
+        "animate-pulse rounded-xl bg-sunken",
         className
       )}
       aria-hidden
@@ -85,7 +87,7 @@ export function Skeleton({
   );
 }
 
-/* Star rating: 1..5 (supports halves for display only). */
+/* Star rating, display only. With no rating yet it says so without a star. */
 export function Rating({
   value,
   count,
@@ -95,23 +97,22 @@ export function Rating({
   count?: number | null | undefined;
   className?: string;
 }) {
-  const v = value ?? 0;
+  if (value == null) {
+    return <span className={cn("text-sm text-muted", className)}>Chưa có đánh giá</span>;
+  }
+  const hasCount = count != null && count > 0;
   return (
     <span
       className={cn("inline-flex items-center gap-1 text-sm", className)}
       aria-label={
-        count != null && count > 0
-          ? `${v.toFixed(1)} trên 5 sao, ${count} đánh giá`
-          : `${v.toFixed(1)} trên 5 sao`
+        hasCount
+          ? `${value.toFixed(1)} trên 5 sao, ${count} đánh giá`
+          : `${value.toFixed(1)} trên 5 sao`
       }
     >
       <Star className="size-4 fill-ink stroke-ink" aria-hidden />
-      <span className="tabular-nums text-ink-2">
-        {value == null ? "Chưa có đánh giá" : v.toFixed(1)}
-      </span>
-      {count != null && count > 0 ? (
-        <span className="tabular-nums text-muted">({count})</span>
-      ) : null}
+      <span className="tabular-nums font-medium text-ink">{value.toFixed(1)}</span>
+      {hasCount ? <span className="tabular-nums text-muted">({count})</span> : null}
     </span>
   );
 }

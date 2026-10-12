@@ -2,6 +2,7 @@ import { forwardRef, useState } from "react";
 import type { InputHTMLAttributes } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { controlClass } from "@/ui/input";
 
 export interface PasswordInputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
@@ -16,21 +17,19 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
         <input
           ref={ref}
           type={visible ? "text" : "password"}
-          className={cn(
-            "flex h-12 w-full rounded-xl border bg-white px-4 pr-12 text-base text-ink",
-            "placeholder:text-muted",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2",
-            "transition-colors duration-150 ease-out",
-            invalid ? "border-destructive" : "border-line-strong",
-            className
-          )}
+          className={cn(controlClass(invalid), "h-12 px-4 pr-12", className)}
+          aria-invalid={invalid || undefined}
           {...props}
         />
         <button
           type="button"
           onClick={() => { setVisible((v) => !v); }}
           aria-label={visible ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-          className="absolute right-2 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-lg text-ink-2 hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
+          aria-pressed={visible}
+          className={cn(
+            "absolute right-2 top-1/2 flex size-8 -translate-y-1/2",
+            "items-center justify-center rounded-md text-ink-2 hover:bg-tint"
+          )}
         >
           {visible ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
         </button>

@@ -13,6 +13,24 @@ export default defineConfig({
     // Deps cache nam ngoai node_modules: thu muc .vite trong sandbox co
     // file do root so huu khong the ghi/xoa -> Vite tra 404 cho moi route.
     cacheDir: "/tmp/trosv-vite-cache",
+    server: {
+        proxy: {
+            "/attachments": {
+                target: "http://127.0.0.1:8000",
+                changeOrigin: false,
+                headers: {
+                    Host: "127.0.0.1",
+                },
+            },
+            "/storage": {
+                target: "http://127.0.0.1:8000",
+                changeOrigin: false,
+                headers: {
+                    Host: "127.0.0.1",
+                },
+            },
+        },
+    },
     build: {
         target: "es2020",
         cssMinify: true,

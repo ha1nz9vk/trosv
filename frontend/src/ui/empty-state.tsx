@@ -37,7 +37,7 @@ export function EmptyState({
       ) : null}
       <h2 className="text-xl font-semibold text-ink">{title}</h2>
       {description ? (
-        <p className="max-w-md font-serif text-lg text-ink-2 paragraph">
+        <p className="max-w-md text-lg text-ink-2">
           {description}
         </p>
       ) : null}
@@ -72,7 +72,7 @@ export function ErrorState({
       )}
     >
       <h2 className="text-xl font-semibold text-ink">{title}</h2>
-      <p className="max-w-md text-base text-muted paragraph">{message}</p>
+      <p className="max-w-md text-base text-muted">{message}</p>
       {action ? <div className="mt-2">{action}</div> : null}
     </div>
   );

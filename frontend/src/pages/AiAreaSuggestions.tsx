@@ -73,7 +73,7 @@ export default function AiAreaSuggestions() {
   return (
     <div className="mx-auto max-w-4xl p-5 pb-16">
       <h1 className="text-3xl">Khu vực phù hợp</h1>
-      <p className="mt-2 max-w-prose font-serif text-lg text-ink-2 paragraph">
+      <p className="mt-2 max-w-prose text-lg text-ink-2">
         Trợ lý AI gợi ý tối đa ba khu vực dựa trên ngân sách, trường học và thứ tự ưu tiên của bạn.
       </p>
 
@@ -82,7 +82,7 @@ export default function AiAreaSuggestions() {
           e.preventDefault();
           void suggest();
         }}
-        className="mt-6 flex flex-col gap-4 rounded-3xl border border-line bg-ivory p-6"
+        className="mt-6 flex flex-col gap-4 rounded-xl border border-line bg-card p-6 shadow-xs"
       >
         <div className="grid gap-4 sm:grid-cols-3">
           <Field id="as-school" label="Trường">
@@ -90,7 +90,7 @@ export default function AiAreaSuggestions() {
               id="as-school"
               value={schoolId}
               onChange={(e) => { setSchoolId(e.target.value); }}
-              className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
+              className="h-11 w-full rounded-lg border border-line-strong bg-card text-ink px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
             >
               <option value="">Chưa chọn</option>
               {schools.map((s) => (
@@ -138,14 +138,14 @@ export default function AiAreaSuggestions() {
             </Chip>
           ))}
         </fieldset>
-        <Button type="submit" variant="clay" loading={busy} className="sm:w-fit">
+        <Button type="submit" variant="primary" loading={busy} className="sm:w-fit">
           Gợi ý khu vực
         </Button>
       </form>
 
       {busy || loading ? (
         <div className="mt-8 flex flex-col items-center gap-3" aria-live="polite">
-          <div className="size-8 animate-spin rounded-full border-2 border-clay border-t-transparent" aria-hidden />
+          <div className="size-8 animate-spin rounded-full border-2 border-plate border-t-transparent" aria-hidden />
           <p className="text-sm text-muted">Trợ lý AI đang phân tích các khu vực…</p>
         </div>
       ) : errorState === "unavailable" ? (
@@ -172,9 +172,9 @@ export default function AiAreaSuggestions() {
             />
           ) : (
             rows.map((r, i) => (
-              <div key={r.ward_id ?? i} className="rounded-2xl border border-line bg-white p-5">
+              <div key={r.ward_id ?? i} className="rounded-xl border border-line bg-card p-5 shadow-xs hover:border-line-strong transition-colors">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h2 className="text-xl font-semibold">{r.name}</h2>
+                  <h2 className="text-xl font-semibold text-ink">{r.name}</h2>
                   <p className="tabular-nums text-sm text-muted">
                     {r.stats?.avg_price != null ? `${fmt(r.stats.avg_price)}/tháng trung bình` : ""}
                     {r.stats?.avg_price != null && r.stats.distance_to_school_km != null ? " · " : ""}
@@ -183,14 +183,14 @@ export default function AiAreaSuggestions() {
                       : ""}
                   </p>
                 </div>
-                <p className="mt-2 font-serif text-ink-2 paragraph">{r.reason ?? ""}</p>
-                <p className="mt-2 text-sm text-muted tabular-nums">
+                <p className="mt-2 text-sm text-ink-2 leading-relaxed">{r.reason ?? ""}</p>
+                <p className="mt-2 text-xs text-muted tabular-nums">
                   {r.stats?.listings_count != null
                     ? `${r.stats.listings_count} tin đăng`
                     : ""}
                 </p>
                 <div className="mt-3 flex justify-end">
-                  <Button asChild size="sm" variant="outline">
+                  <Button asChild size="sm" variant="primary">
                     <Link to={`${ROUTES.ROOMS}?ward_id=${r.ward_id ?? ""}`}>Xem phòng khu vực này</Link>
                   </Button>
                 </div>

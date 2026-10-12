@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, DragEvent, FormEvent } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ROUTES, route } from "@/constants/routes";
 import { useListingForm } from "@/hooks/useListingForm";
 import { Button } from "@/ui/button";
@@ -9,7 +9,7 @@ import { Input, Textarea } from "@/ui/input";
 import { Tag } from "@/ui/badge";
 import { cn } from "@/lib/utils";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { Trash2, MapPin, Sparkles } from "lucide-react";
+import { Trash2, MapPin, Sparkles, ArrowLeft } from "lucide-react";
 import { toast } from "@/ui/toast";
 
 const TYPE_OPTIONS = [
@@ -63,22 +63,37 @@ export default function LandlordForm() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl p-5 pb-16">
-      <h1 className="text-3xl">
-        {form7.isEdit ? "Sửa tin đăng" : "Đăng tin mới"}
-      </h1>
+    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col p-4 sm:p-6 lg:p-8 pb-16">
+      <div className="mb-6 flex flex-col gap-2">
+        <Link
+          to={ROUTES.LANDLORD}
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-ink transition-colors w-fit"
+        >
+          <ArrowLeft className="size-4" aria-hidden />
+          <span>Quay lại Quản lý tin đăng</span>
+        </Link>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-ink">
+          {form7.isEdit ? "Sửa tin đăng" : "Đăng tin mới"}
+        </h1>
+        <p className="text-sm text-muted">
+          {form7.isEdit
+            ? "Cập nhật thông tin phòng trọ, giá cả và tiện ích của bạn."
+            : "Điền thông tin chi tiết về phòng trọ để thu hút sinh viên tìm phòng."}
+        </p>
+      </div>
+
       {form7.notice ? (
-        <p role="alert" className="mt-3 rounded-xl bg-clay-tint p-3 text-sm text-ink">
+        <p role="alert" className="mb-6 rounded-xl bg-plate-tint p-4 text-sm text-ink border border-plate/20">
           {form7.notice}
         </p>
       ) : null}
 
       <form
         onSubmit={(e: FormEvent) => void form7.handleSubmit(e, navigate)}
-        className="mt-6 flex flex-col gap-8"
+        className="flex flex-col gap-6"
       >
         {/* Section 1: basics */}
-        <section className="flex flex-col gap-4 rounded-3xl border border-line bg-white p-6">
+        <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-6">
           <h2 className="text-xl font-semibold">Thông tin chính</h2>
           <Field id="lf-title" label="Tiêu đề" hint="5–200 ký tự" error={err("title")} required>
             <Input
@@ -94,7 +109,7 @@ export default function LandlordForm() {
                 id="lf-type"
                 value={form7.form.type}
                 onChange={form7.set("type")}
-                className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
+                className="h-12 w-full rounded-xl border border-line-strong bg-card text-ink px-4 text-base"
               >
                 {TYPE_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -133,7 +148,7 @@ export default function LandlordForm() {
                 id="lf-city"
                 value={String(form7.form.city_id)}
                 onChange={(e) => { cityChanged(e.target.value); }}
-                className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
+                className="h-12 w-full rounded-xl border border-line-strong bg-card text-ink px-4 text-base"
               >
                 <option value="">Chọn tỉnh/thành phố</option>
                 {form7.cities.map((c) => (
@@ -148,7 +163,7 @@ export default function LandlordForm() {
                 id="lf-ward"
                 value={String(form7.form.ward_id)}
                 onChange={form7.set("ward_id")}
-                className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
+                className="h-12 w-full rounded-xl border border-line-strong bg-card text-ink px-4 text-base"
                 disabled={!form7.form.city_id}
               >
                 <option value="">
@@ -175,14 +190,14 @@ export default function LandlordForm() {
         </section>
 
         {/* Section 2: location on map */}
-        <section className="flex flex-col gap-4 rounded-3xl border border-line bg-white p-6">
+        <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-6">
           <h2 className="flex items-center gap-2 text-xl font-semibold">
             <MapPin className="size-5" aria-hidden /> Vị trí trên bản đồ
           </h2>
           <p className="text-sm text-muted">
             Chọn điểm trên bản đồ để điền kinh độ, vĩ độ (dùng khi lọc gần trường).
           </p>
-          <div className="h-64 overflow-hidden rounded-2xl border border-line">
+          <div className="h-64 overflow-hidden rounded-xl border border-line">
             <CoordinatePicker
               lat={form7.form.latitude}
               lng={form7.form.longitude}
@@ -216,7 +231,7 @@ export default function LandlordForm() {
         </section>
 
         {/* Section 3: description + AI + amenities */}
-        <section className="flex flex-col gap-4 rounded-3xl border border-line bg-white p-6">
+        <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">Mô tả</h2>
             <Button
@@ -249,8 +264,8 @@ export default function LandlordForm() {
                   className={cn(
                     "cursor-pointer whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                     form7.form.amenity_ids.includes(a.id)
-                      ? "border-ink bg-ink font-bold text-white"
-                      : "border-line-strong bg-transparent text-ink hover:bg-ivory"
+                      ? "border-plate bg-plate font-semibold text-white shadow-xs"
+                      : "border-line-strong bg-card text-ink hover:bg-tint"
                   )}
                 >
                   {a.name ?? `Tiện ích ${a.id}`}
@@ -264,7 +279,7 @@ export default function LandlordForm() {
                 id="lf-status"
                 value={form7.form.status}
                 onChange={form7.set("status")}
-                className="h-12 w-full rounded-xl border border-line-strong bg-white px-4 text-base"
+                className="h-12 w-full rounded-xl border border-line-strong bg-card text-ink px-4 text-base"
               >
                 {STATUS_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
@@ -278,12 +293,12 @@ export default function LandlordForm() {
 
         {/* Section 4: images (edit mode: existing images + delete) */}
         {form7.isEdit ? (
-          <section className="flex flex-col gap-4 rounded-3xl border border-line bg-white p-6">
+          <section className="flex flex-col gap-4 rounded-xl border border-line bg-card p-6">
             <h2 className="text-xl font-semibold">Ảnh tin đăng</h2>
             {form7.images.length > 0 ? (
               <div className="grid grid-cols-3 gap-2">
                 {form7.images.map((img, i) => (
-                  <div key={img.id} className="group relative overflow-hidden rounded-xl bg-oat">
+                  <div key={img.id} className="group relative overflow-hidden rounded-xl bg-sunken">
                     <img src={img.url} alt="" width={200} height={133} className="aspect-3/2 w-full object-cover" />
                     {i === 0 ? (
                       <span className="absolute left-1 top-1">
@@ -294,7 +309,7 @@ export default function LandlordForm() {
                       type="button"
                       onClick={() => void form7.handleDeleteImage(img.id)}
                       aria-label={`Xóa ảnh ${i + 1}`}
-                      className="absolute right-1 top-1 flex size-7 items-center justify-center rounded-full bg-white/90 opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                      className="absolute right-1 top-1 flex size-7 items-center justify-center rounded-full bg-card/90 text-ink opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
                     >
                       <Trash2 className="size-4" aria-hidden />
                     </button>
@@ -306,7 +321,7 @@ export default function LandlordForm() {
         ) : null}
 
         {/* Section 5 (create): pick new images via drag & drop */}
-        <section className="flex flex-col gap-3 rounded-3xl border border-line bg-white p-6">
+        <section className="flex flex-col gap-3 rounded-xl border border-line bg-card p-6">
           <h2 className="text-xl font-semibold">Ảnh</h2>
           <div
             onDragOver={(e: DragEvent) => {
@@ -323,8 +338,8 @@ export default function LandlordForm() {
               acceptFiles(files);
             }}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-8 text-center transition-colors",
-              dragOver ? "border-clay bg-clay-tint/50" : "border-line-strong bg-ivory"
+              "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-8 text-center transition-colors",
+              dragOver ? "border-plate bg-plate-tint/50" : "border-line-strong bg-tint"
             )}
             onClick={() => fileInput.current?.click()}
             role="button"
@@ -360,7 +375,7 @@ export default function LandlordForm() {
           >
             Hủy
           </Button>
-          <Button type="submit" variant="clay" loading={form7.busy}>
+          <Button type="submit" variant="primary" loading={form7.busy}>
             {form7.isEdit ? "Lưu thay đổi" : "Đăng tin"}
           </Button>
         </div>
@@ -374,7 +389,7 @@ function CoordinatePicker({ lat, lng, onPick }: CoordinatePickerProps) {
   return (
     <div className="relative h-full w-full" data-testid="coordinate-picker">
       <ListingMapBridge onPick={onPick} />
-      <p className="absolute left-2 top-2 rounded-lg bg-white/90 px-2 py-1 text-xs tabular-nums text-ink">
+      <p className="absolute left-2 top-2 rounded-lg bg-card/90 px-2 py-1 text-xs tabular-nums text-ink border border-line">
         {lat || "—"}, {lng || "—"}
       </p>
     </div>
@@ -382,29 +397,40 @@ function CoordinatePicker({ lat, lng, onPick }: CoordinatePickerProps) {
 }
 
 /* Lazily loads a click-to-pick map; keeps the coordinate logic isolated. */
-import { useEffect } from "react";
-
 function ListingMapBridge({ onPick }: { onPick: (lat: number, lng: number) => void }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    /* The coordinate picker uses the same Leaflet chunk via ListingMap. */
+    let mapInstance: L.Map | null = null;
+    let active = true;
+    const el = containerRef.current;
+
     void import("leaflet").then((Lm) => {
-      const el = document.querySelector('[data-testid="coordinate-picker"] > div');
-      if (!(el instanceof HTMLElement)) return;
+      if (!active || !el) return;
+      if ((el as unknown as { _map?: L.Map })._map) {
+        (el as unknown as { _map?: L.Map })._map?.remove();
+      }
       const map = Lm.map(el).setView([16.0471, 108.2068], 5);
+      mapInstance = map;
+      (el as unknown as { _map?: L.Map })._map = map;
       const marker = Lm.marker([16.0471, 108.2068]);
       map.on("click", (e) => {
         marker.setLatLng(e.latlng).addTo(map);
         onPick(e.latlng.lat, e.latlng.lng);
       });
-      (el as HTMLElement & { _map?: L.Map })._map = map;
     });
+
     return () => {
-      const el = document.querySelector('[data-testid="coordinate-picker"] > div');
-      const map = (el as (HTMLElement & { _map?: unknown }) | null)?._map;
-      if (map && typeof map === "object" && "remove" in map) {
-        (map as { remove: () => void }).remove();
+      active = false;
+      if (mapInstance) {
+        mapInstance.remove();
+        mapInstance = null;
+      }
+      if (el) {
+        delete (el as unknown as { _map?: unknown })._map;
       }
     };
   }, [onPick]);
-  return <div className="h-full w-full" />;
+
+  return <div ref={containerRef} className="h-full w-full" />;
 }

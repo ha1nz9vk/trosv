@@ -6,11 +6,11 @@ import { errStatus } from "@/api/axiosClient";
 import type { AiRoommate } from "@/types/api";
 import { Button } from "@/ui/button";
 import { Avatar } from "@/ui/avatar";
-import { Tag } from "@/ui/badge";
 import { EmptyState } from "@/ui/empty-state";
 import { AiUnavailableIllustration } from "@/ui/icons";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { startDirectConversation } from "@/api/socialApi";
+import { formatHobby } from "@/constants/hobbies";
 
 export default function AiRoommates() {
   useDocumentTitle("Gợi ý bạn cùng phòng · TROSV");
@@ -42,13 +42,13 @@ export default function AiRoommates() {
   return (
     <div className="mx-auto max-w-4xl p-5 pb-16">
       <h1 className="text-3xl">Bạn cùng phòng</h1>
-      <p className="mt-2 max-w-prose font-serif text-lg text-ink-2 paragraph">
+      <p className="mt-2 max-w-prose text-lg text-ink-2">
         Trợ lý AI đề xuất sinh viên có sở thích gần giống bạn nhất, dựa trên hồ sơ của hai bên.
       </p>
 
       {loading ? (
         <div className="mt-8 flex flex-col items-center gap-3" aria-live="polite">
-          <div className="size-8 animate-spin rounded-full border-2 border-clay border-t-transparent" aria-hidden />
+          <div className="size-8 animate-spin rounded-full border-2 border-plate border-t-transparent" aria-hidden />
           <p className="text-sm text-muted">Trợ lý AI đang tìm bạn cùng phòng phù hợp…</p>
         </div>
       ) : errorState === "unavailable" ? (
@@ -75,30 +75,48 @@ export default function AiRoommates() {
       ) : (
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {rows.map((r, i) => (
-            <div key={r.user_id ?? i} className="rounded-2xl border border-line bg-white p-5">
+            <div key={r.user_id ?? i} className="rounded-xl border border-line bg-card p-5 shadow-xs hover:border-line-strong transition-colors">
               <div className="flex items-center gap-3">
                 <Avatar name={r.name ?? "Bạn"} size={48} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-ink">{r.name}</p>
-                  <p className="text-sm text-muted">{r.school ?? "Chưa rõ trường"}</p>
+                  <p className="truncate font-semibold text-ink text-base">{r.name}</p>
+                  <p className="text-xs text-muted">{r.school ?? "Chưa rõ trường"}</p>
                 </div>
-                <span className="rounded-full bg-ivory px-2.5 py-1 text-sm font-semibold tabular-nums text-ink">
-                  {(typeof r.score === "number" ? r.score : Number(r.score ?? 0)).toFixed(0)}/100
+                <span className="rounded-full bg-flyer/30 border border-flyer/70 px-2.5 py-1 text-xs font-bold tabular-nums text-ink">
+                  {(typeof r.score === "number" ? r.score : Number(r.score ?? 0)).toFixed(0)}% phù hợp
                 </span>
               </div>
-              <p className="mt-3 font-serif text-ink-2 paragraph">{r.reason ?? ""}</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {(r.interests_shared ?? []).map((x) => (
-                  <Tag key={x} variant="oat">{x}</Tag>
-                ))}
+              <p className="mt-3 text-sm text-ink-2 leading-relaxed">{r.reason ?? ""}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {(r.interests_shared ?? []).map((x) => {
+                  const h = formatHobby(x);
+                  return (
+                    <span
+                      key={x}
+                      className="inline-flex items-center gap-1 rounded-md bg-plate-tint border border-plate/25 px-2 py-0.5 text-xs font-semibold text-plate shadow-xs"
+                      title="Sở thích chung"
+                    >
+                      <span>{h.label}</span>
+                      <span className="text-[10px] font-normal text-plate/75">★ chung</span>
+                    </span>
+                  );
+                })}
                 {(r.interests ?? [])
                   .filter((x) => !(r.interests_shared ?? []).includes(x))
-                  .map((x) => (
-                    <Tag key={x} variant="outline">{x}</Tag>
-                  ))}
+                  .map((x) => {
+                    const h = formatHobby(x);
+                    return (
+                      <span
+                        key={x}
+                        className="inline-flex items-center rounded-md border border-line bg-paper px-2 py-0.5 text-xs font-medium text-ink-2"
+                      >
+                        <span>{h.label}</span>
+                      </span>
+                    );
+                  })}
               </div>
               <div className="mt-4 flex justify-end">
-                <Button size="sm" variant="outline" onClick={() => void messageUser(r.user_id)}>
+                <Button size="sm" variant="primary" onClick={() => { void messageUser(r.user_id); }}>
                   Nhắn tin
                 </Button>
               </div>

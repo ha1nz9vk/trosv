@@ -26,6 +26,8 @@ export function formatPriceTrieu(value: number | null | undefined): string {
   return `${new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 }).format(value / 1_000_000)}tr`;
 }
 
+export const formatPriceShort = formatPriceTrieu;
+
 /** dd/mm/yyyy HH:mm from ISO string */
 export function formatDateTime(iso: string | null | undefined): string {
   if (!iso) return "";

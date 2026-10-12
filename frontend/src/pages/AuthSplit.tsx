@@ -8,7 +8,7 @@ export function AuthArt({ src, testId }: { src: string; testId: string }) {
   return (
     <div
       data-testid={testId}
-      className="relative hidden min-h-screen flex-1 overflow-hidden bg-oat md:block"
+      className="relative hidden min-h-screen flex-1 overflow-hidden bg-sunken md:block"
       aria-hidden
     >
       <img
@@ -38,19 +38,18 @@ export function AuthSplit({
   artTestId: string;
 }) {
   return (
-    <div className="flex min-h-screen bg-cream">
+    <div className="relative flex min-h-screen bg-paper">
       <div className="flex w-full flex-col px-6 py-12 md:w-[480px] md:flex-none md:justify-center md:px-12">
         <div className="mx-auto w-full max-w-[320px]">
           <div className="mb-8 flex flex-col items-center gap-2 text-center">
             <Link to={ROUTES.HOME} aria-label="TROSV trang chủ">
-              <img src="/trosv-logo.svg" alt="TROSV" className="h-8 w-auto" />
+              <img src="/trosv-logo.svg" alt="TROSV" className="trosv-logo h-8 w-auto" />
             </Link>
-            <h1 className="text-2xl font-semibold">{title}</h1>
+            <h1 className="text-2xl font-semibold text-ink">{title}</h1>
           </div>
           {children}
         </div>
       </div>
-      <div aria-hidden className="rule-y hidden w-[6px] self-stretch md:block" />
       <AuthArt src={artSrc} testId={artTestId} />
     </div>
   );

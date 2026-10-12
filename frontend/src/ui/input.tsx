@@ -2,9 +2,17 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /*
-  TROSV inputs: 48px fields on white, 1px strong line, clay focus ring,
-  12px radius, Noto Sans.
+  TROSV form controls. One shared surface so Input, Textarea and
+  PasswordInput cannot drift: 48px, white, 1px strong line, 8px radius.
+  Focus uses the global plate ring; `invalid` swaps the border to danger.
 */
+export function controlClass(invalid?: boolean): string {
+  return cn(
+    "w-full rounded-lg border bg-card text-base text-ink placeholder:text-muted",
+    "transition-colors duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50",
+    invalid ? "border-danger" : "border-line-strong hover:border-ink-2"
+  );
+}
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -15,15 +23,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, invalid, ...props }, ref) => (
     <input
       type={type}
-      className={cn(
-        "flex h-12 w-full rounded-xl border bg-white px-4 text-base text-ink",
-        "placeholder:text-muted",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        "transition-colors duration-150 ease-out",
-        invalid ? "border-destructive" : "border-line-strong",
-        className
-      )}
+      className={cn(controlClass(invalid), "h-12 px-4", className)}
       ref={ref}
       aria-invalid={invalid || undefined}
       {...props}
@@ -40,14 +40,7 @@ export interface TextareaProps
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, invalid, ...props }, ref) => (
     <textarea
-      className={cn(
-        "flex min-h-24 w-full rounded-xl border bg-white p-4 text-base text-ink",
-        "placeholder:text-muted",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2",
-        "disabled:cursor-not-allowed disabled:opacity-50",
-        invalid ? "border-destructive" : "border-line-strong",
-        className
-      )}
+      className={cn(controlClass(invalid), "min-h-24 p-4", className)}
       ref={ref}
       aria-invalid={invalid || undefined}
       {...props}

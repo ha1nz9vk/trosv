@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 */
 
 const TINTS = [
-  "bg-oat text-ink",
-  "bg-clay-tint text-ink",
-  "bg-ivory text-ink",
-  "bg-olive/20 text-ink",
+  "bg-plate-tint text-plate",
+  "bg-moss-tint text-moss",
+  "bg-flyer/40 text-ink",
+  "bg-sunken text-ink",
 ] as const;
 
 function initials(name: string): string {

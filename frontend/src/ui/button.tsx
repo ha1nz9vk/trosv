@@ -6,30 +6,35 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /*
-  TROSV buttons: ink primary (white text), clay accent (main action of a
-  screen - at most one per section), ghost. Flat, border-based, no shadows.
+  TROSV buttons. `primary` (plate blue) is the screen's main action, at
+  most one per section. `ink` is a heavy secondary, `outline` and `ghost`
+  are quiet. Flat and border-based; focus uses the global ring.
 */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border text-sm font-medium transition-colors duration-150 ease-out disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.98]",
+  [
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border",
+    "text-sm font-semibold transition-all duration-150 ease-out active:scale-[0.98]",
+    "disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  ],
   {
     variants: {
       variant: {
-        ink: "border-ink bg-ink text-white font-bold hover:bg-ink-2",
-        clay: "border-clay bg-clay text-black font-bold hover:bg-clay-hover hover:border-clay-hover",
-        ghost:
-          "border-transparent bg-transparent text-ink hover:bg-ivory",
-        outline:
-          "border-line-strong bg-transparent text-ink hover:bg-ivory",
+        primary:
+          "border-plate bg-plate text-white hover:border-plate-hover hover:bg-plate-hover",
+        ink: "border-ink bg-ink text-white hover:bg-ink-2",
+        outline: "border-line-strong bg-card text-ink hover:bg-tint",
+        ghost: "border-transparent bg-transparent text-ink hover:bg-tint",
+        danger: "border-danger bg-danger text-white hover:bg-danger/90",
       },
       size: {
-        sm: "h-9 px-3 text-xs",
+        sm: "h-9 px-3",
         md: "h-11 px-5",
         lg: "h-12 px-6 text-base",
-        icon: "h-10 w-10 p-0",
+        icon: "size-10 p-0",
       },
     },
     defaultVariants: {
-      variant: "ink",
+      variant: "primary",
       size: "md",
     },
   }

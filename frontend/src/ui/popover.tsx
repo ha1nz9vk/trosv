@@ -3,7 +3,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { cn } from "@/lib/utils";
 
-/* Popover — the only surfaces allowed a shadow (with dropdowns). */
+/* Popover: floating surfaces (with menus and dialogs) are the only ones that get a shadow. */
 const Popover = PopoverPrimitive.Root;
 const PopoverTrigger = PopoverPrimitive.Trigger;
 const PopoverAnchor = PopoverPrimitive.Anchor;
@@ -18,9 +18,9 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 w-72 rounded-xl border border-line bg-white p-4 shadow-md",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-clay",
+        "z-50 w-72 rounded-xl border border-line bg-card text-ink p-4 shadow-pop",
+        "data-[state=open]:animate-pop-in data-[state=closed]:animate-pop-out",
+        "focus:outline-none",
         className
       )}
       {...props}
@@ -49,8 +49,8 @@ const TooltipContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 rounded-lg bg-ink px-2.5 py-1.5 text-xs font-medium text-cream",
-        "data-[state=delayed-open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=delayed-open]:fade-in-0",
+        "z-50 rounded-md bg-ink px-2.5 py-1.5 text-xs font-medium text-white",
+        "data-[state=delayed-open]:animate-fade-in data-[state=closed]:animate-fade-out",
         className
       )}
       {...props}

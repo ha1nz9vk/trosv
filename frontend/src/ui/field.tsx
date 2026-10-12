@@ -51,7 +51,7 @@ export function Field({
       <Label htmlFor={id}>
         {label}
         {required ? (
-          <span aria-hidden className="ml-1 text-clay">
+          <span aria-hidden className="ml-1 text-plate">
             *
           </span>
         ) : null}
@@ -61,7 +61,7 @@ export function Field({
         <p
           id={errorId}
           role="alert"
-          className="text-xs font-normal text-destructive"
+          className="text-xs font-normal text-danger"
         >
           {error}
         </p>

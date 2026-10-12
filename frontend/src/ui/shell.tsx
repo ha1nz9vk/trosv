@@ -28,6 +28,8 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "@/ui/toast";
 import { useUnreadCount } from "@/hooks/useUnreadCount";
+import { ThemeToggle } from "@/ui/ThemeToggle";
+import { AiChatWidget } from "@/ui/AiChatWidget";
 
 /* ---------- Header ---------- */
 
@@ -40,7 +42,7 @@ function Header() {
   /* TODO: keyboard/aria wiring stays handled by Radix for both menus. */
 
   return (
-    <header className="sticky top-0 z-30 grid h-14 grid-cols-2 items-center gap-4 bg-white px-5 min-[890px]:h-[72px] lg:grid-cols-[1fr_auto_1fr]">
+    <header className="sticky top-0 z-30 grid h-14 grid-cols-2 items-center gap-4 border-b border-line bg-card px-5 min-[890px]:h-[72px] lg:grid-cols-[1fr_auto_1fr]">
       {/* Left: product nav (desktop, like Zillow's left group). */}
       <div className="hidden items-center gap-1 justify-self-start lg:flex">
         <NavLink
@@ -53,12 +55,6 @@ function Header() {
           }
         >
           Thuê phòng
-        </NavLink>
-        <NavLink
-          to={`${ROUTES.ROOMS}?view=map`}
-          className="rounded-lg px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-line"
-        >
-          Bản đồ
         </NavLink>
 
         {user?.role === "student" ? (
@@ -74,17 +70,17 @@ function Header() {
                 <ChevronDown className="size-4" aria-hidden />
               </button>
             </PopoverTrigger>
-            <PopoverContent align="end" className="w-auto min-w-52 p-2">
+            <PopoverContent align="end" className="w-auto min-w-52 p-2 bg-card">
               <Link
                 to={ROUTES.AI_ROOMMATES}
-                className="block rounded-lg px-3 py-2 text-sm text-ink hover:bg-ivory"
+                className="block rounded-lg px-3 py-2 text-sm text-ink hover:bg-tint"
                 onClick={() => { setAiOpen(false); }}
               >
                 Bạn cùng phòng
               </Link>
               <Link
                 to={ROUTES.AI_AREA_SUGGESTIONS}
-                className="block rounded-lg px-3 py-2 text-sm text-ink hover:bg-ivory"
+                className="block rounded-lg px-3 py-2 text-sm text-ink hover:bg-tint"
                 onClick={() => { setAiOpen(false); }}
               >
                 Khu vực phù hợp
@@ -115,18 +111,19 @@ function Header() {
           className="flex items-center"
           aria-label="TROSV trang chủ"
         >
-          <img src="/trosv-logo.svg" alt="TROSV" className="h-6 w-auto" />
+          <img src="/trosv-logo.svg" alt="TROSV" className="trosv-logo h-6 w-auto" />
         </Link>
       </div>
 
-      {/* Right: account (always right-aligned). */}
+      {/* Right: theme toggle + account (always right-aligned). */}
       <div className="flex items-center gap-2 justify-self-end">
+        <ThemeToggle />
         {user ? (
           <DropdownMenuPrimitive.Root open={menuOpen} onOpenChange={setMenuOpen}>
             <DropdownMenuPrimitive.Trigger asChild>
               <button
                 type="button"
-                className="flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay"
+                className="flex items-center gap-2 rounded-full p-1 pr-2 transition-colors hover:bg-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate"
                 aria-expanded={menuOpen}
                 aria-haspopup="menu"
                 aria-label="Menu tài khoản"
@@ -139,45 +136,16 @@ function Header() {
               <DropdownMenuPrimitive.Content
                 align="end"
                 sideOffset={8}
-                className="z-50 min-w-48 rounded-xl border border-line bg-white p-1.5 shadow-md focus:outline-none"
+                className="z-50 min-w-44 rounded-xl border border-line bg-card p-1.5 shadow-pop focus:outline-none"
               >
                 <DropdownMenuPrimitive.Item asChild>
                   <Link
                     to={ROUTES.PROFILE}
-                    className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-ivory"
+                    className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-tint"
                   >
                     Hồ sơ
                   </Link>
                 </DropdownMenuPrimitive.Item>
-                {user.role === "student" ? (
-                  <>
-                    <DropdownMenuPrimitive.Item asChild>
-                      <Link
-                        to={ROUTES.FAVORITES}
-                        className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-ivory"
-                      >
-                        Yêu thích
-                      </Link>
-                    </DropdownMenuPrimitive.Item>
-                    <DropdownMenuPrimitive.Item asChild>
-                      <Link
-                        to={ROUTES.MESSAGES}
-                        className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-ivory"
-                      >
-                        Tin nhắn
-                      </Link>
-                    </DropdownMenuPrimitive.Item>
-                  </>
-                ) : (
-                  <DropdownMenuPrimitive.Item asChild>
-                    <Link
-                      to={ROUTES.LANDLORD}
-                      className="block cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-ivory"
-                    >
-                      Quản lý tin đăng
-                    </Link>
-                  </DropdownMenuPrimitive.Item>
-                )}
                 <DropdownMenuPrimitive.Separator className="my-1 h-px bg-line" />
                 <DropdownMenuPrimitive.Item
                   onSelect={() => {
@@ -188,7 +156,7 @@ function Header() {
                       void navigate(ROUTES.HOME);
                     })();
                   }}
-                  className="cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-ivory"
+                  className="cursor-pointer rounded-lg px-3 py-2 text-sm text-ink outline-none data-[highlighted]:bg-tint flex items-center"
                 >
                   <LogOut className="mr-2 inline size-4" aria-hidden />
                   Đăng xuất
@@ -207,7 +175,6 @@ function Header() {
           </>
         )}
       </div>
-      <div aria-hidden className="rule-x absolute inset-x-0 bottom-0 h-[6px]" />
     </header>
   );
 }
@@ -250,42 +217,44 @@ function RailItems(): (RailItem & { active: boolean })[] {
 
 function Rail() {
   const items = RailItems();
+  const location = useLocation();
+  const isConversationThread = /^\/messages\/\d+/.test(location.pathname);
+
   return (
     <TooltipProvider>
       <nav
         aria-label="Điều hướng nhanh"
         className={cn(
-          "relative z-30 flex items-center justify-around bg-white",
+          "relative z-30 flex items-center justify-around bg-card border-t border-line lg:border-t-0 lg:border-r",
           "h-14 fixed bottom-0 left-0 right-0",
-          "lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:w-16 lg:flex-col lg:items-center lg:justify-start lg:gap-4 lg:p-2"
+          "lg:sticky lg:top-[72px] lg:h-[calc(100vh-72px)] lg:w-16 lg:flex-col lg:items-center lg:justify-start lg:gap-4 lg:p-2",
+          isConversationThread && "hidden lg:flex"
         )}
       >
-        <div aria-hidden className="rule-x absolute inset-x-0 top-0 h-[6px] lg:hidden" />
-        <div aria-hidden className="rule-y absolute bottom-0 right-0 top-0 hidden w-[6px] lg:block" />
         {items.map((item) => (
           <Tooltip key={item.label}>
             <TooltipTrigger asChild>
               {/* Plain Link (not NavLink): Radix asChild string-merges
                  className, which would stringify NavLink's function form
-                 and leak "text-clay-hover" onto every icon. Active state
+                 and leak "text-plate-hover" onto every icon. Active state
                  comes from RailItems instead. */}
               <Link
                 to={item.to}
                 aria-label={item.label}
                 aria-current={item.active ? "page" : undefined}
                 className={cn(
-                  "relative flex h-12 w-12 items-center justify-center rounded-xl transition-colors",
-                  "text-ink-2 hover:bg-ivory focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clay focus-visible:ring-offset-2",
+                  "relative flex h-11 w-11 items-center justify-center rounded-lg transition-colors",
+                  "text-ink-2 hover:bg-tint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-plate",
                   item.active &&
-                    "bg-ivory text-clay-hover shadow-[inset_0_0_0_1px_var(--color-line)]"
+                    "bg-plate-tint text-plate font-medium"
                 )}
               >
-                <item.icon className="size-6" />
+                <item.icon className="size-5" />
                 {item.badge != null && item.badge > 0 ? (
                   <Badge
                     className={cn(
                       "absolute -right-1 -top-1",
-                      item.active && "bg-clay text-black"
+                      item.active && "bg-plate text-white"
                     )}
                   >
                     {item.badge > 99 ? "99+" : item.badge}
@@ -315,15 +284,13 @@ export function Footer() {
   ].filter((s) => s.url);
 
   return (
-    <footer className="relative bg-white">
-      <div aria-hidden className="rule-x absolute inset-x-0 top-0 h-[6px]" />
+    <footer className="relative border-t border-line bg-card">
       <div className="mx-auto max-w-5xl px-5 py-6 text-center">
         <nav
           aria-label="Chân trang"
           className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
         >
-          <FooterLink to={ROUTES.ROOMS}>Phòng trọ</FooterLink>
-          <FooterLink to={`${ROUTES.ROOMS}?view=map`}>Bản đồ</FooterLink>
+          <FooterLink to={ROUTES.ROOMS}>Tìm phòng</FooterLink>
           <FooterLink to={ROUTES.REGISTER}>Đăng tin</FooterLink>
           <FooterLink to={ROUTES.LANDLORD}>Quản lý tin đăng</FooterLink>
           <FooterLink to={ROUTES.HOME}>Trợ giúp</FooterLink>
@@ -338,7 +305,7 @@ export function Footer() {
                 aria-label={s.label}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex size-10 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-ivory hover:text-ink"
+                className="flex size-10 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-tint hover:text-ink"
               >
                 <SocialIcon />
               </a>
@@ -395,23 +362,44 @@ export function AppShell({
   /** Route-level Suspense fallback container, provided by main.tsx. */
   screenSuspense?: React.ReactNode;
 }) {
+  const location = useLocation();
+  const isConversationThread = /^\/messages\/\d+/.test(location.pathname);
+  const isMessagesPage = /^\/messages/.test(location.pathname);
+
   return (
-    <div className="flex min-h-screen flex-col bg-cream">
+    <div
+      className={cn(
+        "flex min-h-screen flex-col bg-paper",
+        isMessagesPage && "h-dvh max-h-dvh overflow-hidden"
+      )}
+    >
       {/* Skip-to-content link for keyboard users */}
       <a
         href="#main"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-cream"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
       >
         Bỏ qua điều hướng
       </a>
       <Header />
-      <div className="flex flex-1 flex-col lg:flex-row">
+      <div
+        className={cn(
+          "flex flex-1 flex-col lg:flex-row min-h-0",
+          isMessagesPage && "overflow-hidden"
+        )}
+      >
         <Rail />
-        <div className="flex min-w-0 flex-1 flex-col pb-14 lg:pb-0">
+        <div
+          className={cn(
+            "flex min-w-0 flex-1 flex-col min-h-0 pb-14 lg:pb-0",
+            (isConversationThread || isMessagesPage) && "pb-0",
+            isMessagesPage && "overflow-hidden"
+          )}
+        >
           <main
             id="main"
             className={cn(
-              "min-w-0 flex-1",
+              "min-w-0 flex-1 flex flex-col min-h-0",
+              isMessagesPage && "overflow-hidden",
               className
             )}
           >
@@ -420,6 +408,7 @@ export function AppShell({
           {hideFooter ? null : <Footer />}
         </div>
       </div>
+      <AiChatWidget />
     </div>
   );
 }
