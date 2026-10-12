@@ -1,11 +1,12 @@
 # Sổ theo dõi nợ kỹ thuật (Tech Debt Register)
 
 Sinh bằng skill `tech-debt-tracker` (scan → filter → prioritize → dashboard).
-Snapshot mới nhất 2026-10-12: **1,877 item** sau lọc, mật độ **9.35%**
+Snapshot mới nhất 2026-10-12: **1,872 item** sau lọc, mật độ **9.31%**
 (so với 1,901 @ 10.22% ngày 09-28: dù bổ sung Dark Mode toàn diện, phản hồi
 cảm xúc phòng/tin nhắn, tối ưu cuộn chat, chuyển đổi SVG art và audit bảo mật,
-mật độ nợ kỹ thuật liên tục giảm qua các đợt refactor module hóa `Profile.tsx`
-và chuẩn hóa định dạng dòng dài ở cả backend và frontend).
+mật độ nợ kỹ thuật liên tục giảm qua các đợt refactor module hóa `Profile.tsx`,
+tách `ListingFilterService` và `illustrations.tsx`, xóa toàn bộ `large_file` và
+chuẩn hóa định dạng dòng dài ở cả backend và frontend).
 Bước lọc app-only dùng `scripts/filter-debt-app-only.py` giữ `backend/` +
 `frontend/` + `ai-service/`, loại tests và noise regex.
 
@@ -49,10 +50,13 @@ python3 .agents/skills/tech-debt-tracker/scripts/debt_dashboard.py \
 | 10 | Trùng query & thiếu phòng thủ null | `ListingDetailResource`, `ListingController`, `AiService` | Re-query aggregate và conversation thừa; lỗi 500 khi tọa độ trường học null | ✅ **Xong** (Backend Audit 2026-10-11): Tái sử dụng `loadAvg` và conversation ID; kiểm tra null tọa độ trường học và quan hệ phòng tránh 500/TypeError; tối ưu `rating` sort với `NULLS LAST` | done |
 | 11 | Rate limiting nghẽn theo IP người dùng đăng nhập | `ApiThrottle` dùng chung IP cho mọi user | Ký túc xá/Wi-Fi chung trường chia sẻ hạn mức 10 req/phút của AI | ✅ **Xong** (Backend Audit 2026-10-11): Phân vùng key rate-limit theo user ID cho request có đăng nhập, giữ IP cho khách | done |
 | 12 | Tệp lớn Profile.tsx (548 dòng) | 1 `large_file` item | Khó bảo trì, re-render diện rộng khi người dùng tương tác | ✅ **Xong** (2026-10-12): Tách thành `ProfileBasicInfoCard`, `ProfileAcademicCard`, `ProfileHabitsCard`, `profileTypes`; tệp chính 548 → 245 dòng, toàn bộ sub-card ≤ 245 dòng, không còn `large_file` logic nào | done |
+| 13 | Controller bloat ở `ListingController::index` | ~85 dòng query builder | Khó bảo trì, vi phạm SRP, khó unit test query | ✅ **Xong** (2026-10-12): Tách `ListingFilterService` chuyên trách search ILIKE, lọc giá, khu vực, khoảng cách Haversine và dynamic sort; `ListingController::index` rút gọn còn ~20 dòng | done |
+| 14 | Tệp icon chứa minh họa lớn `icons.tsx` (530 dòng) | 1 `large_file` item | Pha trộn icon glyph và SVG minh họa cảnh lớn | ✅ **Xong** (2026-10-12): Tách 6 minh họa cảnh vào `illustrations.tsx` (454 dòng), `icons.tsx` còn 85 dòng re-export; `large_file` toàn app về **chính xác 0** | done |
+| 15 | Smells đơn lẻ & hardcoded art assets | 1 missing docstring, 1 todo, hardcoded `/art/...` | Code smell, magic string rải rác | ✅ **Xong** (2026-10-12): Thêm docstring `health()` trong `ai-service`, ghi chú Radix trong `shell.tsx`, gom ảnh về `constants/assets.ts`, wrap dòng dài; `missing_docstring` về **0**, `long_line` 230 → 218 | done |
 
 **Không phải debt (giữ nguyên):** test file dài (`ConversationTest` 564 dòng - test feature dài là bình thường),
 boilerplate FormRequest/config/migration (khung framework), `docker-compose*.yml` (override cố ý, có comment giải thích),
-`icons.tsx` (530 dòng - từ điển SVG icons tập trung).
+`drop_debugger: true` trong `vite.config.ts` (cấu hình minify terser).
 
 ## Cảnh báo về con số tự động
 
@@ -70,6 +74,7 @@ lập kế hoạch**. Con số đáng tin là bảng tinh chỉnh ở trên (~2.
 | 2026-09-28 | 1,901 (+266) | Mã mới (ai-service stub FAKE_MODE, spec e2e, script parity + filter, compose mới) làm tổng tăng nhưng **density 10.48 → 10.22** (tính lại trên scope app-only nhất quán). Chốt pipeline tái tạo được; hai large_file còn lại là test feature (đã ghi ở trên - không phải debt) |
 | 2026-10-12 | 1,903 (+2) | Thêm Dark mode, reactions badge + preview card reactions, autoscroll, SVG art tối ưu, sửa lỗi bảo mật backend, indexes. Tổng dòng app tăng lên 20.2k dòng, **density giảm mạnh 10.22% → 9.42%**, Health Score 60/100, Technical Risk Score cải thiện (−25.15/period) |
 | 2026-10-12 (post-refactor) | 1,898 (−5) | Sau refactor #12 Profile.tsx: `large_file` logic = 0, density giảm tiếp 9.42% → 9.39% |
-| 2026-10-12 (format-cleanup) | **1,877 (−21)** | Chuẩn hóa toàn diện các dòng dài > 120 ký tự ở backend (controllers, resources, services, queries) và frontend (UI components, modals, preview cards); **density giảm còn 9.35%**, toàn bộ 13/13 E2E test pass |
+| 2026-10-12 (format-cleanup) | 1,877 (−21) | Chuẩn hóa toàn diện các dòng dài > 120 ký tự ở backend (controllers, resources, services, queries) và frontend (UI components, modals, preview cards); density giảm còn 9.35% |
+| 2026-10-12 (arch-refactor) | **1,872 (−5)** | Tách `ListingFilterService`, module hóa `illustrations.tsx` (`large_file` = 0), thêm docstring `ai-service` (`missing_docstring` = 0), chuẩn hóa `constants/assets.ts` và wrap dòng dài; **density giảm kỷ lục còn 9.31%**, toàn bộ 13/13 E2E test pass |
 
 **Kết quả 5 mục targeted (baseline → final):** #1 FormRequests 44→0 block rules thật (10 còn lại là boilerplate `}`/docblock khớp chéo) · #2 auth 45→30 (30 = coincidental line-match sau khi tách hết hook/layout) · #3 Fv↔ML 34→6 (6 = khung import/div) · #4 large_file CSS 2→0 · #5 hardcode 13→0. Mọi refactor giữ hành vi: 209 test backend + e2e + CI xanh xuyên suốt |
