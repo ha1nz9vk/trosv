@@ -37,9 +37,4 @@ test('chat panel automatically opens at the latest message', async ({ page }) =>
   // 5. Verify "Mới nhất" floating button is NOT shown because user is already at the bottom
   const latestBtn = page.getByRole('button', { name: 'Xuống tin nhắn mới nhất' });
   await expect(latestBtn).toHaveCount(0);
-
-  // Take screenshot proving chat opens directly at the latest message
-  if (!process.env.CI) {
-    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/chat-landing-bottom-verified.png' });
-  }
 });

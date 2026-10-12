@@ -27,11 +27,6 @@ test('user dropdown panel only contains profile and logout', async ({ page }) =>
   await expect(menu.getByText('Chế độ')).toHaveCount(0);
   await expect(menu.getByText('Quản lý tin đăng')).toHaveCount(0);
 
-  // Take screenshot in light mode
-  if (!process.env.CI) {
-    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/user-dropdown-light.png' });
-  }
-
   // Toggle dark mode via the header ThemeToggle
   await page.keyboard.press('Escape'); // close menu
   const themeToggle = page.locator('header button[aria-label*="Chuyển sang chế độ"]').first();
@@ -41,11 +36,6 @@ test('user dropdown panel only contains profile and logout', async ({ page }) =>
   // Re-open user menu in dark mode
   await menuTrigger.click();
   await expect(menu).toBeVisible();
-
-  // Take screenshot in dark mode
-  if (!process.env.CI) {
-    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/user-dropdown-dark.png' });
-  }
 
   // Verify only 2 menu items exist in the menu
   const items = menu.locator('[role="menuitem"]');

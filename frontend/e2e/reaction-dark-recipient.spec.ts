@@ -38,9 +38,4 @@ test('reaction badge and preview card in dark mode and recipient view', async ({
   await laughingEmoji.click({ force: true });
   console.log('Step 8: emoji clicked');
   await page.waitForTimeout(500);
-
-  // Take screenshot in dark mode
-  if (!process.env.CI) {
-    await page.screenshot({ path: '/home/user/.gemini/antigravity-cli/brain/dbb0fd16-bcb0-4f17-945a-99fdea2caa75/chat-dark-mode-reactions.png', fullPage: true });
-  }
 });
