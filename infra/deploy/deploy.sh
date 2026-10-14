@@ -9,6 +9,7 @@
 #                                         # (PostgreSQL local, artisan serve :8000,
 #                                         #  vite dev :5173, reverb :8080)
 #   bash infra/deploy/deploy.sh --quick   # (che do local) bo qua install, GIU DB
+#   bash infra/deploy/deploy.sh --dry-run # in cac duong dan da resolve va thoat
 #   bash infra/deploy/deploy.sh --stop    # dung toan bo service
 #
 # Log/PID (che do local): /tmp/trosv-api.log /tmp/trosv-web.log
@@ -82,6 +83,12 @@ run_docker() {
 
 [[ "${1:-}" == "--stop" ]] && stop_all
 [[ "${1:-}" == "--docker" ]] && run_docker && exit 0
+if [[ "${1:-}" == "--dry-run" ]]; then
+    echo "ROOT=$ROOT"
+    echo "BACKEND=$BACKEND"
+    echo "FRONTEND=$FRONTEND"
+    exit 0
+fi
 
 echo "=============================================="
 echo " TROSV demo deploy - $(date '+%H:%M:%S')"

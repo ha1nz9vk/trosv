@@ -29,9 +29,12 @@ else
 fi
 DC="$DOCKER compose --profile tls"
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$ROOT"
+
 # Mac dinh: ./backups trong repo (da gitignore). Co the ghi de:
 #   BACKUP_DIR=/mnt/backup-drive/trosv ./infra/backup/backup.sh
-BACKUP_DIR="${BACKUP_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/backups}"
+BACKUP_DIR="${BACKUP_DIR:-$ROOT/backups}"
 TS="$(date +%Y%m%d-%H%M%S)"
 KEEP_DAILY=7
 KEEP_WEEKLY=4
