@@ -38,7 +38,7 @@ Cần Docker (hoặc Podman) trên Debian. Chi tiết đầy đủ trong
 
 ```bash
 cp .env.example .env    # điền APP_KEY (lệnh tạo có sẵn trong file)
-docker compose up -d --build
+make up                 # khởi động container (hoặc COMPOSE="docker compose" make up)
 ```
 
 | Dịch vụ | Địa chỉ |
@@ -52,12 +52,14 @@ Dữ liệu demo: đặt `SEED_ON_BOOT=1` trong `.env`, hoặc chạy tay
 Tài khoản demo (mật khẩu `password`): `student1@example.com` (sinh viên),
 `landlord1@example.com` (chủ nhà).
 
-Lệnh hay dùng:
+Lệnh hay dùng (qua Makefile):
 
 ```bash
-docker compose logs -f backend     # log
-docker compose down                # tắt, giữ dữ liệu
-docker compose down -v             # tắt và XÓA dữ liệu
+make logs               # xem log container theo thời gian thực
+make down               # tắt, giữ nguyên dữ liệu volumes
+make smoke              # chạy smoke test API và xác thực
+make check              # chạy toàn bộ lint-api, test-api, lint-web, build-web
+make help               # xem tất cả các target hỗ trợ
 ```
 
 Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (lần sau thêm
@@ -95,6 +97,7 @@ Merge vào `stable` khi xanh là tự động deploy.
 | [docs/ONBOARDING.md](docs/ONBOARDING.md) | Onboarding người mới | Ngày đầu vào nhóm |
 | [docs/runbooks/DEPLOY.md](docs/runbooks/DEPLOY.md) | Deploy lên máy chủ Debian | Triển khai production |
 | [docs/runbooks/DEMO.md](docs/runbooks/DEMO.md) | Chạy thử nghiệm nhanh (demo) | Demo nội bộ hoặc đánh giá tính năng |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Quy ước phân nhánh, commit style, chạy kiểm tra | Trước khi mở Pull Request |
 | [SECURITY.md](SECURITY.md) | Chính sách bảo mật, cách báo cáo lỗ hổng | Báo cáo hoặc tìm hiểu biện pháp bảo mật |
 | [docs/reports/TECH-DEBT.md](docs/reports/TECH-DEBT.md) | Sổ nợ kỹ thuật và quy trình theo dõi | Trước khi refactor |
 | [docs/reports/BACKEND-AUDIT-REPORT.md](docs/reports/BACKEND-AUDIT-REPORT.md) | Báo cáo kiểm tra và tối ưu hóa backend toàn diện | Tham khảo kiến trúc và hiệu năng backend |
@@ -106,14 +109,16 @@ Merge vào `stable` khi xanh là tự động deploy.
 
 ```
 trosv/
+├── Makefile             # Quản lý và kiểm tra nhanh (help, up, down, check, smoke, ...)
 ├── docker-compose.yml   # DB + backend + frontend + reverb + queue + scheduler
 │                        # (+ caddy khi profile tls, + ai-service khi profile ai)
 ├── .env.example
+├── CONTRIBUTING.md      # Quy ước đóng góp, nhánh git, commit style
 ├── docs/                # contracts/, architecture/, reports/, runbooks/, ONBOARDING.md
 ├── infra/               # docker/ (Caddyfile), deploy/ (deploy.sh), backup/ (backup.sh, RESTORE.md)
-├── scripts/             # cong cu no ky thuat & dev helpers
-├── apps/
-│   ├── api/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
-│   ├── web/             # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
-│   └── ai-service/      # FastAPI (stub FAKE_MODE)
+├── scripts/             # công cụ nợ kỹ thuật & dev helpers
+└── apps/
+    ├── api/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
+    ├── web/             # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
+    └── ai-service/      # FastAPI (stub FAKE_MODE)
 ```
