@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: apps/web
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
@@ -72,7 +72,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: apps/web/package-lock.json
 
       - name: Install dependencies
         run: npm ci
@@ -127,7 +127,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: frontend/package-lock.json
+          cache-dependency-path: apps/web/package-lock.json
 
       # ---- API: deps, schema, seed data, then serve on :8000 ----
       - name: Backend dependencies
@@ -162,19 +162,19 @@ jobs:
 
       # ---- Web: production build (incl. check:css + tsc) on :4173 ----
       - name: Frontend dependencies
-        working-directory: frontend
+        working-directory: apps/web
         run: npm ci
 
       - name: Build production bundle
-        working-directory: frontend
+        working-directory: apps/web
         run: npm run build
 
       - name: Install Playwright chromium
-        working-directory: frontend
+        working-directory: apps/web
         run: npx playwright install --with-deps chromium
 
       - name: Serve bundle on :4173
-        working-directory: frontend
+        working-directory: apps/web
         run: |
           nohup npx vite preview --host 127.0.0.1 --port 4173 > /tmp/web.log 2>&1 &
           for i in $(seq 1 30); do
@@ -187,7 +187,7 @@ jobs:
       # The bundle bakes VITE_API_URL (defaults to http://localhost:8000/api)
       # at build time; FRONTEND_URL=4173 on the serve step allows that origin.
       - name: Playwright tests
-        working-directory: frontend
+        working-directory: apps/web
         run: npx playwright test
         env:
           E2E_BASE_URL: http://localhost:4173

@@ -69,9 +69,9 @@ Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (
 |---|---|
 | `php artisan test` (trong thư mục `apps/api/`) | 210+ Feature test, gồm ma trận phân quyền |
 | `./vendor/bin/pint --test` | Code style backend |
-| `npm run lint && npm run build` (thư mục `frontend/`) | ESLint + kiểm CSS + TypeScript strict + build |
-| `npx playwright test` (thư mục `frontend/`) | E2E trình duyệt thật, cần API :8000 + web :4173 |
-| `bash frontend/e2e-smoke.sh` | Smoke mọi API theo luồng người dùng, AI tắt vẫn xanh |
+| `npm run lint && npm run build` (thư mục `apps/web/`) | ESLint + kiểm CSS + TypeScript strict + build |
+| `npx playwright test` (thư mục `apps/web/`) | E2E trình duyệt thật, cần API :8000 + web :4173 |
+| `bash apps/web/e2e-smoke.sh` | Smoke mọi API theo luồng người dùng, AI tắt vẫn xanh |
 
 CI (GitHub Actions) chạy đủ 4 job: backend, frontend, e2e, quét secret.
 Merge vào `stable` khi xanh là tự động deploy.
@@ -113,7 +113,7 @@ trosv/
 ├── infra/               # docker/ (Caddyfile), deploy/ (deploy.sh), backup/ (backup.sh, RESTORE.md)
 ├── scripts/             # cong cu no ky thuat & dev helpers
 ├── apps/
-│   └── api/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
-├── frontend/            # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
+│   ├── api/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
+│   └── web/             # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
 └── ai-service/          # FastAPI (stub FAKE_MODE)
 ```

@@ -27,7 +27,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 BACKEND="$ROOT/apps/api"
-FRONTEND="$ROOT/frontend"
+FRONTEND="$ROOT/apps/web"
 API_LOG=/tmp/trosv-api.log
 WEB_LOG=/tmp/trosv-web.log
 PID_FILE=/tmp/trosv-demo.pids
@@ -78,7 +78,7 @@ run_docker() {
     curl -sf http://127.0.0.1:8000/api/cities >/dev/null || die "API khong tra loi - xem: docker compose logs backend"
     curl -sf http://127.0.0.1:5174/ >/dev/null || die "Web khong tra loi - xem: docker compose logs frontend"
     ok "API: http://localhost:8000/api - Web: http://localhost:5174"
-    ok "Smoke: bash frontend/e2e-smoke.sh"
+    ok "Smoke: bash apps/web/e2e-smoke.sh"
 }
 
 [[ "${1:-}" == "--stop" ]] && stop_all
@@ -181,7 +181,7 @@ if [[ "${1:-}" != "--quick" || ! -d node_modules ]]; then
     npm install --silent || die "npm install that bai"
     ok "NPM dependencies"
 fi
-[[ -f .env ]] || { echo 'VITE_API_URL=http://localhost:8000/api' > .env; ok "Da tao frontend/.env"; }
+[[ -f .env ]] || { echo 'VITE_API_URL=http://localhost:8000/api' > .env; ok "Da tao apps/web/.env"; }
 
 # ------------------------------------------------------------
 # 6. Start services (background, log ra /tmp)
@@ -239,5 +239,5 @@ echo "    Chu nha   : landlord1@example.com"
 echo ""
 echo "  Log   : $API_LOG | $WEB_LOG"
 echo "  Stop  : bash infra/deploy/deploy.sh --stop"
-echo "  Smoke : bash frontend/e2e-smoke.sh"
+echo "  Smoke : bash apps/web/e2e-smoke.sh"
 echo "=============================================="

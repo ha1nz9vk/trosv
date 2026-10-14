@@ -40,7 +40,7 @@ docker compose up -d --build
 Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (lần sau thêm
 `--quick`).
 
-Smoke nhanh API: `bash frontend/e2e-smoke.sh` - xanh là đủ để bắt đầu code.
+Smoke nhanh API: `bash apps/web/e2e-smoke.sh` - xanh là đủ để bắt đầu code.
 
 ## 3. Đọc gì tiếp theo, theo vai trò
 
@@ -48,7 +48,7 @@ Smoke nhanh API: `bash frontend/e2e-smoke.sh` - xanh là đủ để bắt đầ
 |---|---|---|
 | Mọi người | [README.md](../README.md) | [docs/reports/PLAN.md](reports/PLAN.md), [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
 | Backend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [docs/contracts/ERD.md](contracts/ERD.md) | [PROMPTS.md](../PROMPTS.md) |
-| Frontend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [frontend/README.md](../frontend/README.md) | [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
+| Frontend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [apps/web/README.md](../apps/web/README.md) | [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
 | AI | [docs/contracts/AI_CONTRACT.md](contracts/AI_CONTRACT.md) | [docs/contracts/ERD.md](contracts/ERD.md) |
 | Triển khai | [docs/runbooks/DEPLOY.md](runbooks/DEPLOY.md) | [SECURITY.md](../SECURITY.md), [infra/backup/RESTORE.md](../infra/backup/RESTORE.md), [docs/runbooks/ROLLBACK.md](runbooks/ROLLBACK.md) |
 
@@ -75,7 +75,7 @@ apps/api/   Laravel API
   app/Models|Policies      Eloquent + quyền (outsider = 404)
   routes/api.php           toàn bộ endpoint + throttle
   tests/Feature/           210+ test, gồm ma trận phân quyền
-frontend/   React 18 + TypeScript strict SPA (Vite 6, Tailwind CSS v4, Radix UI, Leaflet)
+apps/web/   React 18 + TypeScript strict SPA (Vite 6, Tailwind CSS v4, Radix UI, Leaflet)
   src/api/                 axios client + hàm gọi API theo nhóm (Sanctum Bearer)
   src/pages/               màn hình SPA (Home, Search, RoomDetail, Messages, ...)
   src/ui/                  Design system & Radix UI primitives (button, card, dialog, shell, input, ...)

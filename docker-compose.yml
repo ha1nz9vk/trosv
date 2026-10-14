@@ -176,7 +176,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./apps/web
       args:
         # Mac dinh SAME-ORIGIN (/api qua nginx proxy) - dung cho ca dev
         # lẫn production sau Caddy. Chi dat VITE_API_URL=https://... trong

@@ -64,7 +64,7 @@ skills-lock.json
 .browser-check/
 docker-compose.local-test.yml
 freebuff-chat-*.md
-frontend/src/styles/.css-baseline/
+apps/web/src/styles/.css-baseline/
 
 # Backups (backup.sh ghi vao ./backups hoac BACKUP_DIR bat ky)
 backups/

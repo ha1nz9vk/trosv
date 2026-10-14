@@ -162,7 +162,7 @@ Participant = một trong hai người tham gia hội thoại. Người ngoài n
 
 ### WebSocket realtime (Laravel Reverb)
 
-Tin nhắn và sự kiện xóa được đẩy realtime qua WebSocket, thay cho polling 5 giây trước đây. Giao thức là Pusher protocol; frontend dùng `laravel-echo` + `pusher-js` (xem `src/api/echo.js`). Server: `ws://localhost:8080/app/{REVERB_APP_KEY}` - key khai báo ở `REVERB_APP_KEY` (apps/api/.env) và **phải trùng** `VITE_REVERB_APP_KEY` (frontend `.env`); key lệch thì Reverb trả lỗi `4001 Application does not exist`. `bash infra/deploy/deploy.sh` tự khởi động Reverb cùng stack.
+Tin nhắn và sự kiện xóa được đẩy realtime qua WebSocket, thay cho polling 5 giây trước đây. Giao thức là Pusher protocol; frontend dùng `laravel-echo` + `pusher-js` (xem `src/api/echo.js`). Server: `ws://localhost:8080/app/{REVERB_APP_KEY}` - key khai báo ở `REVERB_APP_KEY` (apps/api/.env) và **phải trùng** `VITE_REVERB_APP_KEY` (apps/web/.env); key lệch thì Reverb trả lỗi `4001 Application does not exist`. `bash infra/deploy/deploy.sh` tự khởi động Reverb cùng stack.
 
 **Xác thực private channel:** Echo gọi `POST /broadcasting/auth` (cùng origin với API nhưng **không có** tiền tố `/api`) với header `Authorization: Bearer {token}` và body JSON `{ socket_id, channel_name }`, nhận `{ auth }` để hoàn tất subscribe. Route này chạy trong nhóm `api` + `auth:sanctum` (đăng ký qua `withBroadcasting` trong `bootstrap/app.php`); CORS đã mở cho `broadcasting/auth`.
 

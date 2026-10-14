@@ -7,7 +7,7 @@
 
 ## 1. Tổng quan hiện trạng (Baseline 2026-10-12)
 
-Quét tự động bằng bộ công cụ `tech-debt-tracker` kết hợp bộ lọc phạm vi ứng dụng chuẩn (`scripts/filter-debt-app-only.py` giữ `apps/api/`, `frontend/`, `ai-service/`, loại bỏ build cache và test noise):
+Quét tự động bằng bộ công cụ `tech-debt-tracker` kết hợp bộ lọc phạm vi ứng dụng chuẩn (`scripts/filter-debt-app-only.py` giữ `apps/api/`, `apps/web/`, `ai-service/`, loại bỏ build cache và test noise):
 
 | Chỉ số | Giá trị | Đánh giá |
 |---|---|---|
@@ -69,7 +69,7 @@ Các tín hiệu sau được quét bởi công cụ nhưng được xác nhận
 2. **Bộ dữ liệu hạt giống (Seeders)**:
    - `SchoolSeeder.php`: Dữ liệu danh mục các trường đại học/cao đẳng tại TP.HCM. Việc giữ các dòng khai báo địa chỉ nguyên vẹn giúp dễ đối soát với danh mục Bộ GD&ĐT.
 3. **Bộ minh họa giao diện vector (SVG Icons & Illustrations)**:
-   - `frontend/src/ui/illustrations.tsx`: Các thẻ hình học SVG có thuộc tính lặp lại (stroke, fill, path coordinates).
+   - `apps/web/src/ui/illustrations.tsx`: Các thẻ hình học SVG có thuộc tính lặp lại (stroke, fill, path coordinates).
 
 ---
 
