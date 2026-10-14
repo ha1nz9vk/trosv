@@ -2,7 +2,7 @@
 
 Trạng thái: stub FAKE_MODE hoàn thành (5 endpoint trả đúng shape hợp đồng).
 Việc còn lại: thay logic mẫu bằng LLM thật bên trong `main.py` khi có
-`LLM_API_KEY`. Hợp đồng đầu-cuối: [docs/contracts/AI_CONTRACT.md](../docs/contracts/AI_CONTRACT.md).
+`LLM_API_KEY`. Hợp đồng đầu-cuối: [docs/contracts/AI_CONTRACT.md](../../docs/contracts/AI_CONTRACT.md).
 
 ## Bối cảnh
 

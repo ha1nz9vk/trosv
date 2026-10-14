@@ -114,6 +114,6 @@ trosv/
 ├── scripts/             # cong cu no ky thuat & dev helpers
 ├── apps/
 │   ├── api/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
-│   └── web/             # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
-└── ai-service/          # FastAPI (stub FAKE_MODE)
+│   ├── web/             # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
+│   └── ai-service/      # FastAPI (stub FAKE_MODE)
 ```

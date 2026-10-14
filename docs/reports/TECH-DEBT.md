@@ -7,7 +7,7 @@
 
 ## 1. Tổng quan hiện trạng (Baseline 2026-10-12)
 
-Quét tự động bằng bộ công cụ `tech-debt-tracker` kết hợp bộ lọc phạm vi ứng dụng chuẩn (`scripts/filter-debt-app-only.py` giữ `apps/api/`, `apps/web/`, `ai-service/`, loại bỏ build cache và test noise):
+Quét tự động bằng bộ công cụ `tech-debt-tracker` kết hợp bộ lọc phạm vi ứng dụng chuẩn (`scripts/filter-debt-app-only.py` giữ `apps/api/`, `apps/web/`, `apps/ai-service/`, loại bỏ build cache và test noise):
 
 | Chỉ số | Giá trị | Đánh giá |
 |---|---|---|
@@ -80,7 +80,7 @@ Dựa trên kết quả từ `debt_prioritizer.py`, các hạng mục bảo trì
 | STT | Hạng mục | Vị trí | Điểm WSJF | Đề xuất xử lý |
 |---|---|---|---|---|
 | 1 | Chuẩn hóa hằng số đường dẫn lưu trữ | `AttachmentController.php`, `LandlordListingController.php` | 6.5 | Tập trung các đường dẫn thư mục upload vào cấu hình `filesystems.disks` thay vì hardcode chuỗi |
-| 2 | Tối ưu khai báo Base Request trong AI service | `ai-service/main.py` | 5.8 | Tách các schema Pydantic chung ra module `schemas.py` khi mở rộng các endpoint AI mới |
+| 2 | Tối ưu khai báo Base Request trong AI service | `apps/ai-service/main.py` | 5.8 | Tách các schema Pydantic chung ra module `schemas.py` khi mở rộng các endpoint AI mới |
 | 3 | Tách nhỏ dữ liệu mảng Seeder trường học | `apps/api/database/seeders/SchoolSeeder.php` | 4.2 | Chuyển mảng trường học sang tệp JSON/CSV nạp ngoài để giảm các dòng dài > 120 ký tự |
 | 4 | Rà soát các khối JSX lặp trong sub-card Profile | `ProfileHabitsCard.tsx` | 3.5 | Tạo generic habit item component cho các trường lựa chọn thói quen sinh hoạt |
 

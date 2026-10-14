@@ -7,7 +7,7 @@ dashboard). Trước 2026-09-28 bước này là ad-hoc nên con số không tá
 được; script này chốt quy tắc lọc:
 
 1. Path scope: chỉ giữ file thuộc mã ứng dụng thật - `apps/api/`, `apps/web/`,
-   `ai-service/`. Loại tài liệu (docs/, *.md ở gốc), hạ tầng (compose,
+   `apps/ai-service/`. Loại tài liệu (docs/, *.md ở gốc), hạ tầng (compose,
    infra/), công cụ cá nhân (.agents, .browser-check, ...).
 2. Noise regex: loại todo_comment khớp `BUG`/`APP_DEBUG` (comment rule của
    Laravel/PROMPTS bị regex bắt nhầm - không phải debt thật).
@@ -20,7 +20,7 @@ import argparse
 import json
 import re
 
-APP_PREFIXES = ("apps/api/", "apps/web/", "ai-service/")
+APP_PREFIXES = ("apps/api/", "apps/web/", "apps/ai-service/")
 # Test code bị loại khỏi scope: feature test in thẳng URL /api/... (đúng
 # phong cách test - assert endpoint thật) nên hardcoded_paths của test là
 # noise, không phải debt. Dồn số vào app code để trend so sánh được.

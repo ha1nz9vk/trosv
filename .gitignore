@@ -27,11 +27,11 @@ desktop.ini
 .phpunit.result.cache
 .phpunit.cache/
 
-# ===== Dependencies (backend, frontend, ai-service) =====
+# ===== Dependencies (apps/api, apps/web, apps/ai-service) =====
 node_modules/
 vendor/
 
-# ===== Python (ai-service) =====
+# ===== Python (apps/ai-service) =====
 __pycache__/
 *.py[cod]
 .venv/

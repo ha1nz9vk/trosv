@@ -47,9 +47,9 @@ Smoke nhanh API: `bash apps/web/e2e-smoke.sh` - xanh là đủ để bắt đầ
 | Vai trò | Bắt buộc | Tham khảo khi cần |
 |---|---|---|
 | Mọi người | [README.md](../README.md) | [docs/reports/PLAN.md](reports/PLAN.md), [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
-| Backend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [docs/contracts/ERD.md](contracts/ERD.md) | [PROMPTS.md](../PROMPTS.md) |
+| Backend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [docs/contracts/ERD.md](contracts/ERD.md) | `PROMPTS.md` (file cá nhân) |
 | Frontend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [apps/web/README.md](../apps/web/README.md) | [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
-| AI | [docs/contracts/AI_CONTRACT.md](contracts/AI_CONTRACT.md) | [docs/contracts/ERD.md](contracts/ERD.md) |
+| AI | [docs/contracts/AI_CONTRACT.md](contracts/AI_CONTRACT.md) + [apps/ai-service/README.md](../apps/ai-service/README.md) | [docs/contracts/ERD.md](contracts/ERD.md) |
 | Triển khai | [docs/runbooks/DEPLOY.md](runbooks/DEPLOY.md) | [SECURITY.md](../SECURITY.md), [infra/backup/RESTORE.md](../infra/backup/RESTORE.md), [docs/runbooks/ROLLBACK.md](runbooks/ROLLBACK.md) |
 
 ## 4. Quy ước bắt buộc
@@ -81,7 +81,7 @@ apps/web/   React 18 + TypeScript strict SPA (Vite 6, Tailwind CSS v4, Radix UI,
   src/ui/                  Design system & Radix UI primitives (button, card, dialog, shell, input, ...)
   src/hooks/               custom hooks (useAuthForm, useListingSearch, useStickToBottom, ...)
   src/styles.css           Tailwind CSS v4 + design tokens (màu sắc, typography, shadow)
-ai-service/ FastAPI (stub FAKE_MODE)
+apps/ai-service/ FastAPI (stub FAKE_MODE)
 docs/       contracts/, architecture/, reports/, runbooks/, ONBOARDING.md
 infra/      docker/, deploy/, backup/
 scripts/    cong cu no ky thuat & dev helpers

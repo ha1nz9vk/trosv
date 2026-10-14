@@ -109,7 +109,7 @@ Request:
 ```json
 { "reply": "Thông thường tiền cọc bằng 1 đến 2 tháng tiền phòng..." }
 ```
-Quy tắc: dùng các thông tin trong `ai-service/knowledge.md` (khoảng 40 dòng do bạn viết: mẹo thuê trọ, tiền cọc, kiến thức cơ bản về hợp đồng, những điều cần kiểm tra để an toàn). Nếu câu trả lời liên quan đến hợp đồng, tiền cọc hoặc pháp lý, kết thúc bằng: "Thông tin mang tính tham khảo, không thay thế tư vấn pháp lý." Nếu không biết thì nói không biết. Không bịa thông tin về tin đăng.
+Quy tắc: dùng các thông tin trong `apps/ai-service/knowledge.md` (khoảng 40 dòng do bạn viết: mẹo thuê trọ, tiền cọc, kiến thức cơ bản về hợp đồng, những điều cần kiểm tra để an toàn). Nếu câu trả lời liên quan đến hợp đồng, tiền cọc hoặc pháp lý, kết thúc bằng: "Thông tin mang tính tham khảo, không thay thế tư vấn pháp lý." Nếu không biết thì nói không biết. Không bịa thông tin về tin đăng.
 
 ### `POST /description`
 
