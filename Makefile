@@ -17,6 +17,10 @@ logs: ## Xem log he thong theo thoi gian thuc
 	$(COMPOSE) logs -f
 
 test-api: ## Chay kiem thu Laravel API trong backend container (su dung DB rental_test)
+	@if ! $(COMPOSE) exec -T backend true 2>/dev/null; then \
+		echo "Loi: Container 'backend' khong chay. Vui long chay 'make up' truoc khi chay 'make test-api'." >&2; \
+		exit 1; \
+	fi
 	@echo "Targeting DB: rental_test"
 	$(COMPOSE) exec -T -e DB_DATABASE=rental_test -e APP_ENV=testing -e CACHE_STORE=array -e BCRYPT_ROUNDS=4 -e TRUSTED_PROXIES="" backend php -r "require 'vendor/autoload.php'; \$$app = require 'bootstrap/app.php'; \$$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo 'Database: ' . config('database.connections.pgsql.database') . PHP_EOL;"
 	$(COMPOSE) exec -T -e DB_DATABASE=rental_test -e APP_ENV=testing -e CACHE_STORE=array -e BCRYPT_ROUNDS=4 -e TRUSTED_PROXIES="" backend php artisan test

@@ -48,3 +48,9 @@ Trước khi mở PR, luôn chạy các bước kiểm tra thông qua `make`:
 - `make smoke`: Chạy kịch bản smoke test toàn diện API và luồng người dùng
 - `make test-e2e`: Chạy kiểm thử Playwright giao diện
 - `make help`: Xem danh sách tất cả các lệnh hỗ trợ
+
+> [!NOTE]
+> Khi clone dự án mới, stack `docker compose` chỉ tự động khởi tạo cơ sở dữ liệu chính `rental`. Để chạy `make test-api` hoặc `make check`, cần tạo cơ sở dữ liệu `rental_test` một lần duy nhất bằng lệnh:
+> ```bash
+> docker compose exec db createdb -U rental rental_test
+> ```
