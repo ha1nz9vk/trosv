@@ -9,13 +9,13 @@ hành vi người dùng. Tất cả các phase dưới đây đã hoàn thành v
 
 | Phase | Nội dung | Bằng chứng |
 |---|---|---|
-| 1. Safety net | PHPUnit chạy trên PostgreSQL; Playwright config cho CI; `GET /api/health` | `backend/tests/` (210+ test), `frontend/playwright.config.ts` |
+| 1. Safety net | PHPUnit chạy trên PostgreSQL; Playwright config cho CI; `GET /api/health` | `apps/api/tests/` (210+ test), `frontend/playwright.config.ts` |
 | 2. Debloat + tối ưu | Tách service/form-request, bỏ N+1, index + JSONB, chuyển đổi UI sang Tailwind CSS v4 + Radix UI + Lucide React, tối ưu Dockerfile | `docs/reports/TECH-DEBT.md`, `frontend/src/styles.css` |
-| 3. Đúng đắn | FormRequest cho mọi endpoint ghi, IDOR sweep, idempotency seen/reaction, regression test cho từng fix | `backend/tests/Feature/` |
-| 4. Bảo mật | Security headers + CSP enforcing, prod fail-fast, token TTL 30 ngày, upload validation, gitleaks trong CI, `SECURITY.md` | `SECURITY.md`, `backend/app/Http/Middleware/` |
+| 3. Đúng đắn | FormRequest cho mọi endpoint ghi, IDOR sweep, idempotency seen/reaction, regression test cho từng fix | `apps/api/tests/Feature/` |
+| 4. Bảo mật | Security headers + CSP enforcing, prod fail-fast, token TTL 30 ngày, upload validation, gitleaks trong CI, `SECURITY.md` | `SECURITY.md`, `apps/api/app/Http/Middleware/` |
 | 5. Production | CI 4 job (backend/frontend/e2e/secrets), deploy-on-green qua SSH, image Debian trixie, compose production-tier duy nhất, runbook + backup/restore/rollback | `.github/workflows/`, `docs/runbooks/DEPLOY.md`, `infra/backup/` |
 | 6. Kiểm chứng cuối | Suite backend 210+ test xanh trên PostgreSQL, e2e 11+ spec trình duyệt thật, drill backup→restore chạy thật | CI trên `stable` |
-| 7. Audit & tối ưu toàn diện | Sửa foreign key User/School, thêm index hiệu năng, xử lý atomic upload ảnh, tối ưu subquery rating và rate-limiting, khử bỏ Bootstrap hoàn toàn | `docs/reports/BACKEND-AUDIT-REPORT.md`, `database/migrations/2026_10_11_*` |
+| 7. Audit & tối ưu toàn diện | Sửa foreign key User/School, thêm index hiệu năng, xử lý atomic upload ảnh, tối ưu subquery rating và rate-limiting, khử bỏ Bootstrap hoàn toàn | `docs/reports/BACKEND-AUDIT-REPORT.md`, `apps/api/database/migrations/2026_10_11_*` |
 
 ## Hợp đồng bất khả xâm phạm
 

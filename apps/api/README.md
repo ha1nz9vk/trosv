@@ -7,7 +7,7 @@ API theo `docs/contracts/API_CONTRACT.md`. Lỗi trả JSON `{ message }` (+ `er
 ### Cách A: Docker (backend + PostgreSQL)
 
 ```bash
-cp backend/.env.example backend/.env
+cp apps/api/.env.example apps/api/.env
 docker compose up -d --build        # db + backend (+ ai-service nếu có thư mục)
 docker compose exec backend php artisan key:generate
 docker compose exec backend php artisan migrate --seed
@@ -20,7 +20,7 @@ Backend chạy ở http://localhost:8000. Kiểm tra: `curl http://localhost:800
 Cần PHP 8.2+, Composer, PostgreSQL 16. Chạy `docker compose up -d db` để có database, rồi:
 
 ```bash
-cd backend
+cd apps/api
 composer install
 cp .env.example .env                # DB_HOST=127.0.0.1
 php artisan key:generate
@@ -31,7 +31,7 @@ php artisan serve                   # http://localhost:8000
 ## Test
 
 ```bash
-cd backend
+cd apps/api
 php artisan test                    # toàn bộ suite
 vendor/bin/pint --test app tests    # check style
 ```

@@ -25,7 +25,7 @@
         <!-- Tests must never touch the dev database "rental" (RefreshDatabase wipes it).
              Only connection + database are forced: in Docker the compose env already
              provides DB_HOST=db (forcing 127.0.0.1 here would break container tests),
-             while locally the values fall back to backend/.env (127.0.0.1). -->
+             while locally the values fall back to apps/api/.env (127.0.0.1). -->
         <env name="DB_CONNECTION" value="pgsql" force="true"/>
         <env name="DB_DATABASE" value="rental_test" force="true"/>
         <env name="DB_HOST" value="127.0.0.1"/>

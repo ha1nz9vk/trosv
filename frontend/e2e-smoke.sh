@@ -12,7 +12,7 @@
 # Requires:
 #   - curl + jq
 #   - Backend running AND seeded on :8000:
-#       cd backend && php artisan serve
+#       cd apps/api && php artisan serve
 #     (DB setup: see the repo README - migrate:fresh --seed)
 #
 # Notes:
@@ -58,7 +58,7 @@ check_ai(){ local name="$1" json="$2" msg
 # --- preflight ---
 if ! curl -s -m 3 -o /dev/null "$API/listings?per_page=1"; then
   echo "✗ Backend not reachable at $API"
-  echo "  Start it:   cd backend && php artisan serve"
+  echo "  Start it:   cd apps/api && php artisan serve"
   echo "  Or docker:  docker compose up -d --build backend"
   echo "  Elsewhere:  API=http://host:8000/api bash frontend/e2e-smoke.sh"
   exit 1

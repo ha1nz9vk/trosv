@@ -42,7 +42,7 @@ venv/
 dist/
 build/
 
-# ===== Laravel runtime (backend/storage) =====
+# ===== Laravel runtime (apps/api/storage) =====
 storage/app/private/*
 storage/app/public/*
 storage/framework/cache/data/*

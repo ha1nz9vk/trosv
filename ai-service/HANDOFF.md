@@ -22,7 +22,7 @@ Việc còn lại: thay logic mẫu bằng LLM thật bên trong `main.py` khi c
   thì đề nghị backend bổ sung vào body, không tự kết nối PostgreSQL.
 - Thời gian phản hồi ≤ 30 giây; lỗi nào cũng trả JSON có nghĩa.
 - Không đưa name/email/phone vào output ngoài các trường hợp đồng cho phép.
-- Không sửa `backend/` hay `docs/` - cần đổi interface thì đề xuất sửa hợp
+- Không sửa `apps/api/` hay `docs/` - cần đổi interface thì đề xuất sửa hợp
   đồng trước, cả nhóm đồng thuận rồi mới code.
 
 ## Kiểm tra sau khi thay

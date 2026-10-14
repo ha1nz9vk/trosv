@@ -32,7 +32,7 @@
 # Tao APP_KEY khong can PHP tren may:
 #   echo "APP_KEY=$(docker run --rm php:8.3-cli php -r 'echo "base64:".base64_encode(random_bytes(32));')" >> .env
 #
-# REVERB key dong bo: root .env va backend/.env phai cung REVERB_APP_*.
+# REVERB key dong bo: root .env va apps/api/.env phai cung REVERB_APP_*.
 # ============================================================
 
 name: trosv
@@ -94,11 +94,11 @@ services:
       retries: 10
 
   backend:
-    build: ./backend
+    build: ./apps/api
     restart: unless-stopped
     logging: *default-logging
     env_file:
-      - path: ./backend/.env
+      - path: ./apps/api/.env
         required: false # bo sung bien phu (khong ghi de block ben duoi)
     # migrate luon chay (idempotent, seeder idempotent nen SEED_ON_BOOT=1
     # chi don gian chay them db:seed - an toan reboot bat ky luc nao).
@@ -126,12 +126,12 @@ services:
         condition: service_healthy
 
   reverb:
-    build: ./backend
+    build: ./apps/api
     command: php artisan reverb:start --host=0.0.0.0 --port=8080
     restart: unless-stopped
     logging: *default-logging
     env_file:
-      - path: ./backend/.env
+      - path: ./apps/api/.env
         required: false
     environment: *backend-env
     ports:
@@ -149,12 +149,12 @@ services:
       - backend
 
   queue:
-    build: ./backend
+    build: ./apps/api
     command: php artisan queue:work --tries=3 --timeout=30
     restart: unless-stopped
     logging: *default-logging
     env_file:
-      - path: ./backend/.env
+      - path: ./apps/api/.env
         required: false
     environment: *backend-env
     depends_on:
@@ -162,12 +162,12 @@ services:
         condition: service_healthy
 
   scheduler:
-    build: ./backend
+    build: ./apps/api
     command: sh -c "while true; do php artisan schedule:run; sleep 60; done"
     restart: unless-stopped
     logging: *default-logging
     env_file:
-      - path: ./backend/.env
+      - path: ./apps/api/.env
         required: false
     environment: *backend-env
     depends_on:

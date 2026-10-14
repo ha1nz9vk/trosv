@@ -67,7 +67,7 @@ Smoke nhanh API: `bash frontend/e2e-smoke.sh` - xanh là đủ để bắt đầ
 ## 5. Bản đồ thư mục
 
 ```
-backend/    Laravel API
+apps/api/   Laravel API
   app/Http/Controllers     Auth/, AI proxy, Listing, Conversation, ...
   app/Http/Requests        FormRequest validate (mỗi endpoint một file)
   app/Http/Resources       Shape JSON ra ngoài (đối chiếu API_CONTRACT §3)

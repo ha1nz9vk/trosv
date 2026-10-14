@@ -67,7 +67,7 @@ Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (
 
 | Lệnh | Phạm vi |
 |---|---|
-| `php artisan test` (trong thư mục `backend/`) | 210+ Feature test, gồm ma trận phân quyền |
+| `php artisan test` (trong thư mục `apps/api/`) | 210+ Feature test, gồm ma trận phân quyền |
 | `./vendor/bin/pint --test` | Code style backend |
 | `npm run lint && npm run build` (thư mục `frontend/`) | ESLint + kiểm CSS + TypeScript strict + build |
 | `npx playwright test` (thư mục `frontend/`) | E2E trình duyệt thật, cần API :8000 + web :4173 |
@@ -112,7 +112,8 @@ trosv/
 ├── docs/                # contracts/, architecture/, reports/, runbooks/, ONBOARDING.md
 ├── infra/               # docker/ (Caddyfile), deploy/ (deploy.sh), backup/ (backup.sh, RESTORE.md)
 ├── scripts/             # cong cu no ky thuat & dev helpers
+├── apps/
+│   └── api/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
 ├── frontend/            # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
-├── backend/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
 └── ai-service/          # FastAPI (stub FAKE_MODE)
 ```
