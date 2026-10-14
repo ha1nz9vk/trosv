@@ -16,8 +16,10 @@ down: ## Dung cac container (giu nguyen volumes va du lieu)
 logs: ## Xem log he thong theo thoi gian thuc
 	$(COMPOSE) logs -f
 
-test-api: ## Chay kiem thu Laravel API (phpunit su dung DB rental_test)
-	cd apps/api && php artisan test
+test-api: ## Chay kiem thu Laravel API trong backend container (su dung DB rental_test)
+	@echo "Targeting DB: rental_test"
+	$(COMPOSE) exec -T -e DB_DATABASE=rental_test -e APP_ENV=testing -e CACHE_STORE=array -e BCRYPT_ROUNDS=4 -e TRUSTED_PROXIES="" backend php -r "require 'vendor/autoload.php'; \$$app = require 'bootstrap/app.php'; \$$app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap(); echo 'Database: ' . config('database.connections.pgsql.database') . PHP_EOL;"
+	$(COMPOSE) exec -T -e DB_DATABASE=rental_test -e APP_ENV=testing -e CACHE_STORE=array -e BCRYPT_ROUNDS=4 -e TRUSTED_PROXIES="" backend php artisan test
 
 lint-api: ## Kiem tra code style backend voi Pint
 	cd apps/api && ./vendor/bin/pint --test

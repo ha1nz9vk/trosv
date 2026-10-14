@@ -18,10 +18,10 @@
         </include>
     </source>
     <php>
-        <env name="APP_ENV" value="testing"/>
+        <env name="APP_ENV" value="testing" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
-        <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="CACHE_STORE" value="array"/>
+        <env name="BCRYPT_ROUNDS" value="4" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
         <!-- Tests must never touch the dev database "rental" (RefreshDatabase wipes it).
              Only connection + database are forced: in Docker the compose env already
              provides DB_HOST=db (forcing 127.0.0.1 here would break container tests),
@@ -43,5 +43,6 @@
         <env name="BROADCAST_CONNECTION" value="null" force="true"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="TRUSTED_PROXIES" value="" force="true"/>
     </php>
 </phpunit>

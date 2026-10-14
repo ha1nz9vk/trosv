@@ -62,6 +62,13 @@ make check              # chạy toàn bộ lint-api, test-api, lint-web, build-
 make help               # xem tất cả các target hỗ trợ
 ```
 
+> [!WARNING]
+> **Xóa toàn bộ dữ liệu (Full Reset)**: Khi cần dọn dẹp triệt để và **XÓA TOÀN BỘ DỮ LIỆU** (bao gồm volume cơ sở dữ liệu `pgdata` và volume lưu trữ file `trosv-storage`), chạy lệnh Docker trực tiếp:
+> ```bash
+> docker compose down -v
+> ```
+> *Makefile cố tình không cung cấp target này để tránh rủi ro vô tình xóa mất dữ liệu.*
+
 Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (lần sau thêm
 `--quick` để giữ DB).
 
