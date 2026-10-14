@@ -1,6 +1,6 @@
 # AI service
 
-FastAPI service triển khai [docs/AI_CONTRACT.md](../docs/AI_CONTRACT.md)
+FastAPI service triển khai [docs/contracts/AI_CONTRACT.md](../docs/contracts/AI_CONTRACT.md)
 (5 endpoint + `/health`). **Chỉ Backend gọi service này** - frontend không
 bao giờ gọi trực tiếp.
 
@@ -37,7 +37,7 @@ bị tính là 503 phía backend.
 
 ## Cấu hình Gemini
 
-Yêu cầu từ hợp đồng ([docs/AI_CONTRACT.md](../docs/AI_CONTRACT.md)):
+Yêu cầu từ hợp đồng ([docs/contracts/AI_CONTRACT.md](../docs/contracts/AI_CONTRACT.md)):
 
 - 5 endpoint: `/roommates`, `/price-advice`, `/areas`, `/chat`, `/description` - request/response shape bám đúng hợp đồng.
 - **Stateless**: backend gửi đủ ngữ cảnh trong body; không kết nối cơ sở dữ liệu.

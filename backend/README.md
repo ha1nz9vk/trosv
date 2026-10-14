@@ -1,6 +1,6 @@
 # Backend - API nhà trọ cho sinh viên (Laravel 11)
 
-API theo `docs/API_CONTRACT.md`. Lỗi trả JSON `{ message }` (+ `errors` cho 422), thông báo tiếng Việt.
+API theo `docs/contracts/API_CONTRACT.md`. Lỗi trả JSON `{ message }` (+ `errors` cho 422), thông báo tiếng Việt.
 
 ## Chạy nhanh
 

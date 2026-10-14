@@ -13,7 +13,7 @@ use Tests\TestCase;
  * Characterization tests for Facebook-style message deletion
  * (DELETE /api/messages/{message}?scope=unsent|self).
  *
- * These pin CURRENT behavior before refactoring (PLAN.md Phase 1):
+ * These pin CURRENT behavior before refactoring (docs/reports/PLAN.md Phase 1):
  * unsend window, sender-only unsend, delete-for-me semantics, idempotency.
  */
 class MessageDeletionTest extends TestCase

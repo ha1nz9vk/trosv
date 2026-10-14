@@ -2,8 +2,8 @@
 # ============================================================
 # TROSV - backup du lieu tren may chu Debian (chay trong thu muc repo)
 #
-#   ./scripts/backup.sh              # backup ngay
-#   ./scripts/backup.sh --verify     # backup + kiem tra doc lai dump
+#   ./infra/backup/backup.sh              # backup ngay
+#   ./infra/backup/backup.sh --verify     # backup + kiem tra doc lai dump
 #
 # Backup 3 thu:
 #   1. DB       : pg_dump TU CONTAINER db (khong can psql tren host)
@@ -12,8 +12,8 @@
 #   3. .env     : APP_KEY + Reverb keys - mat file nay la mat toan phien
 #
 # Giu: 7 ban gan nhat + 4 ban chu nhat (tu xoa ban cu).
-# Cron khuyen nghi (02:30 hang ngay) - xem docs/DEPLOY.md muc 6.
-# Restore: xem scripts/RESTORE.md. Rollback code: scripts/ROLLBACK.md.
+# Cron khuyen nghi (02:30 hang ngay) - xem docs/runbooks/DEPLOY.md muc 6.
+# Restore: xem infra/backup/RESTORE.md. Rollback code: docs/runbooks/ROLLBACK.md.
 # ============================================================
 set -euo pipefail
 
@@ -30,8 +30,8 @@ fi
 DC="$DOCKER compose --profile tls"
 
 # Mac dinh: ./backups trong repo (da gitignore). Co the ghi de:
-#   BACKUP_DIR=/mnt/backup-drive/trosv ./scripts/backup.sh
-BACKUP_DIR="${BACKUP_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/backups}"
+#   BACKUP_DIR=/mnt/backup-drive/trosv ./infra/backup/backup.sh
+BACKUP_DIR="${BACKUP_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/backups}"
 TS="$(date +%Y%m%d-%H%M%S)"
 KEEP_DAILY=7
 KEEP_WEEKLY=4

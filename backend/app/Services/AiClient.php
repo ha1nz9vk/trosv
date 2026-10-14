@@ -6,7 +6,7 @@ use App\Exceptions\AiUnavailableException;
 use Illuminate\Support\Facades\Http;
 
 /**
- * HTTP client for the FastAPI AI service (docs/AI_CONTRACT.md).
+ * HTTP client for the FastAPI AI service (docs/contracts/AI_CONTRACT.md).
  *
  * Any connection failure, non-2xx status, invalid JSON or response missing
  * required fields throws AiUnavailableException - rendered as 503

@@ -305,7 +305,7 @@ class AiProxyTest extends TestCase
         $this->assertEqualsWithDelta(0.0, $row['stats']['distance_to_school_km'], 0.5);
 
         // AI receives the full area rows including names (not personal data;
-        // docs/AI_CONTRACT §4 includes 'name' in the request) and no PII.
+        // docs/contracts/AI_CONTRACT.md §4 includes 'name' in the request) and no PII.
         Http::assertSent(function ($request) use ($near) {
             $areas = $request->data()['areas'];
 

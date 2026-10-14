@@ -5,7 +5,7 @@ import { ROUTES } from "../constants/routes";
 
 /**
  * Logic form xác thực dùng chung cho Login/Register (debt #2 trong
- * docs/TECH-DEBT.md): trạng thái busy, chặn submit kép, và điều hướng sau
+ * docs/reports/TECH-DEBT.md): trạng thái busy, chặn submit kép, và điều hướng sau
  * khi thành công. Riêng phần trạng thái lỗi thuộc về từng page (Login dùng
  * chuỗi alert, Register dùng map lỗi theo field), nên page tự clear trong
  * `submit()` và map lỗi trong `onError(err)`.

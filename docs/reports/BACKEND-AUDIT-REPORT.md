@@ -124,13 +124,13 @@ Sau khi rà soát toàn bộ source code của backend, chúng tôi đã phát h
 
 ## 3. Cập nhật tài liệu kỹ thuật
 
-1. **`docs/API_CONTRACT.md`**:
+1. **`docs/contracts/API_CONTRACT.md`**:
    - Cập nhật bảng mã lỗi chung trong §1: Bổ sung mã `429` (Too Many Requests), ghi rõ các headers trả về (`X-RateLimit-Limit`, `X-RateLimit-Remaining`, `Retry-After`).
    - Ghi chú tính năng tăng tốc qua Cache cho `/cities` và `/amenities`.
    - Ghi chú cơ chế sắp xếp `sort=rating` tối ưu `NULLS LAST`.
    - Ghi chú xử lý atomic và cơ chế dọn dẹp file khi upload ảnh tin đăng.
 
-2. **`docs/TECH-DEBT.md`**:
+2. **`docs/reports/TECH-DEBT.md`**:
    - Đã ghi nhận các hạng mục tech debt đã xử lý (#7 đến #11) và chuyển trạng thái thành `done`.
 
 ---

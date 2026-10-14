@@ -2,7 +2,7 @@
 # ============================================================
 # TROSV E2E smoke test - exercises every API call the
 # frontend makes, page by page, in the order a user clicking
-# through the app would trigger them (docs/API_CONTRACT.md).
+# through the app would trigger them (docs/contracts/API_CONTRACT.md).
 #
 # Usage:
 #   bash frontend/e2e-smoke.sh

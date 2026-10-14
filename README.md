@@ -34,7 +34,7 @@ graph LR
 ## Chạy trên máy
 
 Cần Docker (hoặc Podman) trên Debian. Chi tiết đầy đủ trong
-[docs/DEPLOY.md](docs/DEPLOY.md).
+[docs/runbooks/DEPLOY.md](docs/runbooks/DEPLOY.md).
 
 ```bash
 cp .env.example .env    # điền APP_KEY (lệnh tạo có sẵn trong file)
@@ -60,7 +60,7 @@ docker compose down                # tắt, giữ dữ liệu
 docker compose down -v             # tắt và XÓA dữ liệu
 ```
 
-Chạy không Docker (PHP + Node trực tiếp): `bash deploy.sh` (lần sau thêm
+Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (lần sau thêm
 `--quick` để giữ DB).
 
 ## Kiểm thử
@@ -89,16 +89,18 @@ Merge vào `stable` khi xanh là tự động deploy.
 
 | File | Nội dung | Đọc khi |
 |---|---|---|
-| [docs/API_CONTRACT.md](docs/API_CONTRACT.md) | Hợp đồng API: endpoint, shape JSON, mã lỗi | Làm backend/frontend - nguồn sự thật, đổi API phải sửa đây trước |
-| [docs/AI_CONTRACT.md](docs/AI_CONTRACT.md) | Hợp đồng giữa Backend và AI service | Làm AI service |
-| [docs/ERD.md](docs/ERD.md) | Cơ sở dữ liệu: bảng, quan hệ, dữ liệu seed | Làm backend, sửa migration |
+| [docs/contracts/API_CONTRACT.md](docs/contracts/API_CONTRACT.md) | Hợp đồng API: endpoint, shape JSON, mã lỗi | Làm backend/frontend - nguồn sự thật, đổi API phải sửa đây trước |
+| [docs/contracts/AI_CONTRACT.md](docs/contracts/AI_CONTRACT.md) | Hợp đồng giữa Backend và AI service | Làm AI service |
+| [docs/contracts/ERD.md](docs/contracts/ERD.md) | Cơ sở dữ liệu: bảng, quan hệ, dữ liệu seed | Làm backend, sửa migration |
 | [docs/ONBOARDING.md](docs/ONBOARDING.md) | Onboarding người mới | Ngày đầu vào nhóm |
-| [docs/DEPLOY.md](docs/DEPLOY.md) | Deploy lên máy chủ Debian | Triển khai production |
+| [docs/runbooks/DEPLOY.md](docs/runbooks/DEPLOY.md) | Deploy lên máy chủ Debian | Triển khai production |
+| [docs/runbooks/DEMO.md](docs/runbooks/DEMO.md) | Chạy thử nghiệm nhanh (demo) | Demo nội bộ hoặc đánh giá tính năng |
 | [SECURITY.md](SECURITY.md) | Chính sách bảo mật, cách báo cáo lỗ hổng | Báo cáo hoặc tìm hiểu biện pháp bảo mật |
-| [docs/TECH-DEBT.md](docs/TECH-DEBT.md) | Sổ nợ kỹ thuật và quy trình theo dõi | Trước khi refactor |
-| [docs/BACKEND-AUDIT-REPORT.md](docs/BACKEND-AUDIT-REPORT.md) | Báo cáo kiểm tra và tối ưu hóa backend toàn diện | Tham khảo kiến trúc và hiệu năng backend |
-| [scripts/RESTORE.md](scripts/RESTORE.md) | Quy trình restore từ backup | Khi cần khôi phục dữ liệu |
-| [scripts/ROLLBACK.md](scripts/ROLLBACK.md) | Quy trình rollback code | Khi deployment lỗi |
+| [docs/reports/TECH-DEBT.md](docs/reports/TECH-DEBT.md) | Sổ nợ kỹ thuật và quy trình theo dõi | Trước khi refactor |
+| [docs/reports/BACKEND-AUDIT-REPORT.md](docs/reports/BACKEND-AUDIT-REPORT.md) | Báo cáo kiểm tra và tối ưu hóa backend toàn diện | Tham khảo kiến trúc và hiệu năng backend |
+| [docs/reports/PLAN.md](docs/reports/PLAN.md) | Kế hoạch triển khai và roadmap | Nắm định hướng phát triển |
+| [infra/backup/RESTORE.md](infra/backup/RESTORE.md) | Quy trình restore từ backup | Khi cần khôi phục dữ liệu |
+| [docs/runbooks/ROLLBACK.md](docs/runbooks/ROLLBACK.md) | Quy trình rollback code | Khi deployment lỗi |
 
 ## Cấu trúc
 
@@ -107,9 +109,10 @@ trosv/
 ├── docker-compose.yml   # DB + backend + frontend + reverb + queue + scheduler
 │                        # (+ caddy khi profile tls, + ai-service khi profile ai)
 ├── .env.example
-├── docs/                # hợp đồng API/AI, ERD, deploy, onboarding, báo cáo audit
+├── docs/                # contracts/, architecture/, reports/, runbooks/, ONBOARDING.md
+├── infra/               # docker/ (Caddyfile), deploy/ (deploy.sh), backup/ (backup.sh, RESTORE.md)
+├── scripts/             # cong cu no ky thuat & dev helpers
 ├── frontend/            # React 18 SPA (TypeScript strict, Vite, Tailwind CSS v4, Radix UI, Leaflet)
 ├── backend/             # Laravel API (PHP 8.3, PostgreSQL 16, Sanctum, Reverb)
-├── ai-service/          # FastAPI (stub FAKE_MODE)
-└── scripts/             # backup, restore, rollback
+└── ai-service/          # FastAPI (stub FAKE_MODE)
 ```

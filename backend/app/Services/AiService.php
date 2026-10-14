@@ -10,7 +10,7 @@ use App\Models\Ward;
 use Illuminate\Validation\ValidationException;
 
 /**
- * AI feature layer (docs/AI_CONTRACT.md): prepares ALL data the AI service
+ * AI feature layer (docs/contracts/AI_CONTRACT.md): prepares ALL data the AI service
  * needs (it has no database and never receives names, emails or phones),
  * calls AiClient and sanitizes the response. Controllers only map
  * HTTP in/out; all 422 semantics live here as ValidationException so the
@@ -224,7 +224,7 @@ class AiService
                 'priorities' => $data['priorities'] ?? [],
             ],
             // Names go through: ward names are not personal data and the
-            // AI contract includes them in the request (docs/AI_CONTRACT §4).
+            // AI contract includes them in the request (docs/contracts/AI_CONTRACT.md §4).
             'areas' => $areas,
             'limit' => 3,
         ], ['results']);

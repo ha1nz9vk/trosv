@@ -15,7 +15,7 @@ use App\Http\Controllers\UserPublicController;
 use Illuminate\Support\Facades\Route;
 
 // Internal liveness probe (load balancers, docker healthcheck, CI smoke).
-// NOT part of docs/API_CONTRACT.md - intentionally unauthenticated, minimal payload.
+// NOT part of docs/contracts/API_CONTRACT.md - intentionally unauthenticated, minimal payload.
 Route::get('/health', [HealthController::class, 'show']);
 
 // Authentication and profile (API_CONTRACT §4 - "Xác thực và hồ sơ").
@@ -89,7 +89,7 @@ Route::put('/messages/{message}/reactions', [MessageReactionController::class, '
 Route::delete('/messages/{message}/reactions', [MessageReactionController::class, 'destroy'])
     ->middleware('auth:sanctum')->whereNumber('message');
 
-// AI proxy (API_CONTRACT §4 - "AI", docs/AI_CONTRACT.md).
+// AI proxy (API_CONTRACT §4 - "AI", docs/contracts/AI_CONTRACT.md).
 // All endpoints: auth + 10 req/min per user; 503 when the AI service is down.
 Route::middleware(['auth:sanctum', 'throttle.api:10,1'])->group(function () {
     Route::post('/ai/roommates', [AiController::class, 'roommates'])->middleware('role:student');

@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Dùng chung cho ListingStoreRequest (POST) và ListingUpdateRequest (PUT) -
- * debt #1 trong docs/TECH-DEBT.md: trước đây hai file giữ bản copy rules,
+ * debt #1 trong docs/reports/TECH-DEBT.md: trước đây hai file giữ bản copy rules,
  * messages, attributes và mọi sửa rule phải làm hai nơi, dễ lệch contract.
  *
  * sharedRules() là bản canonical cho chế độ TẠO (required đầy đủ).

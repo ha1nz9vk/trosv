@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Internal health probe for load balancers / docker healthchecks / CI smoke.
  *
- * NOT part of docs/API_CONTRACT.md - internal only. Shape is intentionally
+ * NOT part of docs/contracts/API_CONTRACT.md - internal only. Shape is intentionally
  * minimal and does not leak internals (no exception messages, no versions).
  */
 class HealthController extends Controller

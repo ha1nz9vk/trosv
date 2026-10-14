@@ -7,7 +7,7 @@ Implements real LLM generation for:
 - POST /areas
 - POST /chat
 
-Adheres strictly to docs/AI_CONTRACT.md.
+Adheres strictly to docs/contracts/AI_CONTRACT.md.
 Provides automatic fail-safe fallback to heuristic engine if Gemini is
 disabled, rate-limited, or unavailable.
 """

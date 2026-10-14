@@ -37,7 +37,7 @@ docker compose up -d --build
 - AI service là stub FAKE_MODE, không bắt buộc: `docker compose --profile
   ai up -d`. AI tắt thì backend tự trả 503, mọi tính năng còn lại chạy bình thường.
 
-Chạy không Docker (PHP + Node trực tiếp): `bash deploy.sh` (lần sau thêm
+Chạy không Docker (PHP + Node trực tiếp): `bash infra/deploy/deploy.sh` (lần sau thêm
 `--quick`).
 
 Smoke nhanh API: `bash frontend/e2e-smoke.sh` - xanh là đủ để bắt đầu code.
@@ -46,16 +46,16 @@ Smoke nhanh API: `bash frontend/e2e-smoke.sh` - xanh là đủ để bắt đầ
 
 | Vai trò | Bắt buộc | Tham khảo khi cần |
 |---|---|---|
-| Mọi người | [README.md](../README.md) | [PLAN.md](../PLAN.md), [docs/TECH-DEBT.md](TECH-DEBT.md) |
-| Backend | [docs/API_CONTRACT.md](API_CONTRACT.md) + [docs/ERD.md](ERD.md) | [PROMPTS.md](../PROMPTS.md) |
-| Frontend | [docs/API_CONTRACT.md](API_CONTRACT.md) + [frontend/README.md](../frontend/README.md) | [docs/TECH-DEBT.md](TECH-DEBT.md) |
-| AI | [docs/AI_CONTRACT.md](AI_CONTRACT.md) | [docs/ERD.md](ERD.md) |
-| Triển khai | [docs/DEPLOY.md](DEPLOY.md) | [SECURITY.md](../SECURITY.md), [scripts/RESTORE.md](../scripts/RESTORE.md) |
+| Mọi người | [README.md](../README.md) | [docs/reports/PLAN.md](reports/PLAN.md), [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
+| Backend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [docs/contracts/ERD.md](contracts/ERD.md) | [PROMPTS.md](../PROMPTS.md) |
+| Frontend | [docs/contracts/API_CONTRACT.md](contracts/API_CONTRACT.md) + [frontend/README.md](../frontend/README.md) | [docs/reports/TECH-DEBT.md](reports/TECH-DEBT.md) |
+| AI | [docs/contracts/AI_CONTRACT.md](contracts/AI_CONTRACT.md) | [docs/contracts/ERD.md](contracts/ERD.md) |
+| Triển khai | [docs/runbooks/DEPLOY.md](runbooks/DEPLOY.md) | [SECURITY.md](../SECURITY.md), [infra/backup/RESTORE.md](../infra/backup/RESTORE.md), [docs/runbooks/ROLLBACK.md](runbooks/ROLLBACK.md) |
 
 ## 4. Quy ước bắt buộc
 
 - **Hợp đồng API trước tiên**: shape JSON, mã lỗi, message tiếng Việt phải
-  khớp `docs/API_CONTRACT.md`. Người ngoài bị chặn nhận **404** (không lộ
+  khớp `docs/contracts/API_CONTRACT.md`. Người ngoài bị chặn nhận **404** (không lộ
   tồn tại), lỗi validation luôn 422 `{ message, errors }`.
 - **Mass assignment**: không bao giờ cho `role` qua request; field sinh
   viên/chủ nhà phân tách bằng FormRequest riêng theo vai trò.
@@ -82,8 +82,9 @@ frontend/   React 18 + TypeScript strict SPA (Vite 6, Tailwind CSS v4, Radix UI,
   src/hooks/               custom hooks (useAuthForm, useListingSearch, useStickToBottom, ...)
   src/styles.css           Tailwind CSS v4 + design tokens (màu sắc, typography, shadow)
 ai-service/ FastAPI (stub FAKE_MODE)
-docs/       hợp đồng + runbook + sổ tech debt + báo cáo audit
-scripts/    backup, restore, rollback
+docs/       contracts/, architecture/, reports/, runbooks/, ONBOARDING.md
+infra/      docker/, deploy/, backup/
+scripts/    cong cu no ky thuat & dev helpers
 ```
 
 Sửa gì cũng nhớ: hợp đồng trước, code sau, test kèm theo.

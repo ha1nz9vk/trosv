@@ -29,6 +29,8 @@ Quét tự động bằng bộ công cụ `tech-debt-tracker` kết hợp bộ l
 
 ## 2. Quy trình tái tạo dữ liệu (Pipeline)
 
+> **Lưu ý**: Bộ công cụ `tech-debt-tracker` (trong thư mục `.agents/skills/tech-debt-tracker/`) là công cụ hỗ trợ của agent AI được gitignore, không nằm trong git history của repository. Khi quét thủ công trên máy dev, người dùng cần có sẵn skill `tech-debt-tracker` hoặc chạy script tương ứng từ môi trường agent.
+
 Quy trình chuẩn hóa 4 bước để tái tạo và cập nhật sổ nợ kỹ thuật:
 
 ```bash

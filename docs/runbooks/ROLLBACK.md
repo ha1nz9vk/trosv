@@ -2,7 +2,7 @@
 
 Khi 1 deployment trên `stable` bị lỗi và cần quay lại bản trước. Đáp ứng
 khớp với `.github/workflows/deploy.yml` (deploy = `git reset --hard <sha>` +
-`docker compose --profile tls up -d --build`) và `scripts/RESTORE.md` (khi
+`docker compose --profile tls up -d --build`) và `infra/backup/RESTORE.md` (khi
 phải quay lại dữ liệu).
 
 ## 0. Tìm SHA tốt cuối cùng
@@ -42,13 +42,13 @@ curl -s -o /dev/null -w 'cities:   %{http_code}\n' $R "https://$DOMAIN/api/citie
 
 `php artisan migrate --force` trong backend container không tự roll back.
 Nếu commit lỗi CHẠY migration làm hỏng dữ liệu/schema thì rollback code
-không đủ - phải restore DB từ backup: xem `scripts/RESTORE.md` (bước 2 là
+không đủ - phải restore DB từ backup: xem `infra/backup/RESTORE.md` (bước 2 là
 không-đường-lùi).
 
 Nếu commit lỗi chứa migration: tự sao lưu DB hiện tại TRƯỚC khi reset:
 
 ```bash
-bash scripts/backup.sh
+bash infra/backup/backup.sh
 ```
 
 ## 3. Sau khi đã rollback

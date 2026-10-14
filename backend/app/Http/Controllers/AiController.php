@@ -11,7 +11,7 @@ use App\Services\AiService;
 use Illuminate\Http\JsonResponse;
 
 /**
- * AI proxy endpoints (API_CONTRACT §4 "AI", docs/AI_CONTRACT.md).
+ * AI proxy endpoints (API_CONTRACT §4 "AI", docs/contracts/AI_CONTRACT.md).
  * Thin HTTP layer: validation in FormRequests, data preparation and AI
  * calls in AiService. Backend prepares ALL data (the AI service has no
  * database) and never sends names, emails or phone numbers to it.

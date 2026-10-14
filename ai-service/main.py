@@ -1,11 +1,11 @@
 # ============================================================
-# TROSV AI service - stub FAKE_MODE dung AI_CONTRACT.md.
+# TROSV AI service - stub FAKE_MODE dung docs/contracts/AI_CONTRACT.md.
 #
 # Trang thai: stub demo. Moi endpoint tra du lieu gia hop ly DUNG SHAPE
 # hop contract khi FAKE_MODE=true, khong can LLM key. Khi FAKE_MODE=false,
 # moi endpoint tra 503 (backend se chuyen thanh 503 "Dich vu AI tam thoi
 # khong kha dung." cho frontend) - call LLM that se bu sung sau theo
-# AI_CONTRACT.md §2.
+# docs/contracts/AI_CONTRACT.md §2.
 #
 # Chay: docker compose --profile ai up -d   (hoac)
 #       pip install -r requirements.txt && uvicorn main:app --port 8001

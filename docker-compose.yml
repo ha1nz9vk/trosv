@@ -35,6 +35,8 @@
 # REVERB key dong bo: root .env va backend/.env phai cung REVERB_APP_*.
 # ============================================================
 
+name: trosv
+
 x-default-logging: &default-logging
   driver: json-file
   options:
@@ -219,7 +221,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./infra/docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data # chung chi + ACME accounts
       - caddy_config:/config
     depends_on:
@@ -228,7 +230,7 @@ services:
       - reverb
 
   ai-service:
-    # AI service (AI_CONTRACT.md). Stub FAKE_MODE du file - chi duoc goi boi
+    # AI service (docs/contracts/AI_CONTRACT.md). Stub FAKE_MODE du file - chi duoc goi boi
     # backend, khong co DB. Neu AI chet, backend tu tra 503 lich su.
     build: ./ai-service
     command: uvicorn main:app --host 0.0.0.0 --port 8001

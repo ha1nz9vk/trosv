@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-// Seeded demo account (deploy.sh seed output). Kept in sync with the docs.
+// Seeded demo account (infra/deploy/deploy.sh seed output). Kept in sync with the docs.
 const STUDENT = { email: "student1@example.com", password: "password" };
 
 test.describe("smoke", () => {

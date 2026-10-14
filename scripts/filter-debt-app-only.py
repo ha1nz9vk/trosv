@@ -2,13 +2,13 @@
 """
 Filter debt_scanner output -> "app-only" register numbers.
 
-Bước giữa của pipeline docs/TECH-DEBT.md (scan -> filter -> prioritize ->
+Bước giữa của pipeline docs/reports/TECH-DEBT.md (scan -> filter -> prioritize ->
 dashboard). Trước 2026-09-28 bước này là ad-hoc nên con số không tái tạo
 được; script này chốt quy tắc lọc:
 
 1. Path scope: chỉ giữ file thuộc mã ứng dụng thật - `backend/`, `frontend/`,
    `ai-service/`. Loại tài liệu (docs/, *.md ở gốc), hạ tầng (compose,
-   deploy.sh, docker/), công cụ cá nhân (.agents, .browser-check, ...).
+   infra/), công cụ cá nhân (.agents, .browser-check, ...).
 2. Noise regex: loại todo_comment khớp `BUG`/`APP_DEBUG` (comment rule của
    Laravel/PROMPTS bị regex bắt nhầm - không phải debt thật).
 

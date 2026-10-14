@@ -1,5 +1,5 @@
 /**
- * SPA route definitions - single source of truth (docs/TECH-DEBT.md #5).
+ * SPA route definitions - single source of truth (docs/reports/TECH-DEBT.md #5).
  *
  * Mọi path pattern định nghĩa ĐÚNG MỘT LẦN ở đây và dùng cho cả hai ngữ cảnh:
  * - <Route path={ROUTES.ROOM_DETAIL}> (định tuyến)

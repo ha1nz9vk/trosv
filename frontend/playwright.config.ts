@@ -1,10 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// CI-grade smoke suite (PLAN.md Phase 1). The richer journey checks stay in
+// CI-grade smoke suite (docs/reports/PLAN.md Phase 1). The richer journey checks stay in
 // .browser-check/ (npm run test:e2e / test:prod); this is what CI runs.
 //
 // Requires the demo stack to be up (API :8000 + Vite :5173), e.g.:
-//   bash deploy.sh --quick
+//   bash infra/deploy/deploy.sh --quick
 // Overridable in CI: E2E_BASE_URL / E2E_API_URL.
 
 const baseURL = process.env.E2E_BASE_URL || "http://localhost:5173";

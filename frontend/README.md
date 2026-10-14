@@ -2,7 +2,7 @@
 
 React 18 + TypeScript strict + Vite 6 + Tailwind CSS v4 + Radix UI + Lucide React (Node 22 theo `.nvmrc`).
 Build luôn chạy `tsc --noEmit` trước - TypeScript lỗi thì không build được.
-Gọi toàn bộ API qua Backend theo [docs/API_CONTRACT.md](../docs/API_CONTRACT.md).
+Gọi toàn bộ API qua Backend theo [docs/contracts/API_CONTRACT.md](../docs/contracts/API_CONTRACT.md).
 
 ## Chạy
 

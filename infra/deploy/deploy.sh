@@ -3,13 +3,13 @@
 # TROSV - fast demo deploy (Debian Linux)
 #
 # Hai che do:
-#   bash deploy.sh --docker  # KHUYEN DUNG: docker compose (1 file duy nhat)
-#                            # up -d --build + doi healthy + kiem tra API
-#   bash deploy.sh           # khong Docker: PHP + Node truc tiep tren may
-#                            # (PostgreSQL local, artisan serve :8000,
-#                            #  vite dev :5173, reverb :8080)
-#   bash deploy.sh --quick   # (che do local) bo qua install, GIU DB
-#   bash deploy.sh --stop    # dung toan bo service
+#   bash infra/deploy/deploy.sh --docker  # KHUYEN DUNG: docker compose (1 file duy nhat)
+#                                         # up -d --build + doi healthy + kiem tra API
+#   bash infra/deploy/deploy.sh           # khong Docker: PHP + Node truc tiep tren may
+#                                         # (PostgreSQL local, artisan serve :8000,
+#                                         #  vite dev :5173, reverb :8080)
+#   bash infra/deploy/deploy.sh --quick   # (che do local) bo qua install, GIU DB
+#   bash infra/deploy/deploy.sh --stop    # dung toan bo service
 #
 # Log/PID (che do local): /tmp/trosv-api.log /tmp/trosv-web.log
 #                         /tmp/trosv-demo.pids
@@ -23,7 +23,8 @@
 # ============================================================
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+cd "$ROOT"
 BACKEND="$ROOT/backend"
 FRONTEND="$ROOT/frontend"
 API_LOG=/tmp/trosv-api.log
@@ -56,7 +57,7 @@ stop_all() {
 }
 
 run_docker() {
-    command -v docker >/dev/null || die "Khong co docker - chay 'bash deploy.sh' (che do local PHP + Node)"
+    command -v docker >/dev/null || die "Khong co docker - chay 'bash infra/deploy/deploy.sh' (che do local PHP + Node)"
     docker info >/dev/null 2>&1 || die "Docker daemon chua chay - mo Docker Desktop hoac systemctl start docker"
     [[ -f .env ]] || { cp .env.example .env; ok "Da tao .env tu .env.example"; }
     grep -q '^APP_KEY=base64' .env || {
@@ -147,7 +148,7 @@ if [[ "${1:-}" != "--quick" ]]; then
         || die "composer install that bai - xem log o tren"
     ok "Composer dependencies"
 else
-    [[ -d vendor ]] || die "--quick nhung chua co vendor/ - chay 'bash deploy.sh' (khong --quick) lan dau"
+    [[ -d vendor ]] || die "--quick nhung chua co vendor/ - chay 'bash infra/deploy/deploy.sh' (khong --quick) lan dau"
 fi
 
 # ------------------------------------------------------------
@@ -230,6 +231,6 @@ echo "    Sinh vien : student1@example.com"
 echo "    Chu nha   : landlord1@example.com"
 echo ""
 echo "  Log   : $API_LOG | $WEB_LOG"
-echo "  Stop  : bash deploy.sh --stop"
+echo "  Stop  : bash infra/deploy/deploy.sh --stop"
 echo "  Smoke : bash frontend/e2e-smoke.sh"
 echo "=============================================="

@@ -1,6 +1,6 @@
 /**
- * Shared API types - mirror docs/API_CONTRACT.md (backend resources).
- * Giu dong bo: khi backend them field, cap nhat o day + API_CONTRACT.md.
+ * Shared API types - mirror docs/contracts/API_CONTRACT.md (backend resources).
+ * Giu dong bo: khi backend them field, cap nhat o day + docs/contracts/API_CONTRACT.md.
  */
 
 export type UserRole = "student" | "landlord";

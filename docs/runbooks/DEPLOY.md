@@ -3,7 +3,7 @@
 > Máy chủ bất kỳ: cloud nào cũng được, máy sàn cá nhân, máy phòng lab -
 > miễn là **Debian 12 (bookworm) hoặc 13 (trixie)** + Docker hoặc Podman
 > + quyền sudo. File này là runbook duy nhất cho việc deploy; backup/restore
-> xem `scripts/RESTORE.md`, rollback code xem `scripts/ROLLBACK.md`.
+> xem `infra/backup/RESTORE.md`, rollback code xem `docs/runbooks/ROLLBACK.md`.
 
 Một file `docker-compose.yml` duy nhất phục dev, demo và production:
 
@@ -143,17 +143,17 @@ docker compose down -v                   # XÓA pgdata + uploads - cẩn trọng
 
 ## 6. Backup hằng ngày (bắt buộc trước khi có dữ liệu thật)
 
-Script sẵn sàng: `scripts/backup.sh` (dump DB + tar uploads + bản sao
+Script sẵn sàng: `infra/backup/backup.sh` (dump DB + tar uploads + bản sao
 `.env`, giữ 7 ngày + 4 chủ nhật). Cron trên máy chủ:
 
 ```bash
 sudo crontab -e -u "$USER"
 # 02:30 hằng ngày:
-30 2 * * * cd /srv/trosv && ./scripts/backup.sh >> ./backups/backup.log 2>&1
+30 2 * * * cd /srv/trosv && ./infra/backup/backup.sh >> ./backups/backup.log 2>&1
 ```
 
-Restore drill + quy trình: `scripts/RESTORE.md`. Rollback code:
-`scripts/ROLLBACK.md`. Kiểm tra lại backup định kỳ: `./scripts/backup.sh --verify`.
+Restore drill + quy trình: `infra/backup/RESTORE.md`. Rollback code:
+`docs/runbooks/ROLLBACK.md`. Kiểm tra lại backup định kỳ: `./infra/backup/backup.sh --verify`.
 
 ## 7. Gotchas
 
