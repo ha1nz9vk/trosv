@@ -218,8 +218,7 @@ class ConversationTest extends TestCase
 
         // Older conversation gets the most recent message AFTER the other
         // was touched, so it must come first (activity, not creation order).
-        Conversation::where('id', $newer->id)->update(['updated_at' => now()->subMinutes(5)]);
-        Conversation::where('id', $older->id)->update(['updated_at' => now()]);
+        $newer->touch();
         Message::factory()->create([
             'conversation_id' => $older->id,
             'sender_id' => $this->student->id,
