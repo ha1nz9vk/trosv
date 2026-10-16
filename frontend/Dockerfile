@@ -34,7 +34,7 @@ COPY . .
 RUN npm run build
 
 # ---- Runtime stage: nginx serving the SPA ---------------------------------
-FROM nginx:1.29-trixie
+FROM nginx:1.31-trixie
 
 # Healthcheck dung curl (nginx Debian khong kem wget nhu alpine).
 RUN apt-get update \
