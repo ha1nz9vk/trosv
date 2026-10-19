@@ -5,7 +5,7 @@ import { Toaster as Sonner } from "sonner";
   Sits above the mobile tab bar.
 */
 
-import { useTheme } from "@/hooks/useTheme";
+import { useTheme } from "@/context/ThemeContext";
 
 export function Toaster() {
   const { resolvedTheme } = useTheme();
