@@ -4,7 +4,7 @@ on:
   push:
     branches: [unstable, stable]
   pull_request:
-    branches: [unstable]
+    branches: [unstable, refactor/pro-layout]
 
 jobs:
   backend:
