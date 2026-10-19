@@ -62,14 +62,6 @@ export function RailMessageIcon({ className }: { className?: string }) {
   );
 }
 
-export function RailUserIcon({ className }: { className?: string }) {
-  return (
-    <RailIconBase className={className}>
-      <circle cx="16" cy="11" r="5.5" />
-      <path d="M7 27c1.7-4.5 5.1-7 9-7s7.3 2.5 9 7" />
-    </RailIconBase>
-  );
-}
 
 export function RailBuildingIcon({ className }: { className?: string }) {
   return (

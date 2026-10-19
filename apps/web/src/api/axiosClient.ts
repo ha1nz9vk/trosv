@@ -7,10 +7,6 @@ const USER_KEY = "user";
 
 export const getToken = (): string | null => localStorage.getItem(TOKEN_KEY);
 
-export const setToken = (token: string): void => {
-  localStorage.setItem(TOKEN_KEY, token);
-};
-
 /** Xoa toan bo phien (token + user) - dung cho 401 lan logout. */
 export const clearSession = (): void => {
   localStorage.removeItem(TOKEN_KEY);
