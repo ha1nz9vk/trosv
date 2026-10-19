@@ -6,9 +6,9 @@ import {
   getListings,
   getSchools,
   getWards,
-} from "../api/listingApi";
-import { errMessage } from "../api/axiosClient";
-import type { Amenity, City, Listing, PaginationMeta, School, Ward } from "../types/api";
+} from "@/api/listingApi";
+import { errMessage } from "@/api/axiosClient";
+import type { Amenity, City, Listing, PaginationMeta, School, Ward } from "@/types/api";
 
 export interface ListingFilters {
   q: string;

@@ -1,6 +1,6 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
-import { API_BASE, REVERB } from "../config/env";
+import { API_BASE, REVERB } from "@/config/env";
 
 /**
  * Laravel Echo over Reverb (WebSocket) - replaces HTTP polling for chat.

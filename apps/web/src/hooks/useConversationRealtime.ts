@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { markRead } from "../api/socialApi";
-import { getEcho } from "../api/echo";
-import type { EchoReactive } from "../api/echo";
-import { useAuth } from "../context/AuthContext";
+import { markRead } from "@/api/socialApi";
+import { getEcho } from "@/api/echo";
+import type { EchoReactive } from "@/api/echo";
+import { useAuth } from "@/context/AuthContext";
 import type {
   Message,
   MessageDeletedEvent,
@@ -11,7 +11,7 @@ import type {
   MessageSeenEvent,
   MessageSentEvent,
   TypingWhisper,
-} from "../types/api";
+} from "@/types/api";
 
 /**
  * Realtime layer for the /messages/:id thread over the private

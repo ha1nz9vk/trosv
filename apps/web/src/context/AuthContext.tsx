@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import * as authApi from "../api/authApi";
-import { clearSession, getToken } from "../api/axiosClient";
-import type { RegisterPayload, User } from "../types/api";
+import * as authApi from "@/api/authApi";
+import { clearSession, getToken } from "@/api/axiosClient";
+import type { RegisterPayload, User } from "@/types/api";
 
 export interface AuthContextValue {
   user: User | null;

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { getConversations, getMessages, markRead } from "../api/socialApi";
-import type { Conversation, Message } from "../types/api";
+import { getConversations, getMessages, markRead } from "@/api/socialApi";
+import type { Conversation, Message } from "@/types/api";
 
 /**
  * Conversation header + message list for the /messages/:id thread.

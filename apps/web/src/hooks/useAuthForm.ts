@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../constants/routes";
+import { ROUTES } from "@/constants/routes";
 
 /**
  * Logic form xác thực dùng chung cho Login/Register (debt #2 trong

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { deleteMessage, reactToMessage, sendMessage } from "../api/socialApi";
-import { errMessage } from "../api/axiosClient";
-import type { Message } from "../types/api";
+import { deleteMessage, reactToMessage, sendMessage } from "@/api/socialApi";
+import { errMessage } from "@/api/axiosClient";
+import type { Message } from "@/types/api";
 
 /**
  * Message actions for the thread: send (with dedup against the WS event),

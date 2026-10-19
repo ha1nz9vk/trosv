@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../config/env";
+import { API_URL } from "@/config/env";
 import { disconnectEcho } from "./echo";
 
 const TOKEN_KEY = "token";
