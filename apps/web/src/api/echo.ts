@@ -1,6 +1,7 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { API_BASE, REVERB } from "@/config/env";
+import { TOKEN_KEY } from "./axiosClient";
 
 /**
  * Laravel Echo over Reverb (WebSocket) - replaces HTTP polling for chat.
@@ -37,7 +38,7 @@ function reverbConfig(): Record<string, unknown> {
     // arg is the socketId string, not a params object.
     authorizer: (channel: AuthorizerChannel) => ({
       authorize: (socketId: string, callback: AuthCallback) => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem(TOKEN_KEY);
         fetch(`${API_BASE}/broadcasting/auth`, {
           method: "POST",
           body: JSON.stringify({
@@ -64,7 +65,7 @@ function reverbConfig(): Record<string, unknown> {
 /** Singleton Echo instance; null while logged out. */
 export function getEcho(): Echo<"reverb"> | null {
   if (echo) return echo;
-  if (!localStorage.getItem("token")) return null;
+  if (!localStorage.getItem(TOKEN_KEY)) return null;
 
   (window as unknown as { Pusher: typeof Pusher }).Pusher = Pusher;
   echo = new Echo({ broadcaster: "reverb", ...reverbConfig() });
