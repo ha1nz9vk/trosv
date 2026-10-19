@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getListing } from "@/api/listingApi";
 import type { Listing } from "@/types/api";
-import { formatPriceShort } from "@/api/format";
+import { formatPriceShort } from "@/lib/format";
 import { ExternalLink, Home, SmilePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/ui/popover";

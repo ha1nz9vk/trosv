@@ -28,8 +28,8 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "@/ui/toast";
 import { useUnreadCount } from "@/hooks/useUnreadCount";
-import { ThemeToggle } from "@/ui/ThemeToggle";
-import { AiChatWidget } from "@/ui/AiChatWidget";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { AiChatWidget } from "@/components/AiChatWidget";
 
 /* ---------- Header ---------- */
 

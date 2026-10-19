@@ -12,7 +12,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import type { UserRole } from "./types/api";
 import { ROUTES } from "./constants/routes";
-import { AppShell } from "./ui/shell";
+import { AppShell } from "@/components/shell";
 import { Toaster } from "./ui/toast";
 import { ErrorState } from "./ui/empty-state";
 import { Skeleton } from "./ui/badge";

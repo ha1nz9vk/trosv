@@ -8,7 +8,7 @@ import { useAuthForm } from "@/hooks/useAuthForm";
 import { Button } from "@/ui/button";
 import { Field } from "@/ui/field";
 import { Input } from "@/ui/input";
-import { AuthSplit } from "@/pages/AuthSplit";
+import { AuthSplit } from "@/components/AuthSplit";
 import { PasswordInput } from "@/ui/password-input";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";

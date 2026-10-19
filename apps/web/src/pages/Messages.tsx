@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { GateScreen, MessagesGateIllustration } from "@/pages/gates";
-import { Footer } from "@/ui/shell";
+import { GateScreen, MessagesGateIllustration } from "@/components/gates";
+import { Footer } from "@/components/shell";
 import MessagesList from "@/pages/MessagesList";
 
 function useDocumentTitle(title: string): void {

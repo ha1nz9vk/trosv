@@ -9,7 +9,7 @@ import { Button } from "@/ui/button";
 import { Field } from "@/ui/field";
 import { Input } from "@/ui/input";
 import { PasswordInput } from "@/ui/password-input";
-import { AuthSplit } from "@/pages/AuthSplit";
+import { AuthSplit } from "@/components/AuthSplit";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 export default function Login() {

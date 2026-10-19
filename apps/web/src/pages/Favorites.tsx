@@ -4,12 +4,12 @@ import { ROUTES } from "@/constants/routes";
 import { getFavorites, removeFavorite } from "@/api/socialApi";
 import type { Listing } from "@/types/api";
 import { useAuth } from "@/context/AuthContext";
-import { GateScreen, FavoritesGateIllustration } from "@/pages/gates";
+import { GateScreen, FavoritesGateIllustration } from "@/components/gates";
 import { Button } from "@/ui/button";
 import { Skeleton } from "@/ui/badge";
 import { EmptyState, ErrorState } from "@/ui/empty-state";
 import { FavoriteEmptyIllustration } from "@/ui/icons";
-import { ListingCard } from "@/ui/ListingCard";
+import { ListingCard } from "@/components/ListingCard";
 import { toast } from "@/ui/toast";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 

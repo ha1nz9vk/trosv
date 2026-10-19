@@ -12,7 +12,7 @@ import { HousePlaceholder } from "@/ui/icons";
 import { toast } from "@/ui/toast";
 import { useAuth } from "@/context/AuthContext";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { formatPriceShort } from "@/api/format";
+import { formatPriceShort } from "@/lib/format";
 import { RoomLightbox } from "./room/RoomLightbox";
 import { RoomContactCard } from "./room/RoomContactCard";
 import { Sparkles, MapPin, Navigation, ArrowLeft } from "lucide-react";

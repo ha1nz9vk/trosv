@@ -7,7 +7,7 @@ import { CONV_PREVIEW_EVENT, type ConvPreviewDetail } from "@/constants/events";
 import { Avatar } from "@/ui/avatar";
 import { Skeleton } from "@/ui/badge";
 import { EmptyState } from "@/ui/empty-state";
-import { timeAgo } from "@/api/format";
+import { timeAgo } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 

@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
 import { Heart, Share2, Phone } from "lucide-react";
 import type { Listing } from "@/types/api";
-import { formatPriceShort } from "@/api/format";
+import { formatPriceShort } from "@/lib/format";
 
 export interface RoomContactCardProps {
   listing: Listing;

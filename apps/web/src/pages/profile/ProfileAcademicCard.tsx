@@ -1,7 +1,7 @@
 import type { School } from "@/types/api";
 import { Field } from "@/ui/field";
 import { Input } from "@/ui/input";
-import { SchoolCombobox } from "@/ui/SchoolCombobox";
+import { SchoolCombobox } from "@/components/SchoolCombobox";
 
 interface ProfileAcademicCardProps {
   schools: School[];
