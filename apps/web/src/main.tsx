@@ -3,14 +3,16 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import "./styles.css";
 
-import { router } from "@/app/router";
 import { Providers } from "@/app/providers";
+import { router } from "@/app/router";
+import { Toaster } from "@/ui/toast";
 
 function Root() {
   return (
     <StrictMode>
       <Providers>
         <RouterProvider router={router} />
+        <Toaster />
       </Providers>
     </StrictMode>
   );

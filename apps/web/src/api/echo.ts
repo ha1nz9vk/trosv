@@ -1,7 +1,7 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import { API_BASE, REVERB } from "@/config/env";
-import { TOKEN_KEY } from "./axiosClient";
+import { TOKEN_KEY } from "@/constants/storage";
 
 /**
  * Laravel Echo over Reverb (WebSocket) - replaces HTTP polling for chat.

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { API_URL } from "@/config/env";
 import { disconnectEcho } from "./echo";
+import { TOKEN_KEY } from "@/constants/storage";
 
-export const TOKEN_KEY = "token";
 const USER_KEY = "user";
 
 export const getToken = (): string | null => localStorage.getItem(TOKEN_KEY);
