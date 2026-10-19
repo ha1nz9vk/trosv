@@ -125,6 +125,31 @@ services:
       db:
         condition: service_healthy
 
+  backend-test:
+    profiles: [test]
+    build:
+      context: ./apps/api
+      args:
+        COMPOSER_FLAGS: ""
+    logging: *default-logging
+    env_file:
+      - path: ./apps/api/.env
+        required: false
+    environment:
+      <<: *backend-env
+      APP_ENV: testing
+      APP_DEBUG: "true"
+      DB_DATABASE: rental_test
+      CACHE_STORE: array
+      BCRYPT_ROUNDS: 4
+      TRUSTED_PROXIES: ""
+    entrypoint: ["sh", "-c", "touch /var/www/html/.env && exec docker-php-entrypoint \"$$@\"", "--"]
+    volumes:
+      - ./apps/api/tests:/var/www/html/tests:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
   reverb:
     build: ./apps/api
     command: php artisan reverb:start --host=0.0.0.0 --port=8080
