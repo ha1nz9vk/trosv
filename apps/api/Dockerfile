@@ -21,8 +21,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Dependencies first so they are cached between builds.
+ARG COMPOSER_FLAGS="--no-dev"
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
+RUN composer install ${COMPOSER_FLAGS} --no-interaction --prefer-dist --no-scripts
 
 COPY . .
 
