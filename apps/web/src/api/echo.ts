@@ -78,12 +78,6 @@ export interface EchoReactive {
   listenForWhisper(eventName: string, callback: (payload: unknown) => void): unknown;
 }
 
-export function conversationChannel(conversationId: number): EchoReactive | null {
-  const e = getEcho();
-  if (!e) return null;
-  return e.private(`conversation.${conversationId}`);
-}
-
 /** Drop the socket + subscriptions (logout / auth change). */
 export function disconnectEcho(): void {
   if (!echo) return;

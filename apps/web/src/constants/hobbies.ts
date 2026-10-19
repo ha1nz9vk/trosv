@@ -21,15 +21,8 @@ export const HOBBY_LIST: HobbyItem[] = [
   { key: "art", label: "Hội họa" },
   { key: "pets", label: "Thú cưng" },
 ];
-
-export const HOBBIES: string[] = HOBBY_LIST.map((h) => h.key);
-
 export const HOBBY_MAP: Record<string, HobbyItem> = Object.fromEntries(
   HOBBY_LIST.map((h) => [h.key, h])
-);
-
-export const HOBBY_LABELS: Record<string, string> = Object.fromEntries(
-  HOBBY_LIST.map((h) => [h.key, h.label])
 );
 
 /**
@@ -64,11 +57,4 @@ export function parseHobbies(
     .map((s) => s.trim())
     .filter(Boolean)
     .map(formatHobby);
-}
-
-/**
- * "music,gym" -> ["Âm nhạc", "Gym & Thể thao"] (tương thích ngược)
- */
-export function hobbyLabels(interestsCsv: string | null | undefined): string[] {
-  return parseHobbies(interestsCsv).map((h) => h.label);
 }

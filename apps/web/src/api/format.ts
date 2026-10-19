@@ -4,18 +4,6 @@ export const TYPE_LABELS: Record<string, string> = {
   house: "Nhà nguyên căn",
 };
 
-export const STATUS_LABELS: Record<string, string> = {
-  available: "Còn trống",
-  rented: "Đã thuê",
-  hidden: "Ẩn",
-};
-
-export const STATUS_BADGES: Record<string, string> = {
-  available: "success",
-  rented: "secondary",
-  hidden: "warning",
-};
-
 export function formatVnd(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
   return `${new Intl.NumberFormat("vi-VN").format(value)}đ`;
