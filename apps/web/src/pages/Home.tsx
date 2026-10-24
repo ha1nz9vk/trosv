@@ -8,7 +8,7 @@ import { Button } from "@/ui/button";
 import { Skeleton } from "@/ui/badge";
 import { ErrorState } from "@/ui/empty-state";
 import { SearchEmptyIllustration } from "@/ui/icons";
-import { ListingCard } from "@/ui/ListingCard";
+import { ListingCard } from "@/components/ListingCard";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { Search as SearchIcon, GraduationCap, MapPin } from "lucide-react";
 

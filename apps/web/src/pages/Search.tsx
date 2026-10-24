@@ -7,16 +7,16 @@ import { Button } from "@/ui/button";
 import { Skeleton } from "@/ui/badge";
 import { ErrorState, EmptyState } from "@/ui/empty-state";
 import { SearchEmptyIllustration } from "@/ui/icons";
-import { ListingMap } from "@/ui/ListingMap";
+import { ListingMap } from "@/components/ListingMap";
 import { Popover, PopoverTrigger, PopoverContent } from "@/ui/popover";
-import { ListingCard } from "@/ui/ListingCard";
+import { ListingCard } from "@/components/ListingCard";
 import { X, ChevronDown, Map as MapIcon, List as ListIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { addFavorite, removeFavorite } from "@/api/socialApi";
 import { toast } from "@/ui/toast";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { formatPriceShort } from "@/api/format";
+import { formatPriceShort } from "@/lib/format";
 import { SearchFilterBar, TYPE_OPTIONS } from "./search/SearchFilterBar";
 
 const SORT_OPTIONS = [

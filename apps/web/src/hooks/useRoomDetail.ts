@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { getListing, getListingReviews } from "../api/listingApi";
-import { errMessage, errStatus } from "../api/axiosClient";
-import type { Listing, Review, PaginationMeta } from "../types/api";
+import { getListing, getListingReviews } from "@/api/listingApi";
+import { errMessage, errStatus } from "@/api/axiosClient";
+import type { Listing, Review, PaginationMeta } from "@/types/api";
 
 /**
  * Data + actions for the /rooms/:id page: listing detail, review list

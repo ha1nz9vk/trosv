@@ -6,12 +6,12 @@ import {
   updateListing,
   uploadImages,
   deleteImage,
-} from "../api/landlordApi";
-import { getListing, getWards, getAmenities, getCities } from "../api/listingApi";
-import { aiDescription } from "../api/aiApi";
-import { errMessage, errFieldErrors } from "../api/axiosClient";
-import { ROUTES, route } from "../constants/routes";
-import type { Amenity, City, ListingImage, ListingPayload, Ward } from "../types/api";
+} from "@/api/landlordApi";
+import { getListing, getWards, getAmenities, getCities } from "@/api/listingApi";
+import { aiDescription } from "@/api/aiApi";
+import { errMessage, errFieldErrors } from "@/api/axiosClient";
+import { ROUTES, route } from "@/constants/routes";
+import type { Amenity, City, ListingImage, ListingPayload, Ward } from "@/types/api";
 
 export interface ListingFormState {
   title: string;

@@ -4,7 +4,7 @@ import { Heart, MapPin, Navigation } from "lucide-react";
 import { ROUTES, route } from "@/constants/routes";
 import { useAuth } from "@/context/AuthContext";
 import type { Listing } from "@/types/api";
-import { formatPriceShort, TYPE_LABELS } from "@/api/format";
+import { formatPriceShort, TYPE_LABELS } from "@/lib/format";
 import { Rating, Tag } from "@/ui/badge";
 import { HousePlaceholder } from "@/ui/icons";
 import { toast } from "@/ui/toast";

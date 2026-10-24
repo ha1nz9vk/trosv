@@ -17,8 +17,8 @@ import { toast } from "@/ui/toast";
 import { cn } from "@/lib/utils";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { useAuth } from "@/context/AuthContext";
-import { GateScreen, MessagesGateIllustration } from "@/pages/gates";
-import { Footer } from "@/ui/shell";
+import { GateScreen, MessagesGateIllustration } from "@/components/gates";
+import { Footer } from "@/components/shell";
 import { MessageBubble } from "@/pages/messages/MessageBubble";
 import {
   Paperclip,

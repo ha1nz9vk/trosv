@@ -7,7 +7,7 @@ import type {
   AiDescriptionResult,
   AiPriceAdvice,
   AiRoommate,
-} from "../types/api";
+} from "@/types/api";
 
 // API_CONTRACT §4 - "AI". Backend proxies to the AI service; may take ~30s.
 export const aiRoommates = (): Promise<AiRoommate[]> =>

@@ -1,6 +1,6 @@
 import api from "./axiosClient";
 import { envelope } from "./envelope";
-import type { AuthResponse, RegisterPayload, User } from "../types/api";
+import type { AuthResponse, RegisterPayload, User } from "@/types/api";
 
 // API_CONTRACT §4 - "Xác thực và hồ sơ"
 export const login = (email: string, password: string): Promise<AuthResponse> =>

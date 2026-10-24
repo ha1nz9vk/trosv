@@ -11,7 +11,7 @@ import type {
   School,
   Ward,
   PaginationMeta,
-} from "../types/api";
+} from "@/types/api";
 
 export interface Paged<T> {
   data: T[];

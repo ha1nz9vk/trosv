@@ -1,6 +1,6 @@
 import api from "./axiosClient";
 import { envelope, pagedEnvelope } from "./envelope";
-import type { Listing, ListingPayload } from "../types/api";
+import type { Listing, ListingPayload } from "@/types/api";
 import type { Paged } from "./listingApi";
 
 // API_CONTRACT §4 - "Chủ nhà: quản lý tin đăng"

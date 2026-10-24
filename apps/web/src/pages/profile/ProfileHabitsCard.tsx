@@ -1,5 +1,5 @@
 import { Field } from "@/ui/field";
-import { HobbySelector } from "@/ui/HobbySelector";
+import { HobbySelector } from "@/components/HobbySelector";
 import {
   CLEANLINESS_LEVELS,
   PERSONALITY_OPTIONS,

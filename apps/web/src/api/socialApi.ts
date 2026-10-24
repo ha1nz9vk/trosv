@@ -1,6 +1,6 @@
 import api from "./axiosClient";
 import { envelope, envelopeArray, pagedEnvelope } from "./envelope";
-import type { Conversation, Listing, Message, MessagePayload } from "../types/api";
+import type { Conversation, Listing, Message, MessagePayload } from "@/types/api";
 import type { Paged } from "./listingApi";
 
 // API_CONTRACT §4 - "Yêu thích (sinh viên)"

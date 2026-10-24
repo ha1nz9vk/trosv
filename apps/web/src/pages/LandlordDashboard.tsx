@@ -17,7 +17,7 @@ import {
   DialogFooter,
 } from "@/ui/dialog";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import { formatVnd } from "@/api/format";
+import { formatVnd } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { MapPin, ExternalLink, Edit3, Trash2 } from "lucide-react";
 
